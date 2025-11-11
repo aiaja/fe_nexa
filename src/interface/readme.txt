@@ -1,0 +1,1 @@
+Menampung tipe dan interface TypeScript yang digunakan di seluruh proyek.

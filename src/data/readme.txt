@@ -1,0 +1,1 @@
+Berisi data statis atau mock data sementara atau data dummy, biasanya digunakan untuk testing tampilan sebelum integrasi API.
