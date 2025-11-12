@@ -1,37 +1,55 @@
 "use client";
 
 import * as React from "react";
-
-
+import { usePathname } from "next/navigation";
 import { NavMain } from "@/components/nav-main";
-import { NavUser } from "@/components/nav-user";
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { Button } from "@/components/ui/button";
+import { getNavigationByRole, getRoleFromPathname } from "@/data/navigation";
 
-import { data } from "@/data/sidebar"
-import { Button } from "./ui/button";
-import { LucideIcon } from "lucide-react";
+interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {}
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function AppSidebar({ ...props }: AppSidebarProps) {
+  const pathname = usePathname();
+  const currentRole = getRoleFromPathname(pathname);
+  const navigationItems = getNavigationByRole(currentRole);
+
+  const handleLogout = () => {
+    // Implement logout logic here
+    console.log("Logout clicked");
+    // Example: redirect to login or clear session
+    // window.location.href = '/login';
+  };
+
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
-        <a href="#">
-          <img src="./nexa-logo.svg" alt="logo nexa" />
+        <a href="/" aria-label="Home">
+          <img 
+            src="/nexa-logo.svg" 
+            alt="Nexa Logo" 
+            className="h-8 w-auto"
+          />
         </a>
       </SidebarHeader>
+      
       <SidebarContent>
-        <NavMain items={data.navMain} />
+        <NavMain items={navigationItems} />
       </SidebarContent>
+      
       <SidebarFooter>
-        <Button variant="destructive">Logout</Button>
+        <Button 
+          variant="destructive" 
+          onClick={handleLogout}
+          className="w-full"
+        >
+          Logout
+        </Button>
       </SidebarFooter>
     </Sidebar>
   );
