@@ -33,7 +33,6 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
           <img 
             src="/nexa-logo.svg" 
             alt="Nexa Logo" 
-            className="h-8 w-auto"
           />
         </a>
       </SidebarHeader>
