@@ -122,7 +122,7 @@ const managerItems: NavItem[] = [
             url: "/manager/schedule",
         },
         {
-            title: "History Routes",
+            title: "Delivery History",
             url: "/manager/history",
         },
         {
