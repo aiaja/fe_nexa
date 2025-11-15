@@ -29,9 +29,7 @@ export function NavMain({ items }: NavMainProps) {
   const pathname = usePathname();
 
   const isActive = (url: string) => {
-    if (url === pathname) return true;
-    if (url !== "/" && pathname.startsWith(url)) return true;
-    return false;
+    return url === pathname;
   };
 
   const hasActiveChild = (item: NavItem) => {
@@ -59,11 +57,6 @@ export function NavMain({ items }: NavMainProps) {
                     asChild
                     tooltip={item.title}
                     isActive={active}
-                    className={cn(
-                      "cursor-pointer",
-                      active &&
-                        "bg-sidebar-accent text-sidebar-accent-foreground"
-                    )}
                   >
                     <Link href={item.url}>
                       {item.icon && <item.icon />}
@@ -84,12 +77,7 @@ export function NavMain({ items }: NavMainProps) {
                     <CollapsibleTrigger asChild>
                       <SidebarMenuButton
                         tooltip={item.title}
-                        isActive={active || hasActiveChild(item)}
-                        className={cn(
-                          "cursor-pointer",
-                          (active || hasActiveChild(item)) &&
-                            "bg-sidebar-accent text-sidebar-accent-foreground"
-                        )}
+                        isActive={false}
                       >
                         {item.icon && <item.icon />}
                         <span>{item.title}</span>
@@ -105,11 +93,6 @@ export function NavMain({ items }: NavMainProps) {
                               <SidebarMenuSubButton
                                 asChild
                                 isActive={subActive}
-                                className={cn(
-                                  "cursor-pointer",
-                                  subActive &&
-                                    "bg-sidebar-accent text-sidebar-accent-foreground"
-                                )}
                               >
                                 <Link href={subItem.url}>
                                   <span>{subItem.title}</span>

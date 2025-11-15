@@ -1,9 +1,19 @@
-import React from 'react'
+import SuperAdminDashboard from "@/features/admin/page"
+import { 
+  dashboardStats, 
+  systemAlerts, 
+  activityLogs, 
+  userDistribution,
+  activityTrends 
+} from "@/data/admin/dashboard"
 
-function page() {
+export default function Page() {
   return (
-    <div>page</div>
+    <SuperAdminDashboard 
+      stats={dashboardStats}
+      logs={activityLogs}
+      distribution={userDistribution}
+      trends={activityTrends}
+    />
   )
 }
-
-export default page

@@ -1,9 +1,8 @@
-import React from 'react'
+"use client"
 
-function page() {
-  return (
-    <div>page</div>
-  )
+import DriverMaster from "@/features/admin/(master-data)/driver/driver-data"
+import { driverData } from "@/data/admin/driver"
+
+export default function Page() {
+  return <DriverMaster driverItems={driverData} />
 }
-
-export default page
