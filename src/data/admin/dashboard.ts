@@ -1,6 +1,5 @@
 import { 
   DashboardStats, 
-  SystemAlert, 
   ActivityLog, 
   UserDistribution,
   ActivityTrend 
@@ -12,22 +11,6 @@ export const dashboardStats: DashboardStats[] = [
   { icon: "UserCircle", label: "Total Driver", value: "55", subtitle: "Data Overview", color: "text-purple-600" },
 ]
 
-export const systemAlerts: SystemAlert[] = [
-  { 
-    title: "System Update", 
-    message: "Scheduled maintenance tonight at 11 PM",
-    type: "info",
-    bgColor: "bg-blue-50",
-    borderColor: "border-blue-200"
-  },
-  { 
-    title: "Performance Excellent", 
-    message: "All systems operating optimally",
-    type: "success",
-    bgColor: "bg-green-50",
-    borderColor: "border-green-200"
-  },
-]
 
 export const activityLogs: ActivityLog[] = [
   { name: "Amanda Wan", role: "Supervisor", action: "Logged in to system", time: "22:02" },

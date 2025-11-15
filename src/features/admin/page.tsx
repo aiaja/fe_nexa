@@ -4,7 +4,6 @@ import React from 'react'
 import { Users, Truck, UserCircle, LucideIcon } from 'lucide-react'
 import { 
   DashboardStats, 
-  SystemAlert, 
   ActivityLog, 
   UserDistribution,
   ActivityTrend 

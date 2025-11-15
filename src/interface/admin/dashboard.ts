@@ -6,14 +6,6 @@ export interface DashboardStats {
   color: string
 }
 
-export interface SystemAlert {
-  title: string
-  message: string
-  type: "info" | "success" | "warning" | "error"
-  bgColor: string
-  borderColor: string
-}
-
 export interface ActivityLog {
   name: string
   role: string
