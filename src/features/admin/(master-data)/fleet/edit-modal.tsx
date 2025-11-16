@@ -1,8 +1,16 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import { X, Upload } from 'lucide-react'
+import { X, Upload, CalendarIcon } from 'lucide-react'
 import { FleetData, FleetType, FleetStatus } from '@/interface/admin/fleet'
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Field, FieldGroup, FieldLabel } from "@/components/ui/field"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Calendar } from "@/components/ui/calendar"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { format } from "date-fns"
+import { cn } from "@/lib/utils"
 
 interface EditFleetModalProps {
   open: boolean
@@ -19,13 +27,14 @@ export function EditFleetModal({ open, onClose, fleet, onSuccess }: EditFleetMod
     brands: '',
     model: '',
     year: '',
-    purchaseDate: '',
+    purchaseDate: undefined as Date | undefined,
     initialMileage: '',
     status: 'Active' as FleetStatus
   })
 
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [previewImage, setPreviewImage] = useState<string>('')
+  const [isReady, setIsReady] = useState(false)
 
   const fleetTypes: FleetType[] = ["Haul Truck", "Dump Truck", "Tanker", "Excavator", "Bulldozer", "Loader"]
   const fleetStatuses: FleetStatus[] = ["Active", "Inactive", "Maintenance", "Under Review"]
@@ -34,6 +43,7 @@ export function EditFleetModal({ open, onClose, fleet, onSuccess }: EditFleetMod
   // Pre-fill form when fleet data changes
   useEffect(() => {
     if (fleet && open) {
+      setIsReady(false)
       setFormData({
         plateNumber: fleet.plateNumber,
         photo: fleet.photo || '',
@@ -41,11 +51,15 @@ export function EditFleetModal({ open, onClose, fleet, onSuccess }: EditFleetMod
         brands: fleet.brands,
         model: fleet.model,
         year: fleet.year,
-        purchaseDate: fleet.purchaseDate || '',
+        purchaseDate: fleet.purchaseDate ? new Date(fleet.purchaseDate) : undefined,
         initialMileage: fleet.initialMileage?.toString() || '',
         status: fleet.status
       })
       setPreviewImage(fleet.photo || '')
+      setErrors({}) // Reset errors saat modal dibuka
+      
+      // Delay biar state kebaca dulu
+      setTimeout(() => setIsReady(true), 0)
     }
   }, [fleet, open])
 
@@ -99,7 +113,7 @@ export function EditFleetModal({ open, onClose, fleet, onSuccess }: EditFleetMod
       brands: formData.brands,
       model: formData.model,
       year: formData.year,
-      purchaseDate: formData.purchaseDate || undefined,
+      purchaseDate: formData.purchaseDate ? format(formData.purchaseDate, 'yyyy-MM-dd') : undefined,
       initialMileage: formData.initialMileage ? parseInt(formData.initialMileage) : undefined,
       status: formData.status
     }
@@ -123,227 +137,252 @@ export function EditFleetModal({ open, onClose, fleet, onSuccess }: EditFleetMod
             <h3 className="text-lg font-semibold text-gray-900">Edit Fleet</h3>
             <p className="text-sm text-gray-500">{fleet.id}</p>
           </div>
-          <button onClick={handleClose} className="p-1 hover:bg-gray-100 rounded">
-            <X className="h-5 w-5 text-gray-500" />
-          </button>
+          <Button 
+            variant="ghost" 
+            size="icon"
+            onClick={handleClose}
+            className="h-8 w-8"
+          >
+            <X className="h-4 w-4" />
+          </Button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          {/* Photo Upload */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Upload Photo
-            </label>
-            <div className="flex items-center gap-4">
-              {previewImage ? (
-                <div className="relative w-32 h-32 rounded-lg overflow-hidden border-2 border-gray-200">
-                  <img src={previewImage} alt="Preview" className="w-full h-full object-cover" />
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setPreviewImage('')
-                      setFormData(prev => ({ ...prev, photo: '' }))
-                    }}
-                    className="absolute top-1 right-1 p-1 bg-red-600 text-white rounded-full hover:bg-red-700"
-                  >
-                    <X className="h-3 w-3" />
-                  </button>
+        <form onSubmit={handleSubmit} className="p-6">
+          <FieldGroup>
+            <Field>
+              <FieldLabel>Upload Photo</FieldLabel>
+              <div className="flex items-center gap-4 mt-2">
+                {previewImage ? (
+                  <div className="relative w-32 h-32 rounded-lg overflow-hidden border-2 border-gray-200">
+                    <img src={previewImage} alt="Preview" className="w-full h-full object-cover" />
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      size="icon"
+                      onClick={() => {
+                        setPreviewImage('')
+                        setFormData(prev => ({ ...prev, photo: '' }))
+                      }}
+                      className="absolute top-1 right-1 h-6 w-6"
+                    >
+                      <X className="h-3 w-3" />
+                    </Button>
+                  </div>
+                ) : (
+                  <label className="w-32 h-32 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-gray-400 transition-colors">
+                    <Upload className="h-8 w-8 text-gray-400 mb-2" />
+                    <span className="text-xs text-gray-500">Click to upload</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={handleImageUpload}
+                    />
+                  </label>
+                )}
+                <div className="text-xs text-gray-500">
+                  <p>PNG, JPG up to 5MB</p>
+                  <p>Recommended: 400x400px</p>
                 </div>
-              ) : (
-                <label className="w-32 h-32 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-gray-400 transition-colors">
-                  <Upload className="h-8 w-8 text-gray-400 mb-2" />
-                  <span className="text-xs text-gray-500">Click to upload</span>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={handleImageUpload}
-                  />
-                </label>
-              )}
-              <div className="text-xs text-gray-500">
-                <p>PNG, JPG up to 5MB</p>
-                <p>Recommended: 400x400px</p>
               </div>
-            </div>
-          </div>
+            </Field>
 
-          {/* Fleet ID (Read-only) */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Fleet ID
-            </label>
-            <input
-              type="text"
-              value={fleet.id}
-              disabled
-              className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-lg text-gray-500 cursor-not-allowed"
-            />
-          </div>
-
-          {/* Plate Number */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Plate Number <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              value={formData.plateNumber}
-              onChange={(e) => setFormData(prev => ({ ...prev, plateNumber: e.target.value.toUpperCase() }))}
-              placeholder="B 1234 ABC"
-              className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                errors.plateNumber ? 'border-red-500' : 'border-gray-300'
-              }`}
-            />
-            {errors.plateNumber && (
-              <p className="text-xs text-red-500 mt-1">⚠️ {errors.plateNumber}</p>
-            )}
-          </div>
-
-          {/* Type */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Type <span className="text-red-500">*</span>
-            </label>
-            <select
-              value={formData.type}
-              onChange={(e) => setFormData(prev => ({ ...prev, type: e.target.value as FleetType }))}
-              className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                errors.type ? 'border-red-500' : 'border-gray-300'
-              }`}
-            >
-              <option value="">Select type</option>
-              {fleetTypes.map(type => (
-                <option key={type} value={type}>{type}</option>
-              ))}
-            </select>
-            {errors.type && (
-              <p className="text-xs text-red-500 mt-1">⚠️ {errors.type}</p>
-            )}
-          </div>
-
-          {/* Brands & Model */}
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Brands <span className="text-red-500">*</span>
-              </label>
-              <input
+            <Field>
+              <FieldLabel>Fleet ID</FieldLabel>
+              <Input
                 type="text"
-                value={formData.brands}
-                onChange={(e) => setFormData(prev => ({ ...prev, brands: e.target.value }))}
-                placeholder="Volvo"
-                className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                  errors.brands ? 'border-red-500' : 'border-gray-300'
-                }`}
+                value={fleet.id}
+                disabled
+                className="bg-gray-100 text-gray-500 cursor-not-allowed"
               />
-              {errors.brands && (
-                <p className="text-xs text-red-500 mt-1">⚠️ {errors.brands}</p>
-              )}
-            </div>
+            </Field>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Model <span className="text-red-500">*</span>
-              </label>
-              <input
+
+            <Field>
+              <FieldLabel>
+                Plate Number <span className="text-red-500">*</span>
+              </FieldLabel>
+              <Input
                 type="text"
-                value={formData.model}
-                onChange={(e) => setFormData(prev => ({ ...prev, model: e.target.value }))}
-                placeholder="FH16"
-                className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                  errors.model ? 'border-red-500' : 'border-gray-300'
-                }`}
+                value={formData.plateNumber}
+                onChange={(e) => setFormData(prev => ({ ...prev, plateNumber: e.target.value.toUpperCase() }))}
+                placeholder="B 1234 ABC"
+                className={errors.plateNumber ? 'border-red-500' : ''}
               />
-              {errors.model && (
-                <p className="text-xs text-red-500 mt-1">⚠️ {errors.model}</p>
+              {errors.plateNumber && (
+                <p className="text-xs text-red-500 mt-1">⚠ {errors.plateNumber}</p>
               )}
+            </Field>
+
+
+            <Field>
+              <FieldLabel>
+                Type <span className="text-red-500">*</span>
+              </FieldLabel>
+              {isReady ? (
+                <Select 
+                  value={formData.type}
+                  onValueChange={(value) => setFormData(prev => ({ ...prev, type: value as FleetType }))}
+                >
+                  <SelectTrigger className={errors.type ? 'border-red-500' : ''}>
+                    <SelectValue placeholder="Select type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {fleetTypes.map(type => (
+                      <SelectItem key={type} value={type}>{type}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              ) : (
+                <div className="w-full h-10 bg-gray-100 animate-pulse rounded-md" />
+              )}
+              {errors.type && (
+                <p className="text-xs text-red-500 mt-1">⚠ {errors.type}</p>
+              )}
+            </Field>
+
+            <div className="grid grid-cols-2 gap-4">
+              <Field>
+                <FieldLabel>
+                  Brands <span className="text-red-500">*</span>
+                </FieldLabel>
+                <Input
+                  type="text"
+                  value={formData.brands}
+                  onChange={(e) => setFormData(prev => ({ ...prev, brands: e.target.value }))}
+                  placeholder="Volvo"
+                  className={errors.brands ? 'border-red-500' : ''}
+                />
+                {errors.brands && (
+                  <p className="text-xs text-red-500 mt-1">⚠ {errors.brands}</p>
+                )}
+              </Field>
+
+              <Field>
+                <FieldLabel>
+                  Model <span className="text-red-500">*</span>
+                </FieldLabel>
+                <Input
+                  type="text"
+                  value={formData.model}
+                  onChange={(e) => setFormData(prev => ({ ...prev, model: e.target.value }))}
+                  placeholder="FH16"
+                  className={errors.model ? 'border-red-500' : ''}
+                />
+                {errors.model && (
+                  <p className="text-xs text-red-500 mt-1">⚠ {errors.model}</p>
+                )}
+              </Field>
             </div>
-          </div>
 
-          {/* Year */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Year <span className="text-red-500">*</span>
-            </label>
-            <select
-              value={formData.year}
-              onChange={(e) => setFormData(prev => ({ ...prev, year: e.target.value }))}
-              className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                errors.year ? 'border-red-500' : 'border-gray-300'
-              }`}
-            >
-              <option value="">Select year</option>
-              {years.map(year => (
-                <option key={year} value={year}>{year}</option>
-              ))}
-            </select>
-            {errors.year && (
-              <p className="text-xs text-red-500 mt-1">⚠️ {errors.year}</p>
-            )}
-          </div>
+            <Field>
+              <FieldLabel>
+                Year <span className="text-red-500">*</span>
+              </FieldLabel>
+              {isReady ? (
+                <Select 
+                  value={formData.year}
+                  onValueChange={(value) => setFormData(prev => ({ ...prev, year: value }))}
+                >
+                  <SelectTrigger className={errors.year ? 'border-red-500' : ''}>
+                    <SelectValue placeholder="Select year" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {years.map(year => (
+                      <SelectItem key={year} value={year}>{year}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              ) : (
+                <div className="w-full h-10 bg-gray-100 animate-pulse rounded-md" />
+              )}
+              {errors.year && (
+                <p className="text-xs text-red-500 mt-1">⚠ {errors.year}</p>
+              )}
+            </Field>
 
-          {/* Purchase Date & Initial Mileage */}
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Purchase Date
-              </label>
-              <input
-                type="date"
-                value={formData.purchaseDate}
-                onChange={(e) => setFormData(prev => ({ ...prev, purchaseDate: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
+            <div className="grid grid-cols-2 gap-4">
+              <Field>
+                <FieldLabel>Purchase Date</FieldLabel>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className={cn(
+                        "w-full justify-start text-left font-normal",
+                        !formData.purchaseDate && "text-muted-foreground"
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {formData.purchaseDate ? format(formData.purchaseDate, "PPP") : <span>Pick a date</span>}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0">
+                    <Calendar
+                      mode="single"
+                      selected={formData.purchaseDate}
+                      onSelect={(date) => setFormData(prev => ({ ...prev, purchaseDate: date }))}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+              </Field>
+
+              <Field>
+                <FieldLabel>Initial Mileage (km)</FieldLabel>
+                <Input
+                  type="number"
+                  value={formData.initialMileage}
+                  onChange={(e) => setFormData(prev => ({ ...prev, initialMileage: e.target.value }))}
+                  placeholder="0"
+                  min="0"
+                />
+              </Field>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Initial Mileage (km)
-              </label>
-              <input
-                type="number"
-                value={formData.initialMileage}
-                onChange={(e) => setFormData(prev => ({ ...prev, initialMileage: e.target.value }))}
-                placeholder="0"
-                min="0"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-          </div>
 
-          {/* Status */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Status <span className="text-red-500">*</span>
-            </label>
-            <select
-              value={formData.status}
-              onChange={(e) => setFormData(prev => ({ ...prev, status: e.target.value as FleetStatus }))}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              {fleetStatuses.map(status => (
-                <option key={status} value={status}>{status}</option>
-              ))}
-            </select>
-          </div>
+            <Field>
+              <FieldLabel>
+                Status <span className="text-red-500">*</span>
+              </FieldLabel>
+              {isReady ? (
+                <Select 
+                  value={formData.status}
+                  onValueChange={(value) => setFormData(prev => ({ ...prev, status: value as FleetStatus }))}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {fleetStatuses.map(status => (
+                      <SelectItem key={status} value={status}>{status}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              ) : (
+                <div className="w-full h-10 bg-gray-100 animate-pulse rounded-md" />
+              )}
+            </Field>
 
-          {/* Actions */}
-          <div className="flex items-center gap-3 pt-4">
-            <button
-              type="button"
-              onClick={handleClose}
-              className="flex-1 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="flex-1 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700"
-            >
-              Update Fleet
-            </button>
-          </div>
+            {/* Actions */}
+            <Field orientation="horizontal" className="pt-4 gap-3">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleClose}
+                className="flex-1"
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                className="flex-1"
+              >
+                Update Fleet
+              </Button>
+            </Field>
+          </FieldGroup>
         </form>
       </div>
     </>

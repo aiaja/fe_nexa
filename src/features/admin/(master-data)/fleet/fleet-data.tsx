@@ -1,24 +1,18 @@
 "use client"
 
-import { useState, useMemo } from 'react'
-import { Search, Filter, Plus, Trash2 } from 'lucide-react'
-import { toast } from 'sonner'
+import { useState, useMemo } from "react"
+import { Search, Plus, Trash2 } from "lucide-react"
+import { toast } from "sonner"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { columns } from "./columns"
 import { DataTable } from "./data-table"
 import { FleetData } from "@/interface/admin/fleet"
-import { FilterModal, FilterValues } from "./filter-modal"
+import { FilterPopover, FilterValues } from "./filter-popover"
 import { ActionModal } from "./action-modal"
 import { DeleteConfirmationModal } from "./delete-modal"
 import { AddFleetModal } from "./add-modal"
 import { EditFleetModal } from "./edit-modal"
-
-function FilterIconFilled({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
-      <path d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
-    </svg>
-  )
-}
 
 interface FleetMasterProps {
   fleetItems: FleetData[]
@@ -27,7 +21,6 @@ interface FleetMasterProps {
 export default function FleetMaster({ fleetItems: initialFleetItems }: FleetMasterProps) {
   const [fleetItems, setFleetItems] = useState<FleetData[]>(initialFleetItems)
   const [searchQuery, setSearchQuery] = useState("")
-  const [isFilterOpen, setIsFilterOpen] = useState(false)
   const [isActionOpen, setIsActionOpen] = useState(false)
   const [isDeleteOpen, setIsDeleteOpen] = useState(false)
   const [isAddOpen, setIsAddOpen] = useState(false)
@@ -51,14 +44,12 @@ export default function FleetMaster({ fleetItems: initialFleetItems }: FleetMast
 
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase()
-      result = result.filter((fleet) => {
-        return (
-          fleet.id.toLowerCase().includes(query) ||
-          fleet.plateNumber.toLowerCase().includes(query) ||
-          fleet.brands.toLowerCase().includes(query) ||
-          fleet.model.toLowerCase().includes(query)
-        )
-      })
+      result = result.filter(fleet =>
+        fleet.id.toLowerCase().includes(query) ||
+        fleet.plateNumber.toLowerCase().includes(query) ||
+        fleet.brands.toLowerCase().includes(query) ||
+        fleet.model.toLowerCase().includes(query)
+      )
     }
 
     if (filters.types.length > 0) {
@@ -80,13 +71,6 @@ export default function FleetMaster({ fleetItems: initialFleetItems }: FleetMast
 
     return result
   }, [activeFleetItems, searchQuery, filters])
-
-  const activeFilterCount = 
-    filters.types.length + 
-    filters.statuses.length + 
-    (filters.yearRange.min || filters.yearRange.max ? 1 : 0)
-
-  const hasActiveFilters = activeFilterCount > 0
 
   const handleActionClick = (fleet: FleetData, position: { top: number; left: number }) => {
     setSelectedFleet(fleet)
@@ -111,33 +95,28 @@ export default function FleetMaster({ fleetItems: initialFleetItems }: FleetMast
   const handleConfirmDelete = () => {
     const idsToDelete = selectedRows.map(row => row.id)
     const count = idsToDelete.length
-    
+
     setDeletedIds(prev => [...prev, ...idsToDelete])
     setSelectedRows([])
-    
-    // Toast notification untuk bulk delete
-    toast.success(`${count} fleet${count > 1 ? 's' : ''} deleted successfully!`, {
-      description: `${count} vehicle${count > 1 ? 's have' : ' has'} been removed from the system`,
+
+    toast.success(`${count} fleet${count > 1 ? "s" : ""} deleted successfully!`, {
+      description: `${count} vehicle${count > 1 ? "s have" : " has"} been removed from the system`
     })
   }
 
   const handleAddSuccess = (newFleet: FleetData) => {
     setFleetItems(prev => [...prev, newFleet])
-    
-    // Toast notification untuk add fleet
-    toast.success('Fleet added successfully!', {
-      description: `${newFleet.id} - ${newFleet.plateNumber} has been added to the system`,
+    toast.success("Fleet added successfully!", {
+      description: `${newFleet.id} - ${newFleet.plateNumber} has been added to the system`
     })
   }
 
   const handleEditSuccess = (updatedFleet: FleetData) => {
-    setFleetItems(prev => 
-      prev.map(fleet => fleet.id === updatedFleet.id ? updatedFleet : fleet)
+    setFleetItems(prev =>
+      prev.map(fleet => (fleet.id === updatedFleet.id ? updatedFleet : fleet))
     )
-    
-    // Toast notification untuk edit fleet
-    toast.success('Fleet updated successfully!', {
-      description: `${updatedFleet.id} - ${updatedFleet.plateNumber} has been updated`,
+    toast.success("Fleet updated successfully!", {
+      description: `${updatedFleet.id} - ${updatedFleet.plateNumber} has been updated`
     })
   }
 
@@ -150,71 +129,46 @@ export default function FleetMaster({ fleetItems: initialFleetItems }: FleetMast
 
         <div className="flex items-center gap-3">
           <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-            <input
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
+            <Input
               type="text"
               placeholder="Search by Fleet ID, Plate Number, Brands, or Model"
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              onChange={e => setSearchQuery(e.target.value)}
+              className="pl-10 focus-visible:ring-0 focus-visible:border-[#0047AB]"
             />
           </div>
-          
-          <button 
-            onClick={() => setIsFilterOpen(true)}
-            className={`relative flex items-center gap-2 px-4 py-2 border rounded-lg transition-colors ${
-              hasActiveFilters 
-                ? 'border-blue-600 bg-blue-50 text-blue-700 hover:bg-blue-100' 
-                : 'border-gray-300 hover:bg-gray-50'
-            }`}
-          >
-            {hasActiveFilters ? (
-              <FilterIconFilled className="h-4 w-4" />
-            ) : (
-              <Filter className="h-4 w-4" />
-            )}
-            {hasActiveFilters ? 'Filtered by' : 'Filter by'}
-            {activeFilterCount > 0 && (
-              <span className="absolute -top-1 -right-1 bg-blue-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
-                {activeFilterCount}
-              </span>
-            )}
-          </button>
+
+          <FilterPopover onApply={setFilters} currentFilters={filters} />
 
           <div className="flex items-center gap-2 ml-auto">
-            <button 
+            <Button
+              variant="destructive"
               onClick={handleBulkDelete}
               disabled={selectedRows.length === 0}
-              className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-red-50"
+              className="gap-2"
             >
               <Trash2 className="h-4 w-4" />
               Delete {selectedRows.length > 0 && `(${selectedRows.length})`}
-            </button>
-            
-            <button 
+            </Button>
+
+            <Button
               onClick={() => setIsAddOpen(true)}
-              className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
+              className="gap-2 bg-[#0047AB] hover:bg-[#003580]"
             >
               Add Data
               <Plus className="h-4 w-4" />
-            </button>
+            </Button>
           </div>
         </div>
 
-        <DataTable 
-          columns={columns} 
+        <DataTable
+          columns={columns}
           data={filteredData}
           onActionClick={handleActionClick}
           onSelectionChange={handleSelectionChange}
         />
       </div>
-
-      <FilterModal
-        open={isFilterOpen}
-        onClose={() => setIsFilterOpen(false)}
-        onApply={setFilters}
-        currentFilters={filters}
-      />
 
       <ActionModal
         open={isActionOpen}

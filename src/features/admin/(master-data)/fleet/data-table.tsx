@@ -10,6 +10,8 @@ import {
 } from "@tanstack/react-table"
 import { useEffect } from "react"
 import { FleetData } from "@/interface/admin/fleet"
+import { Button } from "@/components/ui/button"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -118,62 +120,72 @@ export function DataTable<TData, TValue>({
         </table>
       </div>
 
-    
       <div className="flex items-center justify-between px-4 py-3 border-t border-gray-200">
         <div className="flex items-center gap-2">
-          <button
+
+          <Button
+            variant="outline"
+            size="sm"
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
-            className="px-3 py-1 text-sm border border-gray-300 rounded disabled:opacity-50"
           >
             Prev
-          </button>
+          </Button>
+
 
           {Array.from({ length: table.getPageCount() }, (_, i) => i + 1)
             .slice(0, 5)
             .map((page) => (
-              <button
+              <Button
                 key={page}
+                variant={table.getState().pagination.pageIndex === page - 1 ? "default" : "outline"}
+                size="sm"
                 onClick={() => table.setPageIndex(page - 1)}
-                className={`px-3 py-1 text-sm rounded transition-colors ${
-                  table.getState().pagination.pageIndex === page - 1
-                    ? "bg-blue-600 text-white"
-                    : "border border-gray-300 hover:bg-gray-50"
-                }`}
+                className={table.getState().pagination.pageIndex === page - 1 ? "bg-[#0047AB] hover:bg-[#003580]" : ""}
               >
                 {page}
-              </button>
+              </Button>
             ))}
 
           {table.getPageCount() > 5 && (
             <>
               <span className="px-2 text-sm text-gray-500">...</span>
-              <button className="px-3 py-1 text-sm border border-gray-300 rounded">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+              >
                 {table.getPageCount()}
-              </button>
+              </Button>
             </>
           )}
 
-          <button
+
+          <Button
+            variant="outline"
+            size="sm"
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
-            className="px-3 py-1 text-sm border border-gray-300 rounded disabled:opacity-50"
           >
             Next
-          </button>
+          </Button>
         </div>
 
         <div className="flex items-center gap-2">
           <span className="text-sm text-gray-600">Per Page :</span>
-          <select
-            value={table.getState().pagination.pageSize}
-            onChange={(e) => table.setPageSize(Number(e.target.value))}
-            className="px-3 py-1 text-sm border border-gray-300 rounded"
+          <Select
+            value={table.getState().pagination.pageSize.toString()}
+            onValueChange={(value) => table.setPageSize(Number(value))}
           >
-            <option value={20}>20</option>
-            <option value={50}>50</option>
-            <option value={100}>100</option>
-          </select>
+            <SelectTrigger className="w-20 h-8">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="20">20</SelectItem>
+              <SelectItem value="50">50</SelectItem>
+              <SelectItem value="100">100</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       </div>
     </div>

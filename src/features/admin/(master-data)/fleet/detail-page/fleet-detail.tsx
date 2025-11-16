@@ -72,7 +72,7 @@ export default function FleetDetail({ fleet: initialFleet }: FleetDetailProps) {
   return (
     <>
       <div className="flex flex-col min-h-screen bg-gray-50">
-        {/* Header */}
+
         <div className="bg-white border-b border-gray-200 px-6 py-4">
           <div className="flex items-center justify-between max-w-7xl mx-auto">
             <button
@@ -102,13 +102,13 @@ export default function FleetDetail({ fleet: initialFleet }: FleetDetailProps) {
           </div>
         </div>
 
-        {/* Content */}
+       
         <div className="flex-1 px-6 py-8">
           <div className="max-w-7xl mx-auto">
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
               <div className="p-8">
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                  {/* Left: Photo */}
+              
                   <div className="lg:col-span-1">
                     {fleet.photo ? (
                       <div className="rounded-lg aspect-square overflow-hidden border-2 border-gray-200">
@@ -124,9 +124,8 @@ export default function FleetDetail({ fleet: initialFleet }: FleetDetailProps) {
                     )}
                   </div>
 
-                  {/* Right: Details */}
+                
                   <div className="lg:col-span-2 space-y-6">
-                    {/* Fleet Details Header */}
                     <div>
                       <h1 className="text-3xl font-bold text-gray-900 mb-2">{fleet.id}</h1>
                       <div className="flex items-center gap-2 text-gray-600">
@@ -138,7 +137,7 @@ export default function FleetDetail({ fleet: initialFleet }: FleetDetailProps) {
                       </div>
                     </div>
 
-                    {/* Vehicle Information */}
+                 
                     <div>
                       <h2 className="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">
                         Vehicle Information
@@ -163,7 +162,6 @@ export default function FleetDetail({ fleet: initialFleet }: FleetDetailProps) {
                       </div>
                     </div>
 
-                    {/* Purchase Details */}
                     <div>
                       <h2 className="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">
                         Purchase Details
@@ -184,7 +182,6 @@ export default function FleetDetail({ fleet: initialFleet }: FleetDetailProps) {
                       </div>
                     </div>
 
-                    {/* Operational Status */}
                     <div>
                       <h2 className="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">
                         Operational Status
@@ -193,7 +190,6 @@ export default function FleetDetail({ fleet: initialFleet }: FleetDetailProps) {
                         <span className="text-2xl">{getStatusIcon(fleet.status)}</span>
                         <span className="text-lg font-medium text-gray-900">{fleet.status}</span>
                       </div>
-                      <p className="text-sm text-gray-500">Last Updated: 2 hours ago</p>
                     </div>
                   </div>
                 </div>
