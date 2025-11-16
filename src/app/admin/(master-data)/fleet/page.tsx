@@ -1,9 +1,8 @@
-import React from 'react'
+"use client"
 
-function page() {
-  return (
-    <div>page</div>
-  )
+import FleetMaster from "@/features/admin/(master-data)/fleet/fleet-data"
+import { fleetData } from "@/data/admin/fleet"
+
+export default function Page() {
+  return <FleetMaster fleetItems={fleetData} />
 }
-
-export default page

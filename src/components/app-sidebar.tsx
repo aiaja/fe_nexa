@@ -30,7 +30,11 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader className="items-center">
         <a href="/" aria-label="Home">
-          <img src="/nexa-logo.svg" alt="Nexa Logo" className="h-12 w-auto" />
+          <img 
+            src="/nexa-logo.svg" 
+            alt="Nexa Logo" 
+            className="h-12 w-auto"
+          />
         </a>
       </SidebarHeader>
 
