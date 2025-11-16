@@ -1,9 +1,10 @@
-import React from 'react'
+import IncidentReports from '@/features/auditor/incidents/page';
+import { incidentReports } from '@/data/auditor/incident-reports';
 
-function page() {
+function Page() {
   return (
-    <div>page</div>
-  )
+    <IncidentReports incidents={incidentReports} />
+  );
 }
 
-export default page
+export default Page;
