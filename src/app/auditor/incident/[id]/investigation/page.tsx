@@ -4,13 +4,13 @@ import { incidentReports } from '@/data/auditor/incident-reports';
 import { notFound } from 'next/navigation';
 
 interface PageProps {
-  params: Promise<{
+  params: {
     id: string;
-  }>;
+  };
 }
 
-export default async function Page({ params }: PageProps) {
-  const { id } = await params;
+export default function Page({ params }: PageProps) {
+  const { id } = params;
   
   // Get investigation data
   const data = investigationData[id];
