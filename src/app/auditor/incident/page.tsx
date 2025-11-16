@@ -1,4 +1,4 @@
-import IncidentReports from '@/features/auditor/incidents/page';
+import IncidentReports from '@/features/auditor/incident/page';
 import { incidentReports } from '@/data/auditor/incident-reports';
 
 

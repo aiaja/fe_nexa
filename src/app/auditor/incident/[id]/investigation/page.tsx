@@ -1,16 +1,16 @@
-import InvestigationPage from '@/features/auditor/incidents/investigation/page';
+import InvestigationPage from '@/features/auditor/incident/investigation/page';
 import { investigationData } from '@/data/auditor/investigation';
 import { incidentReports } from '@/data/auditor/incident-reports';
 import { notFound } from 'next/navigation';
 
 interface PageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
-export default function Page({ params }: PageProps) {
-  const { id } = params;
+export default async function Page({ params }: PageProps) {
+  const { id } = await params;
   
   // Get investigation data
   const data = investigationData[id];
