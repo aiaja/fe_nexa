@@ -9,17 +9,20 @@ import {
   getSortedRowModel,
 } from "@tanstack/react-table"
 import { useEffect } from "react"
+import { FleetData } from "@/interface/admin/fleet"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
   onSelectionChange?: (rows: TData[]) => void
+  onActionClick?: (fleet: FleetData, position: { top: number; left: number }) => void
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
   onSelectionChange,
+  onActionClick,
 }: DataTableProps<TData, TValue>) {
 
   const table = useReactTable({
@@ -32,8 +35,15 @@ export function DataTable<TData, TValue>({
       pagination: { pageSize: 20 },
       sorting: [],
     },
+    meta: {
+      onActionClick,
+    },
+    getRowId: (row: any) => row.id,
   })
 
+  useEffect(() => {
+    table.resetRowSelection()
+  }, [data.length])
 
   useEffect(() => {
     if (onSelectionChange) {
@@ -160,7 +170,6 @@ export function DataTable<TData, TValue>({
             onChange={(e) => table.setPageSize(Number(e.target.value))}
             className="px-3 py-1 text-sm border border-gray-300 rounded"
           >
-            <option value={10}>10</option>
             <option value={20}>20</option>
             <option value={50}>50</option>
             <option value={100}>100</option>

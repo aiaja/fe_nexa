@@ -3,7 +3,7 @@
 import { ColumnDef } from "@tanstack/react-table"
 import { Checkbox } from "@/components/ui/checkbox"
 import { MoreVertical, ChevronDown } from "lucide-react"
-import { FleetData } from "@/interface/admin/fleet" 
+import { FleetData } from "@/interface/admin/fleet"
 
 const SortableHeader = ({ column, label }: any) => (
   <button
@@ -23,7 +23,7 @@ const SortableHeader = ({ column, label }: any) => (
   </button>
 )
 
-export const columns: ColumnDef<FleetData>[] = [ 
+export const columns: ColumnDef<FleetData>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -44,7 +44,6 @@ export const columns: ColumnDef<FleetData>[] = [
     enableHiding: false,
   },
 
-  
   {
     accessorKey: "id",
     header: ({ column }) => (
@@ -55,40 +54,30 @@ export const columns: ColumnDef<FleetData>[] = [
     ),
   },
   {
-    accessorKey: "type",
+    accessorKey: "plateNumber",
     header: ({ column }) => (
-      <SortableHeader column={column} label="Type" />
+      <SortableHeader column={column} label="Plate Number" />
     ),
     cell: ({ row }) => (
-      <div className="text-sm text-gray-600">{row.getValue("type")}</div>
+      <div className="text-sm text-gray-600">{row.getValue("plateNumber")}</div>
     ),
   },
   {
-    accessorKey: "make",
+    accessorKey: "brands",
     header: ({ column }) => (
-      <SortableHeader column={column} label="Make" />
+      <SortableHeader column={column} label="Brands" />
     ),
     cell: ({ row }) => (
-      <div className="text-sm text-gray-600">{row.getValue("make")}</div>
+      <div className="text-sm text-gray-600">{row.getValue("brands")}</div>
     ),
   },
   {
-    accessorKey: "brands", 
+    accessorKey: "model",
     header: ({ column }) => (
       <SortableHeader column={column} label="Model" />
     ),
     cell: ({ row }) => (
-      <div className="text-sm text-gray-600">{row.getValue("brands")}</div> 
-      
-    ),
-  },
-  {
-    accessorKey: "year",
-    header: ({ column }) => (
-      <SortableHeader column={column} label="Year" />
-    ),
-    cell: ({ row }) => (
-      <div className="text-sm text-gray-600">{row.getValue("year")}</div>
+      <div className="text-sm text-gray-600">{row.getValue("model")}</div>
     ),
   },
   {
@@ -101,6 +90,8 @@ export const columns: ColumnDef<FleetData>[] = [
       const getStatusStyle = (status: string) => {
         if (status === "Active") return "bg-green-100 text-green-700"
         if (status === "Under Review") return "bg-yellow-100 text-yellow-700"
+        if (status === "Maintenance") return "bg-orange-100 text-orange-700"
+        if (status === "Inactive") return "bg-gray-100 text-gray-700"
         return "bg-gray-100 text-gray-700"
       }
 
@@ -116,14 +107,31 @@ export const columns: ColumnDef<FleetData>[] = [
     },
   },
 
-  
   {
     id: "actions",
     enableSorting: false,
-    cell: () => (
-      <button className="p-1 hover:bg-gray-100 rounded transition-colors">
-        <MoreVertical className="h-4 w-4 text-gray-500" />
-      </button>
-    ),
+    cell: ({ row, table }) => {
+      const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.stopPropagation()
+        const rect = e.currentTarget.getBoundingClientRect()
+        // @ts-ignore - custom meta property
+        if (table.options.meta?.onActionClick) {
+          // @ts-ignore
+          table.options.meta.onActionClick(row.original, {
+            top: rect.bottom + 4,
+            left: rect.left - 140
+          })
+        }
+      }
+
+      return (
+        <button 
+          onClick={handleClick}
+          className="p-1 hover:bg-gray-100 rounded transition-colors"
+        >
+          <MoreVertical className="h-4 w-4 text-gray-500" />
+        </button>
+      )
+    },
   },
 ]
