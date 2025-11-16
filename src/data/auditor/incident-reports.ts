@@ -27,6 +27,7 @@ export const incidentReports: IncidentReport[] = [
       "3rd incident this month for this driver",
     ],
   },
+
   {
     id: "A-2024-0852",
     title: "Out of Zone Activity - Truck #F-002",
@@ -52,6 +53,7 @@ export const incidentReports: IncidentReport[] = [
       "Occurred during night shift",
     ],
   },
+
   {
     id: "A-2024-0853",
     title: "Overconsumption Pattern - Truck #F-007",
@@ -77,6 +79,7 @@ export const incidentReports: IncidentReport[] = [
       "No maintenance records in last 2 months",
     ],
   },
+
   {
     id: "A-2024-0854",
     title: "Fleet Sensor Malfunction - Truck #F-004",
@@ -103,6 +106,7 @@ export const incidentReports: IncidentReport[] = [
       "3rd incident this month for this driver",
     ],
   },
+
   {
     id: "A-2024-0855",
     title: "Out of Zone - Truck #F-004",
@@ -129,6 +133,7 @@ export const incidentReports: IncidentReport[] = [
       "No communication from driver",
     ],
   },
+
   {
     id: "A-2024-0856",
     title: "Driver Behavior Alert - Truck #F-005",
@@ -154,6 +159,7 @@ export const incidentReports: IncidentReport[] = [
       "Fuel efficiency decreased by 25%",
     ],
   },
+
   {
     id: "A-2024-0857",
     title: "Overconsumption Warning - Truck #F-006",
@@ -179,6 +185,7 @@ export const incidentReports: IncidentReport[] = [
       "Vehicle load within normal range",
     ],
   },
+
   {
     id: "A-2024-0858",
     title: "Sudden Drop Alert - Truck #F-010",
@@ -205,6 +212,7 @@ export const incidentReports: IncidentReport[] = [
       "Driver not responding to calls",
     ],
   },
+
   {
     id: "A-2024-0859",
     title: "Overconsumption Warning - Truck #F-008",
@@ -230,6 +238,7 @@ export const incidentReports: IncidentReport[] = [
       "No engine issues reported",
     ],
   },
+
   {
     id: "A-2024-0860",
     title: "Out of Zone - Truck #F-009",
@@ -255,6 +264,7 @@ export const incidentReports: IncidentReport[] = [
       "Fuel level stable",
     ],
   },
+
   {
     id: "A-2024-0861",
     title: "Sudden Drop Alert - Truck #F-010",
@@ -280,6 +290,7 @@ export const incidentReports: IncidentReport[] = [
       "GPS signal intermittent",
     ],
   },
+  
   {
     id: "A-2024-0862",
     title: "Overconsumption Pattern - Truck #F-011",
