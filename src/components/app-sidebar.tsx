@@ -28,25 +28,18 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
 
   return (
     <Sidebar collapsible="offcanvas" {...props}>
-      <SidebarHeader>
+      <SidebarHeader className="items-center">
         <a href="/" aria-label="Home">
-          <img 
-            src="/nexa-logo.svg" 
-            alt="Nexa Logo" 
-          />
+          <img src="/nexa-logo.svg" alt="Nexa Logo" className="h-12 w-auto" />
         </a>
       </SidebarHeader>
-      
+
       <SidebarContent>
         <NavMain items={navigationItems} />
       </SidebarContent>
-      
+
       <SidebarFooter>
-        <Button 
-          variant="destructive" 
-          onClick={handleLogout}
-          className="w-full"
-        >
+        <Button variant="destructive" onClick={handleLogout} className="w-full">
           Logout
         </Button>
       </SidebarFooter>

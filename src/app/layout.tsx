@@ -41,7 +41,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
           <AppSidebar variant="inset" />
           <SidebarInset>
             <SiteHeader />
-            <main className="flex-1">
+            <main className="flex-1 p-4">
               {children}
             </main>
           </SidebarInset>
