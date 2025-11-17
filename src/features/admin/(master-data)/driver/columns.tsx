@@ -34,6 +34,5 @@ export const columns: ColumnDef<DriverData>[] = [
     "On Leave": "bg-blue-100 text-blue-700",
   }),
 
-  // Actions
   createActionsColumn<DriverData>(),
 ]

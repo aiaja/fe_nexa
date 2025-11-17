@@ -30,6 +30,5 @@ export const columns: ColumnDef<FleetData>[] = [
     "Maintenance": "bg-orange-100 text-orange-700",
   }),
 
-  // Actions
   createActionsColumn<FleetData>(),
 ]
