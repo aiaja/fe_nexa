@@ -1,10 +1,14 @@
 export interface FleetData {
-  id: string;
-  type: FleetType;
-  make: string;
-  brands: string;
-  year: string;
-  status: FleetStatus;
+  id: string
+  plateNumber: string
+  photo?: string
+  type: FleetType
+  brands: string
+  model: string
+  year: string
+  purchaseDate?: string
+  initialMileage?: number
+  status: FleetStatus
 }
 
 export type FleetType = 
@@ -20,4 +24,3 @@ export type FleetStatus =
   | "Inactive" 
   | "Maintenance" 
   | "Under Review"
-  | "Retired"

@@ -1,10 +1,16 @@
 export interface DriverData {
   id: string;
+  photo?: string;                    
   name: string;
-  license: LicenseType;
-  truck_id: string;
-  incident: number;
-  status: DriverStatus;
+  simNumber: string;                 
+  license: LicenseType;              
+  assignedTruck?: string;            
+  phone: string;                     
+  email?: string;                    
+  address?: string;                  
+  joinDate: string;                  
+  incident: number;                  
+  status: DriverStatus;              
 }
 
 export type LicenseType = 
@@ -17,3 +23,4 @@ export type DriverStatus =
   | "Active" 
   | "Under Review"
   | "Suspended"
+  | "On Leave"  
