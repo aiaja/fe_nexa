@@ -51,7 +51,7 @@ export default function IncidentReports({ incidents }: IncidentReportsProps) {
     console.log("Quick confirm:", id);
     
     // Add your confirmation logic here
-    window.location.href = `/auditor/incidents/${id}/resolve`;
+    window.location.href = `/auditor/incident/${id}/resolve`;
   };
 
   const handleDismiss = (id: string) => {

@@ -34,5 +34,3 @@ export interface RecentIncidents {
   loss: string;
   status: "Critical" | "High" | "Medium";
 }
-
-
