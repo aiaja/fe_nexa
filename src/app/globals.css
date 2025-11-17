@@ -125,3 +125,76 @@
     @apply bg-background text-foreground;
   }
 }
+
+[data-sonner-toast] {
+  background-color: white !important;
+  border: 1px solid rgb(229 231 235) !important;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1) !important;
+  border-radius: 0.5rem !important;
+  padding: 16px !important;
+}
+
+[data-sonner-toast][data-type="success"] {
+  border-left: 4px solid rgb(59 130 246) !important;
+}
+
+[data-sonner-toast][data-type="success"] [data-icon] {
+  color: rgb(59 130 246) !important;
+}
+
+[data-sonner-toast][data-type="success"] [data-title] {
+  color: rgb(17 24 39) !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+}
+
+[data-sonner-toast][data-type="success"] [data-description] {
+  color: rgb(107 114 128) !important;
+  font-size: 13px !important;
+  margin-top: 2px !important;
+}
+
+[data-sonner-toast][data-type="error"] {
+  border-left: 4px solid rgb(239 68 68) !important;
+}
+
+[data-sonner-toast][data-type="error"] [data-icon] {
+  color: rgb(239 68 68) !important;
+}
+
+[data-sonner-toast][data-type="error"] [data-title] {
+  color: rgb(17 24 39) !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+}
+
+[data-sonner-toast][data-type="error"] [data-description] {
+  color: rgb(107 114 128) !important;
+  font-size: 13px !important;
+  margin-top: 2px !important;
+}
+
+[data-sonner-toast] [data-close-button] {
+  position: absolute !important;
+  top: 16px !important;
+  right: 16px !important;
+  left: auto !important;
+  transform: none !important;
+  border: none !important;
+  background-color: transparent !important;
+  color: rgb(156 163 175) !important;
+  opacity: 1 !important;
+  transition: all 0.2s !important;
+  width: 20px !important;
+  height: 20px !important;
+}
+
+[data-sonner-toast] [data-close-button]:hover {
+  background-color: rgb(243 244 246) !important;
+  color: rgb(107 114 128) !important;
+  border-radius: 4px !important;
+}
+
+[data-sonner-toast] [data-content] {
+  padding-right: 32px !important;
+}

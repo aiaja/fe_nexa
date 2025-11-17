@@ -5,6 +5,7 @@ import 'leaflet/dist/leaflet.css';
 import { AppSidebar } from "@/components/app-sidebar";
 import { SiteHeader } from "@/components/site-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { Toaster } from "sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -47,6 +48,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
             </main>
           </SidebarInset>
         </SidebarProvider>
+        <Toaster position="top-right" richColors expand closeButton />
       </body>
     </html>
   );

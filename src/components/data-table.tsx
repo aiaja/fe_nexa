@@ -8,18 +8,30 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
 } from "@tanstack/react-table"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
 import { useEffect } from "react"
+import { Button } from "@/components/ui/button"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
   onSelectionChange?: (rows: TData[]) => void
+  onActionClick?: (row: TData, position: { top: number; left: number }) => void
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
   onSelectionChange,
+  onActionClick,
 }: DataTableProps<TData, TValue>) {
 
   const table = useReactTable({
@@ -32,8 +44,15 @@ export function DataTable<TData, TValue>({
       pagination: { pageSize: 20 },
       sorting: [],
     },
+    meta: {
+      onActionClick,
+    },
+    getRowId: (row: any) => row.id,
   })
 
+  useEffect(() => {
+    table.resetRowSelection()
+  }, [data.length])
 
   useEffect(() => {
     if (onSelectionChange) {
@@ -46,21 +65,18 @@ export function DataTable<TData, TValue>({
     }
   }, [table.getSelectedRowModel().flatRows])
 
-
-
   return (
     <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
       <div className="overflow-x-auto">
-        <table className="w-full">
-          <thead className="bg-gray-50 border-b border-gray-200">
+        <Table>
+          <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id}>
+              <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
-
                   return (
-                    <th
+                    <TableHead
                       key={header.id}
-                      className="px-4 py-3 text-left text-sm font-medium text-gray-700 select-none"
+                      className="font-medium text-gray-700 select-none"
                     >
                       {header.isPlaceholder ? null : (
                         <div className="flex items-center gap-1">
@@ -70,101 +86,107 @@ export function DataTable<TData, TValue>({
                           )}
                         </div>
                       )}
-                    </th>
+                    </TableHead>
                   )
                 })}
-              </tr>
+              </TableRow>
             ))}
-          </thead>
+          </TableHeader>
 
-          <tbody className="divide-y divide-gray-200">
+          <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <tr
+                <TableRow
                   key={row.id}
-                  className="hover:bg-gray-50 transition-colors"
+                  data-state={row.getIsSelected() && "selected"}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <td key={cell.id} className="px-4 py-3">
+                    <TableCell key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()
                       )}
-                    </td>
+                    </TableCell>
                   ))}
-                </tr>
+                </TableRow>
               ))
             ) : (
-              <tr>
-                <td
+              <TableRow>
+                <TableCell
                   colSpan={columns.length}
                   className="h-24 text-center text-sm text-gray-500"
                 >
                   No results.
-                </td>
-              </tr>
+                </TableCell>
+              </TableRow>
             )}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </div>
 
-    
       <div className="flex items-center justify-between px-4 py-3 border-t border-gray-200">
         <div className="flex items-center gap-2">
-          <button
+          <Button
+            variant="outline"
+            size="sm"
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
-            className="px-3 py-1 text-sm border border-gray-300 rounded disabled:opacity-50"
           >
             Prev
-          </button>
+          </Button>
 
           {Array.from({ length: table.getPageCount() }, (_, i) => i + 1)
             .slice(0, 5)
             .map((page) => (
-              <button
+              <Button
                 key={page}
+                variant={table.getState().pagination.pageIndex === page - 1 ? "default" : "outline"}
+                size="sm"
                 onClick={() => table.setPageIndex(page - 1)}
-                className={`px-3 py-1 text-sm rounded transition-colors ${
-                  table.getState().pagination.pageIndex === page - 1
-                    ? "bg-blue-600 text-white"
-                    : "border border-gray-300 hover:bg-gray-50"
-                }`}
+                className={table.getState().pagination.pageIndex === page - 1 ? "bg-[#0047AB] hover:bg-[#003580]" : ""}
               >
                 {page}
-              </button>
+              </Button>
             ))}
 
           {table.getPageCount() > 5 && (
             <>
               <span className="px-2 text-sm text-gray-500">...</span>
-              <button className="px-3 py-1 text-sm border border-gray-300 rounded">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+              >
                 {table.getPageCount()}
-              </button>
+              </Button>
             </>
           )}
 
-          <button
+          <Button
+            variant="outline"
+            size="sm"
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
-            className="px-3 py-1 text-sm border border-gray-300 rounded disabled:opacity-50"
           >
             Next
-          </button>
+          </Button>
         </div>
 
         <div className="flex items-center gap-2">
           <span className="text-sm text-gray-600">Per Page :</span>
-          <select
-            value={table.getState().pagination.pageSize}
-            onChange={(e) => table.setPageSize(Number(e.target.value))}
-            className="px-3 py-1 text-sm border border-gray-300 rounded"
+          <Select
+            value={table.getState().pagination.pageSize.toString()}
+            onValueChange={(value) => table.setPageSize(Number(value))}
           >
-            <option value={10}>10</option>
-            <option value={20}>20</option>
-            <option value={50}>50</option>
-            <option value={100}>100</option>
-          </select>
+            <SelectTrigger className="w-20 h-8">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="20">20</SelectItem>
+              <SelectItem value="50">50</SelectItem>
+              <SelectItem value="100">100</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       </div>
     </div>

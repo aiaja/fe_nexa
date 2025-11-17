@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { usePathname } from "next/navigation";
-import { NavMain } from "@/components/nav-main";
+import { NavMain } from "@/data/nav-main";
 import {
   Sidebar,
   SidebarContent,
