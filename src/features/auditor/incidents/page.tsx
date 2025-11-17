@@ -2,10 +2,10 @@
 
 import React, { useState, useMemo } from "react";
 import { Search, Filter } from "lucide-react";
-import { ReportCard } from "@/features/auditor/incident/report-card";
-import { ReportTable } from "@/features/auditor/incident/report-table";
-import { ViewToggle } from "@/features/auditor/incident/view-toggle";
-import { Pagination } from "@/features/auditor/incident/pagination";
+import { ReportCard } from "@/features/auditor/incidents/report-card";
+import { ReportTable } from "@/features/auditor/incidents/report-table";
+import { ViewToggle } from "@/features/auditor/incidents/view-toggle";
+import { Pagination } from "@/features/auditor/incidents/pagination";
 import { IncidentReport } from "@/interface/auditor/incident-reports/incidents";
 
 interface IncidentReportsProps {
@@ -51,7 +51,7 @@ export default function IncidentReports({ incidents }: IncidentReportsProps) {
     console.log("Quick confirm:", id);
     
     // Add your confirmation logic here
-    window.location.href = `/auditor/incident/${id}/resolve`;
+    window.location.href = `/auditor/incidents/${id}/resolve`;
   };
 
   const handleDismiss = (id: string) => {

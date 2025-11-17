@@ -74,7 +74,7 @@ export const fleetItem: FleetTotal[] = [
     name: "Maintenance",
     value: 28,
     percent: Math.round((28 / 95) * 100),
-    color: "#ea2727",
+    color: "#6366f1",
   },
 ];
 
