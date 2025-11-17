@@ -2,12 +2,12 @@
 
 import { useState, useMemo } from 'react'
 import { Filter } from 'lucide-react'
-import { FleetType, FleetStatus } from '@/interface/admin/fleet'
+import { LicenseType, DriverStatus } from '@/interface/admin/driver'
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 
 interface FilterPopoverProps {
   onApply: (filters: FilterValues) => void
@@ -15,9 +15,9 @@ interface FilterPopoverProps {
 }
 
 export interface FilterValues {
-  types: FleetType[]
-  statuses: FleetStatus[]
-  yearRange: { min: string; max: string }
+  licenses: LicenseType[]
+  statuses: DriverStatus[]
+  assignmentStatus: 'all' | 'assigned' | 'unassigned'
 }
 
 function FilterIconFilled({ className }: { className?: string }) {
@@ -30,33 +30,29 @@ function FilterIconFilled({ className }: { className?: string }) {
 
 export function FilterPopover({ onApply, currentFilters }: FilterPopoverProps) {
   const [open, setOpen] = useState(false)
-  const [selectedTypes, setSelectedTypes] = useState<FleetType[]>(currentFilters.types)
-  const [selectedStatuses, setSelectedStatuses] = useState<FleetStatus[]>(currentFilters.statuses)
-  const [yearMin, setYearMin] = useState(currentFilters.yearRange.min)
-  const [yearMax, setYearMax] = useState(currentFilters.yearRange.max)
-  const [isReady, setIsReady] = useState(false)
+  const [selectedLicenses, setSelectedLicenses] = useState<LicenseType[]>(currentFilters.licenses)
+  const [selectedStatuses, setSelectedStatuses] = useState<DriverStatus[]>(currentFilters.statuses)
+  const [assignmentStatus, setAssignmentStatus] = useState<'all' | 'assigned' | 'unassigned'>(currentFilters.assignmentStatus)
 
-  const fleetTypes: FleetType[] = ["Haul Truck", "Dump Truck", "Tanker", "Excavator", "Bulldozer", "Loader"]
-  const fleetStatuses: FleetStatus[] = ["Active", "Inactive", "Maintenance", "Under Review"]
-  
-  const years = Array.from({ length: 15 }, (_, i) => (2010 + i).toString())
+  const licenseTypes: LicenseType[] = ["A", "B1", "B2", "C"]
+  const driverStatuses: DriverStatus[] = ["Active", "Under Review", "Suspended", "On Leave"]
 
   const activeFilterCount = 
-    selectedTypes.length + 
+    selectedLicenses.length + 
     selectedStatuses.length + 
-    (yearMin || yearMax ? 1 : 0)
+    (assignmentStatus !== 'all' ? 1 : 0)
 
   const hasActiveFilters = activeFilterCount > 0
 
-  const handleTypeToggle = (type: FleetType) => {
-    setSelectedTypes(prev =>
-      prev.includes(type)
-        ? prev.filter(t => t !== type)
-        : [...prev, type]
+  const handleLicenseToggle = (license: LicenseType) => {
+    setSelectedLicenses(prev =>
+      prev.includes(license)
+        ? prev.filter(l => l !== license)
+        : [...prev, license]
     )
   }
 
-  const handleStatusToggle = (status: FleetStatus) => {
+  const handleStatusToggle = (status: DriverStatus) => {
     setSelectedStatuses(prev =>
       prev.includes(status)
         ? prev.filter(s => s !== status)
@@ -66,35 +62,31 @@ export function FilterPopover({ onApply, currentFilters }: FilterPopoverProps) {
 
   const handleApply = () => {
     onApply({
-      types: selectedTypes,
+      licenses: selectedLicenses,
       statuses: selectedStatuses,
-      yearRange: { min: yearMin, max: yearMax }
+      assignmentStatus: assignmentStatus
     })
     setOpen(false)
   }
 
   const handleReset = () => {
     const resetFilters = {
-      types: [],
+      licenses: [],
       statuses: [],
-      yearRange: { min: "", max: "" }
+      assignmentStatus: 'all' as const
     }
-    setSelectedTypes([])
+    setSelectedLicenses([])
     setSelectedStatuses([])
-    setYearMin("")
-    setYearMax("")
+    setAssignmentStatus('all')
     onApply(resetFilters)
     setOpen(false)
   }
 
   useMemo(() => {
     if (open) {
-      setIsReady(false)
-      setSelectedTypes(currentFilters.types)
+      setSelectedLicenses(currentFilters.licenses)
       setSelectedStatuses(currentFilters.statuses)
-      setYearMin(currentFilters.yearRange.min)
-      setYearMax(currentFilters.yearRange.max)
-      setTimeout(() => setIsReady(true), 0)
+      setAssignmentStatus(currentFilters.assignmentStatus)
     }
   }, [open, currentFilters])
 
@@ -134,20 +126,20 @@ export function FilterPopover({ onApply, currentFilters }: FilterPopoverProps) {
 
           <FieldGroup className="space-y-4">
             <div className="space-y-2">
-              <h4 className="text-xs font-medium text-gray-700">Fleet Type</h4>
+              <h4 className="text-xs font-medium text-gray-700">SIM Type</h4>
               <div className="grid grid-cols-2 gap-2">
-                {fleetTypes.map((type) => (
-                  <Field key={type} orientation="horizontal" className="items-center space-x-2">
+                {licenseTypes.map((license) => (
+                  <Field key={license} orientation="horizontal" className="items-center space-x-2">
                     <Checkbox
-                      id={`type-${type}`}
-                      checked={selectedTypes.includes(type)}
-                      onCheckedChange={() => handleTypeToggle(type)}
+                      id={`license-${license}`}
+                      checked={selectedLicenses.includes(license)}
+                      onCheckedChange={() => handleLicenseToggle(license)}
                     />
                     <FieldLabel 
-                      htmlFor={`type-${type}`}
+                      htmlFor={`license-${license}`}
                       className="text-xs font-normal cursor-pointer"
                     >
-                      {type}
+                      SIM {license}
                     </FieldLabel>
                   </Field>
                 ))}
@@ -155,9 +147,9 @@ export function FilterPopover({ onApply, currentFilters }: FilterPopoverProps) {
             </div>
 
             <div className="space-y-2">
-              <h4 className="text-xs font-medium text-gray-700">Fleet Status</h4>
+              <h4 className="text-xs font-medium text-gray-700">Operational Status</h4>
               <div className="grid grid-cols-2 gap-2">
-                {fleetStatuses.map((status) => (
+                {driverStatuses.map((status) => (
                   <Field key={status} orientation="horizontal" className="items-center space-x-2">
                     <Checkbox
                       id={`status-${status}`}
@@ -176,43 +168,36 @@ export function FilterPopover({ onApply, currentFilters }: FilterPopoverProps) {
             </div>
 
             <div className="space-y-2">
-              <h4 className="text-xs font-medium text-gray-700">Year Range</h4>
-              <div className="grid grid-cols-2 gap-2">
-                <Field className="space-y-1">
-                  <FieldLabel className="text-xs text-gray-600">From</FieldLabel>
-                  {isReady ? (
-                    <Select value={yearMin || undefined} onValueChange={setYearMin}>
-                      <SelectTrigger className="h-8 text-xs">
-                        <SelectValue placeholder="Year" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {years.map(year => (
-                          <SelectItem key={year} value={year}>{year}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  ) : (
-                    <div className="w-full h-8 bg-gray-100 animate-pulse rounded-md" />
-                  )}
+              <h4 className="text-xs font-medium text-gray-700">Truck Assignment</h4>
+              <RadioGroup value={assignmentStatus} onValueChange={(value) => setAssignmentStatus(value as 'all' | 'assigned' | 'unassigned')}>
+                <Field orientation="horizontal" className="items-center space-x-2">
+                  <RadioGroupItem value="all" id="assignment-all" />
+                  <FieldLabel 
+                    htmlFor="assignment-all"
+                    className="text-xs font-normal cursor-pointer"
+                  >
+                    All Drivers
+                  </FieldLabel>
                 </Field>
-                <Field className="space-y-1">
-                  <FieldLabel className="text-xs text-gray-600">To</FieldLabel>
-                  {isReady ? (
-                    <Select value={yearMax || undefined} onValueChange={setYearMax}>
-                      <SelectTrigger className="h-8 text-xs">
-                        <SelectValue placeholder="Year" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {years.map(year => (
-                          <SelectItem key={year} value={year}>{year}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  ) : (
-                    <div className="w-full h-8 bg-gray-100 animate-pulse rounded-md" />
-                  )}
+                <Field orientation="horizontal" className="items-center space-x-2">
+                  <RadioGroupItem value="assigned" id="assignment-assigned" />
+                  <FieldLabel 
+                    htmlFor="assignment-assigned"
+                    className="text-xs font-normal cursor-pointer"
+                  >
+                    Assigned to Truck
+                  </FieldLabel>
                 </Field>
-              </div>
+                <Field orientation="horizontal" className="items-center space-x-2">
+                  <RadioGroupItem value="unassigned" id="assignment-unassigned" />
+                  <FieldLabel 
+                    htmlFor="assignment-unassigned"
+                    className="text-xs font-normal cursor-pointer"
+                  >
+                    Unassigned (Available)
+                  </FieldLabel>
+                </Field>
+              </RadioGroup>
             </div>
           </FieldGroup>
 

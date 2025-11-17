@@ -2,28 +2,38 @@
 
 import { useRouter } from 'next/navigation'
 import { Eye, Edit } from 'lucide-react'
-import { FleetData } from '@/interface/admin/fleet'
 
-interface ActionModalProps {
+interface ActionModalProps<T> {
   open: boolean
   onClose: () => void
-  fleet: FleetData | null
+  data: T | null
   position: { top: number; left: number }
-  onEditClick: (fleet: FleetData) => void
+  onEditClick: (data: T) => void
+  detailPath: string 
+  idKey?: keyof T 
 }
 
-export function ActionModal({ open, onClose, fleet, position, onEditClick }: ActionModalProps) {
+export function ActionModal<T extends Record<string, any>>({ 
+  open, 
+  onClose, 
+  data, 
+  position, 
+  onEditClick,
+  detailPath,
+  idKey = 'id' as keyof T
+}: ActionModalProps<T>) {
   const router = useRouter()
   
-  if (!open || !fleet) return null
+  if (!open || !data) return null
 
   const handleEdit = () => {
-    onEditClick(fleet)
+    onEditClick(data)
     onClose()
   }
 
   const handleDetail = () => {
-    router.push(`/admin/fleet/${fleet.id}`)
+    const id = data[idKey]
+    router.push(`${detailPath}/${id}`)
     onClose()
   }
 

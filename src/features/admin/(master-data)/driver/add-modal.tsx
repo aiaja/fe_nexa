@@ -2,9 +2,10 @@
 
 import { useState } from 'react'
 import { X, Upload, CalendarIcon } from 'lucide-react'
-import { FleetData, FleetType, FleetStatus } from '@/interface/admin/fleet'
+import { DriverData, LicenseType, DriverStatus } from '@/interface/admin/driver'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Calendar } from "@/components/ui/calendar"
@@ -13,15 +14,15 @@ import { format } from "date-fns"
 import { cn } from "@/lib/utils"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { fleetSchema, FleetFormData, FLEET_TYPES, FLEET_STATUSES, FLEET_YEARS } from './schema'
+import { driverSchema, DriverFormData, LICENSE_TYPES, DRIVER_STATUSES } from './schema'
 
-interface AddFleetModalProps {
+interface AddDriverModalProps {
   open: boolean
   onClose: () => void
-  onSuccess: (fleet: FleetData) => void
+  onSuccess: (driver: DriverData) => void
 }
 
-export function AddFleetModal({ open, onClose, onSuccess }: AddFleetModalProps) {
+export function AddDriverModal({ open, onClose, onSuccess }: AddDriverModalProps) {
   const [previewImage, setPreviewImage] = useState<string>('')
 
   const {
@@ -31,25 +32,26 @@ export function AddFleetModal({ open, onClose, onSuccess }: AddFleetModalProps) 
     setValue,
     watch,
     reset
-  } = useForm<FleetFormData>({
-    resolver: zodResolver(fleetSchema),
+  } = useForm<DriverFormData>({
+    resolver: zodResolver(driverSchema),
     defaultValues: {
-      plateNumber: '',
       photo: '',
-      type: undefined,
-      brands: '',
-      model: '',
-      year: '',
-      purchaseDate: undefined,
-      initialMileage: '',
+      name: '',
+      simNumber: '',
+      license: undefined,
+      phone: '',
+      email: '',
+      address: '',
+      joinDate: '',
       status: 'Active'
     }
   })
 
-  const watchedType = watch('type')
-  const watchedYear = watch('year')
+  const watchedLicense = watch('license')
   const watchedStatus = watch('status')
-  const watchedPurchaseDate = watch('purchaseDate')
+  const watchedJoinDate = watch('joinDate')
+
+  const parsedJoinDate = watchedJoinDate ? new Date(watchedJoinDate) : undefined
 
   if (!open) return null
 
@@ -66,21 +68,22 @@ export function AddFleetModal({ open, onClose, onSuccess }: AddFleetModalProps) 
     }
   }
 
-  const onSubmit = (data: FleetFormData) => {
-    const newFleet: FleetData = {
-      id: `TRK-${String(Math.floor(Math.random() * 10000)).padStart(4, '0')}`,
-      plateNumber: data.plateNumber,
+  const onSubmit = (data: DriverFormData) => {
+    const newDriver: DriverData = {
+      id: `DRV-${String(Math.floor(Math.random() * 10000)).padStart(4, '0')}`,
       photo: data.photo || undefined,
-      type: data.type,
-      brands: data.brands,
-      model: data.model,
-      year: data.year,
-      purchaseDate: data.purchaseDate ? format(data.purchaseDate, 'yyyy-MM-dd') : undefined,
-      initialMileage: data.initialMileage ? parseInt(data.initialMileage) : undefined,
+      name: data.name,
+      simNumber: data.simNumber,
+      license: data.license,
+      phone: data.phone,
+      email: data.email || undefined,
+      address: data.address || undefined,
+      joinDate: data.joinDate,
+      incident: 0,
       status: data.status
     }
 
-    onSuccess(newFleet)
+    onSuccess(newDriver)
     handleClose()
   }
 
@@ -96,7 +99,7 @@ export function AddFleetModal({ open, onClose, onSuccess }: AddFleetModalProps) 
       
       <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg shadow-xl w-full max-w-2xl z-50 max-h-[90vh] overflow-y-auto">
         <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between z-10">
-          <h3 className="text-lg font-semibold text-gray-900">Add New Fleet</h3>
+          <h3 className="text-lg font-semibold text-gray-900">Add New Driver</h3>
           <Button 
             variant="ghost" 
             size="icon"
@@ -149,102 +152,107 @@ export function AddFleetModal({ open, onClose, onSuccess }: AddFleetModalProps) 
 
             <Field>
               <FieldLabel>
-                Plate Number <span className="text-red-500">*</span>
+                Full Name <span className="text-red-500">*</span>
               </FieldLabel>
               <Input
                 type="text"
-                {...register('plateNumber', {
-                  onChange: (e) => {
-                    e.target.value = e.target.value.toUpperCase()
-                  }
-                })}
-                placeholder="B 1234 ABC"
-                className={errors.plateNumber ? 'border-red-500' : ''}
+                {...register('name')}
+                placeholder="John Doe"
+                className={errors.name ? 'border-red-500' : ''}
               />
-              {errors.plateNumber && (
-                <p className="text-xs text-red-500 mt-1">⚠️ {errors.plateNumber.message}</p>
-              )}
-            </Field>
-
-            <Field>
-              <FieldLabel>
-                Type <span className="text-red-500">*</span>
-              </FieldLabel>
-              <Select 
-                value={watchedType} 
-                onValueChange={(value) => setValue('type', value as FleetType, { shouldValidate: true })}
-              >
-                <SelectTrigger className={errors.type ? 'border-red-500' : ''}>
-                  <SelectValue placeholder="Select type" />
-                </SelectTrigger>
-                <SelectContent>
-                  {FLEET_TYPES.map(type => (
-                    <SelectItem key={type} value={type}>{type}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {errors.type && (
-                <p className="text-xs text-red-500 mt-1">⚠️ {errors.type.message}</p>
+              {errors.name && (
+                <p className="text-xs text-red-500 mt-1">⚠️ {errors.name.message}</p>
               )}
             </Field>
 
             <div className="grid grid-cols-2 gap-4">
               <Field>
                 <FieldLabel>
-                  Brands <span className="text-red-500">*</span>
+                  License Number <span className="text-red-500">*</span>
                 </FieldLabel>
                 <Input
                   type="text"
-                  {...register('brands')}
-                  placeholder="Volvo"
-                  className={errors.brands ? 'border-red-500' : ''}
+                  {...register('simNumber', {
+                    onChange: (e) => {
+                      e.target.value = e.target.value.toUpperCase()
+                    }
+                  })}
+                  placeholder="1234567890ABC"
+                  className={errors.simNumber ? 'border-red-500' : ''}
                 />
-                {errors.brands && (
-                  <p className="text-xs text-red-500 mt-1">⚠️ {errors.brands.message}</p>
+                {errors.simNumber && (
+                  <p className="text-xs text-red-500 mt-1">⚠️ {errors.simNumber.message}</p>
                 )}
               </Field>
 
               <Field>
                 <FieldLabel>
-                  Model <span className="text-red-500">*</span>
+                  License Type <span className="text-red-500">*</span>
+                </FieldLabel>
+                <Select 
+                  value={watchedLicense} 
+                  onValueChange={(value) => setValue('license', value as LicenseType, { shouldValidate: true })}
+                >
+                  <SelectTrigger className={errors.license ? 'border-red-500' : ''}>
+                    <SelectValue placeholder="Select license type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {LICENSE_TYPES.map(type => (
+                      <SelectItem key={type} value={type}>SIM {type}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {errors.license && (
+                  <p className="text-xs text-red-500 mt-1">⚠️ {errors.license.message}</p>
+                )}
+              </Field>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <Field>
+                <FieldLabel>
+                  Phone Number <span className="text-red-500">*</span>
                 </FieldLabel>
                 <Input
                   type="text"
-                  {...register('model')}
-                  placeholder="FH16"
-                  className={errors.model ? 'border-red-500' : ''}
+                  {...register('phone')}
+                  placeholder="08123456789"
+                  className={errors.phone ? 'border-red-500' : ''}
                 />
-                {errors.model && (
-                  <p className="text-xs text-red-500 mt-1">⚠️ {errors.model.message}</p>
+                {errors.phone && (
+                  <p className="text-xs text-red-500 mt-1">⚠️ {errors.phone.message}</p>
+                )}
+              </Field>
+
+              <Field>
+                <FieldLabel>Email</FieldLabel>
+                <Input
+                  type="email"
+                  {...register('email')}
+                  placeholder="driver@example.com"
+                  className={errors.email ? 'border-red-500' : ''}
+                />
+                {errors.email && (
+                  <p className="text-xs text-red-500 mt-1">⚠️ {errors.email.message}</p>
                 )}
               </Field>
             </div>
 
             <Field>
-              <FieldLabel>
-                Year <span className="text-red-500">*</span>
-              </FieldLabel>
-              <Select 
-                value={watchedYear} 
-                onValueChange={(value) => setValue('year', value, { shouldValidate: true })}
-              >
-                <SelectTrigger className={errors.year ? 'border-red-500' : ''}>
-                  <SelectValue placeholder="Select year" />
-                </SelectTrigger>
-                <SelectContent>
-                  {FLEET_YEARS.map(year => (
-                    <SelectItem key={year} value={year}>{year}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {errors.year && (
-                <p className="text-xs text-red-500 mt-1">⚠️ {errors.year.message}</p>
-              )}
+              <FieldLabel>Address</FieldLabel>
+              <Textarea
+                {...register('address')}
+                placeholder="Enter full address"
+                rows={3}
+                className={errors.address ? 'border-red-500' : ''}
+              />
             </Field>
 
             <div className="grid grid-cols-2 gap-4">
               <Field>
-                <FieldLabel>Purchase Date</FieldLabel>
+                <FieldLabel>
+                  Join Date <span className="text-red-500">*</span>
+                </FieldLabel>
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button
@@ -252,53 +260,51 @@ export function AddFleetModal({ open, onClose, onSuccess }: AddFleetModalProps) 
                       variant="outline"
                       className={cn(
                         "w-full justify-start text-left font-normal",
-                        !watchedPurchaseDate && "text-muted-foreground"
+                        !parsedJoinDate && "text-muted-foreground",
+                        errors.joinDate && "border-red-500"
                       )}
                     >
                       <CalendarIcon className="mr-2 h-4 w-4" />
-                      {watchedPurchaseDate ? format(watchedPurchaseDate, "PPP") : <span>Pick a date</span>}
+                      {parsedJoinDate ? format(parsedJoinDate, "PPP") : <span>Pick a date</span>}
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0" align="start">
                     <Calendar
                       mode="single"
-                      selected={watchedPurchaseDate}
-                      onSelect={(date) => setValue('purchaseDate', date)}
+                      selected={parsedJoinDate}
+                      onSelect={(date) => {
+                        if (date) {
+                          setValue('joinDate', format(date, 'yyyy-MM-dd'), { shouldValidate: true })
+                        }
+                      }}
                       initialFocus
                     />
                   </PopoverContent>
                 </Popover>
+                {errors.joinDate && (
+                  <p className="text-xs text-red-500 mt-1">⚠️ {errors.joinDate.message}</p>
+                )}
               </Field>
 
               <Field>
-                <FieldLabel>Initial Mileage (km)</FieldLabel>
-                <Input
-                  type="number"
-                  {...register('initialMileage')}
-                  placeholder="0"
-                  min="0"
-                />
+                <FieldLabel>
+                  Status <span className="text-red-500">*</span>
+                </FieldLabel>
+                <Select 
+                  value={watchedStatus} 
+                  onValueChange={(value) => setValue('status', value as DriverStatus)}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {DRIVER_STATUSES.map(status => (
+                      <SelectItem key={status} value={status}>{status}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </Field>
             </div>
-
-            <Field>
-              <FieldLabel>
-                Status <span className="text-red-500">*</span>
-              </FieldLabel>
-              <Select 
-                value={watchedStatus} 
-                onValueChange={(value) => setValue('status', value as FleetStatus)}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {FLEET_STATUSES.map(status => (
-                    <SelectItem key={status} value={status}>{status}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </Field>
 
             <Field orientation="horizontal" className="pt-4 gap-3">
               <Button
@@ -313,7 +319,7 @@ export function AddFleetModal({ open, onClose, onSuccess }: AddFleetModalProps) 
                 type="submit"
                 className="flex-1 bg-[#0047AB] hover:bg-[#003580]"
               >
-                Save Fleet
+                Save Driver
               </Button>
             </Field>
           </FieldGroup>

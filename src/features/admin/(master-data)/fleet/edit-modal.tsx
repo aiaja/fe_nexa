@@ -11,6 +11,9 @@ import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { format } from "date-fns"
 import { cn } from "@/lib/utils"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { fleetSchema, FleetFormData, FLEET_TYPES, FLEET_STATUSES, FLEET_YEARS } from './schema'
 
 interface EditFleetModalProps {
   open: boolean
@@ -20,31 +23,42 @@ interface EditFleetModalProps {
 }
 
 export function EditFleetModal({ open, onClose, fleet, onSuccess }: EditFleetModalProps) {
-  const [formData, setFormData] = useState({
-    plateNumber: '',
-    photo: '',
-    type: '' as FleetType | '',
-    brands: '',
-    model: '',
-    year: '',
-    purchaseDate: undefined as Date | undefined,
-    initialMileage: '',
-    status: 'Active' as FleetStatus
-  })
-
-  const [errors, setErrors] = useState<Record<string, string>>({})
   const [previewImage, setPreviewImage] = useState<string>('')
   const [isReady, setIsReady] = useState(false)
 
-  const fleetTypes: FleetType[] = ["Haul Truck", "Dump Truck", "Tanker", "Excavator", "Bulldozer", "Loader"]
-  const fleetStatuses: FleetStatus[] = ["Active", "Inactive", "Maintenance", "Under Review"]
-  const years = Array.from({ length: 15 }, (_, i) => (2024 - i).toString())
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+    watch,
+    reset
+  } = useForm<FleetFormData>({
+    resolver: zodResolver(fleetSchema),
+    defaultValues: {
+      plateNumber: '',
+      photo: '',
+      type: undefined,
+      brands: '',
+      model: '',
+      year: '',
+      purchaseDate: undefined,
+      initialMileage: '',
+      status: 'Active'
+    }
+  })
+
+  const watchedType = watch('type')
+  const watchedYear = watch('year')
+  const watchedStatus = watch('status')
+  const watchedPurchaseDate = watch('purchaseDate')
 
   // Pre-fill form when fleet data changes
   useEffect(() => {
     if (fleet && open) {
       setIsReady(false)
-      setFormData({
+      
+      reset({
         plateNumber: fleet.plateNumber,
         photo: fleet.photo || '',
         type: fleet.type,
@@ -55,67 +69,41 @@ export function EditFleetModal({ open, onClose, fleet, onSuccess }: EditFleetMod
         initialMileage: fleet.initialMileage?.toString() || '',
         status: fleet.status
       })
-      setPreviewImage(fleet.photo || '')
-      setErrors({}) // Reset errors saat modal dibuka
       
-      // Delay biar state kebaca dulu
+      setPreviewImage(fleet.photo || '')
+      
+      // Delay to ensure state is set
       setTimeout(() => setIsReady(true), 0)
     }
-  }, [fleet, open])
+  }, [fleet, open, reset])
 
   if (!open || !fleet) return null
-
-  const validatePlateNumber = (plate: string): boolean => {
-    const regex = /^[A-Z]{1,2}\s\d{1,4}\s[A-Z]{1,3}$/
-    return regex.test(plate)
-  }
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
       const reader = new FileReader()
       reader.onloadend = () => {
-        setPreviewImage(reader.result as string)
-        setFormData(prev => ({ ...prev, photo: reader.result as string }))
+        const result = reader.result as string
+        setPreviewImage(result)
+        setValue('photo', result)
       }
       reader.readAsDataURL(file)
     }
   }
 
-  const validateForm = (): boolean => {
-    const newErrors: Record<string, string> = {}
-
-    if (!formData.plateNumber) {
-      newErrors.plateNumber = 'Plate number is required'
-    } else if (!validatePlateNumber(formData.plateNumber)) {
-      newErrors.plateNumber = 'Invalid format. Use: B 1234 ABC'
-    }
-
-    if (!formData.type) newErrors.type = 'Type is required'
-    if (!formData.brands) newErrors.brands = 'Brands is required'
-    if (!formData.model) newErrors.model = 'Model is required'
-    if (!formData.year) newErrors.year = 'Year is required'
-
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    
-    if (!validateForm()) return
-
+  const onSubmit = (data: FleetFormData) => {
     const updatedFleet: FleetData = {
       ...fleet,
-      plateNumber: formData.plateNumber,
-      photo: formData.photo || undefined,
-      type: formData.type as FleetType,
-      brands: formData.brands,
-      model: formData.model,
-      year: formData.year,
-      purchaseDate: formData.purchaseDate ? format(formData.purchaseDate, 'yyyy-MM-dd') : undefined,
-      initialMileage: formData.initialMileage ? parseInt(formData.initialMileage) : undefined,
-      status: formData.status
+      plateNumber: data.plateNumber,
+      photo: data.photo || undefined,
+      type: data.type,
+      brands: data.brands,
+      model: data.model,
+      year: data.year,
+      purchaseDate: data.purchaseDate ? format(data.purchaseDate, 'yyyy-MM-dd') : undefined,
+      initialMileage: data.initialMileage ? parseInt(data.initialMileage) : undefined,
+      status: data.status
     }
 
     onSuccess(updatedFleet)
@@ -123,7 +111,6 @@ export function EditFleetModal({ open, onClose, fleet, onSuccess }: EditFleetMod
   }
 
   const handleClose = () => {
-    setErrors({})
     onClose()
   }
 
@@ -132,7 +119,7 @@ export function EditFleetModal({ open, onClose, fleet, onSuccess }: EditFleetMod
       <div className="fixed inset-0 bg-black/50 z-50" onClick={handleClose} />
       
       <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg shadow-xl w-full max-w-2xl z-50 max-h-[90vh] overflow-y-auto">
-        <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+        <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between z-10">
           <div>
             <h3 className="text-lg font-semibold text-gray-900">Edit Fleet</h3>
             <p className="text-sm text-gray-500">{fleet.id}</p>
@@ -147,7 +134,7 @@ export function EditFleetModal({ open, onClose, fleet, onSuccess }: EditFleetMod
           </Button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="p-6">
           <FieldGroup>
             <Field>
               <FieldLabel>Upload Photo</FieldLabel>
@@ -161,7 +148,7 @@ export function EditFleetModal({ open, onClose, fleet, onSuccess }: EditFleetMod
                       size="icon"
                       onClick={() => {
                         setPreviewImage('')
-                        setFormData(prev => ({ ...prev, photo: '' }))
+                        setValue('photo', '')
                       }}
                       className="absolute top-1 right-1 h-6 w-6"
                     >
@@ -197,23 +184,24 @@ export function EditFleetModal({ open, onClose, fleet, onSuccess }: EditFleetMod
               />
             </Field>
 
-
             <Field>
               <FieldLabel>
                 Plate Number <span className="text-red-500">*</span>
               </FieldLabel>
               <Input
                 type="text"
-                value={formData.plateNumber}
-                onChange={(e) => setFormData(prev => ({ ...prev, plateNumber: e.target.value.toUpperCase() }))}
+                {...register('plateNumber', {
+                  onChange: (e) => {
+                    e.target.value = e.target.value.toUpperCase()
+                  }
+                })}
                 placeholder="B 1234 ABC"
                 className={errors.plateNumber ? 'border-red-500' : ''}
               />
               {errors.plateNumber && (
-                <p className="text-xs text-red-500 mt-1">⚠ {errors.plateNumber}</p>
+                <p className="text-xs text-red-500 mt-1">⚠️ {errors.plateNumber.message}</p>
               )}
             </Field>
-
 
             <Field>
               <FieldLabel>
@@ -221,14 +209,14 @@ export function EditFleetModal({ open, onClose, fleet, onSuccess }: EditFleetMod
               </FieldLabel>
               {isReady ? (
                 <Select 
-                  value={formData.type}
-                  onValueChange={(value) => setFormData(prev => ({ ...prev, type: value as FleetType }))}
+                  value={watchedType} 
+                  onValueChange={(value) => setValue('type', value as FleetType, { shouldValidate: true })}
                 >
                   <SelectTrigger className={errors.type ? 'border-red-500' : ''}>
                     <SelectValue placeholder="Select type" />
                   </SelectTrigger>
                   <SelectContent>
-                    {fleetTypes.map(type => (
+                    {FLEET_TYPES.map(type => (
                       <SelectItem key={type} value={type}>{type}</SelectItem>
                     ))}
                   </SelectContent>
@@ -237,7 +225,7 @@ export function EditFleetModal({ open, onClose, fleet, onSuccess }: EditFleetMod
                 <div className="w-full h-10 bg-gray-100 animate-pulse rounded-md" />
               )}
               {errors.type && (
-                <p className="text-xs text-red-500 mt-1">⚠ {errors.type}</p>
+                <p className="text-xs text-red-500 mt-1">⚠️ {errors.type.message}</p>
               )}
             </Field>
 
@@ -248,13 +236,12 @@ export function EditFleetModal({ open, onClose, fleet, onSuccess }: EditFleetMod
                 </FieldLabel>
                 <Input
                   type="text"
-                  value={formData.brands}
-                  onChange={(e) => setFormData(prev => ({ ...prev, brands: e.target.value }))}
+                  {...register('brands')}
                   placeholder="Volvo"
                   className={errors.brands ? 'border-red-500' : ''}
                 />
                 {errors.brands && (
-                  <p className="text-xs text-red-500 mt-1">⚠ {errors.brands}</p>
+                  <p className="text-xs text-red-500 mt-1">⚠️ {errors.brands.message}</p>
                 )}
               </Field>
 
@@ -264,13 +251,12 @@ export function EditFleetModal({ open, onClose, fleet, onSuccess }: EditFleetMod
                 </FieldLabel>
                 <Input
                   type="text"
-                  value={formData.model}
-                  onChange={(e) => setFormData(prev => ({ ...prev, model: e.target.value }))}
+                  {...register('model')}
                   placeholder="FH16"
                   className={errors.model ? 'border-red-500' : ''}
                 />
                 {errors.model && (
-                  <p className="text-xs text-red-500 mt-1">⚠ {errors.model}</p>
+                  <p className="text-xs text-red-500 mt-1">⚠️ {errors.model.message}</p>
                 )}
               </Field>
             </div>
@@ -281,14 +267,14 @@ export function EditFleetModal({ open, onClose, fleet, onSuccess }: EditFleetMod
               </FieldLabel>
               {isReady ? (
                 <Select 
-                  value={formData.year}
-                  onValueChange={(value) => setFormData(prev => ({ ...prev, year: value }))}
+                  value={watchedYear} 
+                  onValueChange={(value) => setValue('year', value, { shouldValidate: true })}
                 >
                   <SelectTrigger className={errors.year ? 'border-red-500' : ''}>
                     <SelectValue placeholder="Select year" />
                   </SelectTrigger>
                   <SelectContent>
-                    {years.map(year => (
+                    {FLEET_YEARS.map(year => (
                       <SelectItem key={year} value={year}>{year}</SelectItem>
                     ))}
                   </SelectContent>
@@ -297,7 +283,7 @@ export function EditFleetModal({ open, onClose, fleet, onSuccess }: EditFleetMod
                 <div className="w-full h-10 bg-gray-100 animate-pulse rounded-md" />
               )}
               {errors.year && (
-                <p className="text-xs text-red-500 mt-1">⚠ {errors.year}</p>
+                <p className="text-xs text-red-500 mt-1">⚠️ {errors.year.message}</p>
               )}
             </Field>
 
@@ -311,19 +297,18 @@ export function EditFleetModal({ open, onClose, fleet, onSuccess }: EditFleetMod
                       variant="outline"
                       className={cn(
                         "w-full justify-start text-left font-normal",
-                        !formData.purchaseDate && "text-muted-foreground"
+                        !watchedPurchaseDate && "text-muted-foreground"
                       )}
                     >
                       <CalendarIcon className="mr-2 h-4 w-4" />
-                      {formData.purchaseDate ? format(formData.purchaseDate, "PPP") : <span>Pick a date</span>}
+                      {watchedPurchaseDate ? format(watchedPurchaseDate, "PPP") : <span>Pick a date</span>}
                     </Button>
                   </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0">
+                  <PopoverContent className="w-auto p-0" align="start">
                     <Calendar
                       mode="single"
-                      selected={formData.purchaseDate}
-                      onSelect={(date) => setFormData(prev => ({ ...prev, purchaseDate: date }))}
-                      initialFocus
+                      selected={watchedPurchaseDate}
+                      onSelect={(date) => setValue('purchaseDate', date)}
                     />
                   </PopoverContent>
                 </Popover>
@@ -333,14 +318,12 @@ export function EditFleetModal({ open, onClose, fleet, onSuccess }: EditFleetMod
                 <FieldLabel>Initial Mileage (km)</FieldLabel>
                 <Input
                   type="number"
-                  value={formData.initialMileage}
-                  onChange={(e) => setFormData(prev => ({ ...prev, initialMileage: e.target.value }))}
+                  {...register('initialMileage')}
                   placeholder="0"
                   min="0"
                 />
               </Field>
             </div>
-
 
             <Field>
               <FieldLabel>
@@ -348,14 +331,14 @@ export function EditFleetModal({ open, onClose, fleet, onSuccess }: EditFleetMod
               </FieldLabel>
               {isReady ? (
                 <Select 
-                  value={formData.status}
-                  onValueChange={(value) => setFormData(prev => ({ ...prev, status: value as FleetStatus }))}
+                  value={watchedStatus} 
+                  onValueChange={(value) => setValue('status', value as FleetStatus)}
                 >
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {fleetStatuses.map(status => (
+                    {FLEET_STATUSES.map(status => (
                       <SelectItem key={status} value={status}>{status}</SelectItem>
                     ))}
                   </SelectContent>
@@ -365,7 +348,6 @@ export function EditFleetModal({ open, onClose, fleet, onSuccess }: EditFleetMod
               )}
             </Field>
 
-            {/* Actions */}
             <Field orientation="horizontal" className="pt-4 gap-3">
               <Button
                 type="button"
@@ -377,7 +359,7 @@ export function EditFleetModal({ open, onClose, fleet, onSuccess }: EditFleetMod
               </Button>
               <Button
                 type="submit"
-                className="flex-1"
+                className="flex-1 bg-[#0047AB] hover:bg-[#003580]"
               >
                 Update Fleet
               </Button>

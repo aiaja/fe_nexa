@@ -1,16 +1,16 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
 import { Search, Plus, Trash2 } from "lucide-react"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { columns } from "./columns"
-import { DataTable } from "./data-table"
+import { DataTable } from "@/components/data-table"
 import { FleetData } from "@/interface/admin/fleet"
 import { FilterPopover, FilterValues } from "./filter-popover"
-import { ActionModal } from "./action-modal"
-import { DeleteConfirmationModal } from "./delete-modal"
+import { ActionModal } from "@/components/action-modal"
+import { DeleteConfirmationModal } from "@/components/delete-modal"
 import { AddFleetModal } from "./add-modal"
 import { EditFleetModal } from "./edit-modal"
 
@@ -18,8 +18,11 @@ interface FleetMasterProps {
   fleetItems: FleetData[]
 }
 
+const STORAGE_KEY = 'fleets-data'
+
 export default function FleetMaster({ fleetItems: initialFleetItems }: FleetMasterProps) {
-  const [fleetItems, setFleetItems] = useState<FleetData[]>(initialFleetItems)
+  const [fleetItems, setFleetItems] = useState<FleetData[]>([])
+  const [isLoading, setIsLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState("")
   const [isActionOpen, setIsActionOpen] = useState(false)
   const [isDeleteOpen, setIsDeleteOpen] = useState(false)
@@ -34,6 +37,51 @@ export default function FleetMaster({ fleetItems: initialFleetItems }: FleetMast
     statuses: [],
     yearRange: { min: "", max: "" }
   })
+
+  useEffect(() => {
+    loadFleetsData()
+  }, [])
+
+  const loadFleetsData = () => {
+    setIsLoading(true)
+    try {
+      const savedData = localStorage.getItem(STORAGE_KEY)
+      if (savedData) {
+        const parsedData = JSON.parse(savedData)
+        
+        if (parsedData.fleets && Array.isArray(parsedData.fleets)) {
+          setFleetItems(parsedData.fleets)
+          setDeletedIds(parsedData.deletedIds || [])
+        } else {
+          setFleetItems(parsedData)
+        }
+      } else {
+        setFleetItems(initialFleetItems)
+        saveToStorage(initialFleetItems, [])
+      }
+    } catch (error) {
+      console.error('Failed to load data:', error)
+      setFleetItems(initialFleetItems)
+      saveToStorage(initialFleetItems, [])
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const saveToStorage = (updatedFleets: FleetData[], updatedDeletedIds?: string[]) => {
+    try {
+      const dataToSave = {
+        fleets: updatedFleets,
+        deletedIds: updatedDeletedIds !== undefined ? updatedDeletedIds : deletedIds
+      }
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave))
+    } catch (error) {
+      console.error('Failed to save to storage:', error)
+      toast.error("Failed to save data", {
+        description: "Your changes may not persist after refresh"
+      })
+    }
+  }
 
   const activeFleetItems = useMemo(() => {
     return fleetItems.filter(item => !deletedIds.includes(item.id))
@@ -96,8 +144,11 @@ export default function FleetMaster({ fleetItems: initialFleetItems }: FleetMast
     const idsToDelete = selectedRows.map(row => row.id)
     const count = idsToDelete.length
 
-    setDeletedIds(prev => [...prev, ...idsToDelete])
+    const updatedDeletedIds = [...deletedIds, ...idsToDelete]
+    setDeletedIds(updatedDeletedIds)
     setSelectedRows([])
+
+    saveToStorage(fleetItems, updatedDeletedIds)
 
     toast.success(`${count} fleet${count > 1 ? "s" : ""} deleted successfully!`, {
       description: `${count} vehicle${count > 1 ? "s have" : " has"} been removed from the system`
@@ -105,19 +156,36 @@ export default function FleetMaster({ fleetItems: initialFleetItems }: FleetMast
   }
 
   const handleAddSuccess = (newFleet: FleetData) => {
-    setFleetItems(prev => [...prev, newFleet])
+    const updatedFleets = [...fleetItems, newFleet]
+    setFleetItems(updatedFleets)
+    
+    saveToStorage(updatedFleets)
+    
     toast.success("Fleet added successfully!", {
       description: `${newFleet.id} - ${newFleet.plateNumber} has been added to the system`
     })
   }
 
   const handleEditSuccess = (updatedFleet: FleetData) => {
-    setFleetItems(prev =>
-      prev.map(fleet => (fleet.id === updatedFleet.id ? updatedFleet : fleet))
+    const updatedFleets = fleetItems.map(fleet => 
+      fleet.id === updatedFleet.id ? updatedFleet : fleet
     )
+    setFleetItems(updatedFleets)
+    
+    saveToStorage(updatedFleets)
+    
     toast.success("Fleet updated successfully!", {
       description: `${updatedFleet.id} - ${updatedFleet.plateNumber} has been updated`
     })
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-1 flex-col items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#0047AB]"></div>
+        <p className="mt-4 text-sm text-gray-500">Loading fleets data...</p>
+      </div>
+    )
   }
 
   return (
@@ -170,12 +238,13 @@ export default function FleetMaster({ fleetItems: initialFleetItems }: FleetMast
         />
       </div>
 
-      <ActionModal
+      <ActionModal<FleetData>
         open={isActionOpen}
         onClose={() => setIsActionOpen(false)}
-        fleet={selectedFleet}
+        data={selectedFleet}
         position={actionPosition}
         onEditClick={handleEditClick}
+        detailPath="/admin/fleet"
       />
 
       <DeleteConfirmationModal

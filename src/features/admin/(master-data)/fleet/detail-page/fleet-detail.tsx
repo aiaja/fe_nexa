@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { ArrowLeft, Edit, Trash2, ImageIcon } from 'lucide-react'
 import { FleetData } from '@/interface/admin/fleet'
 import { EditFleetModal } from '../edit-modal'
-import { DeleteConfirmationModal } from '../delete-modal'
+import { DeleteConfirmationModal } from "@/components/delete-modal"
 import { toast } from 'sonner'
 
 interface FleetDetailProps {
@@ -40,13 +40,6 @@ export default function FleetDetail({ fleet: initialFleet }: FleetDetailProps) {
     return "bg-gray-100 text-gray-700"
   }
 
-  const getStatusIcon = (status: string) => {
-    if (status === "Active") return "🟢"
-    if (status === "Under Review") return "🟡"
-    if (status === "Maintenance") return "🟠"
-    if (status === "Inactive") return "⚫"
-    return "⚫"
-  }
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
@@ -179,16 +172,6 @@ export default function FleetDetail({ fleet: initialFleet }: FleetDetailProps) {
                             {fleet.initialMileage !== undefined ? `${fleet.initialMileage.toLocaleString()} km` : '0 km'}
                           </p>
                         </div>
-                      </div>
-                    </div>
-
-                    <div>
-                      <h2 className="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">
-                        Operational Status
-                      </h2>
-                      <div className="flex items-center gap-3 mb-2">
-                        <span className="text-2xl">{getStatusIcon(fleet.status)}</span>
-                        <span className="text-lg font-medium text-gray-900">{fleet.status}</span>
                       </div>
                     </div>
                   </div>

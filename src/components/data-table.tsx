@@ -8,8 +8,15 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
 } from "@tanstack/react-table"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
 import { useEffect } from "react"
-import { FleetData } from "@/interface/admin/fleet"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
@@ -17,7 +24,7 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
   onSelectionChange?: (rows: TData[]) => void
-  onActionClick?: (fleet: FleetData, position: { top: number; left: number }) => void
+  onActionClick?: (row: TData, position: { top: number; left: number }) => void
 }
 
 export function DataTable<TData, TValue>({
@@ -58,21 +65,18 @@ export function DataTable<TData, TValue>({
     }
   }, [table.getSelectedRowModel().flatRows])
 
-
-
   return (
     <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
       <div className="overflow-x-auto">
-        <table className="w-full">
-          <thead className="bg-gray-50 border-b border-gray-200">
+        <Table>
+          <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id}>
+              <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
-
                   return (
-                    <th
+                    <TableHead
                       key={header.id}
-                      className="px-4 py-3 text-left text-sm font-medium text-gray-700 select-none"
+                      className="font-medium text-gray-700 select-none"
                     >
                       {header.isPlaceholder ? null : (
                         <div className="flex items-center gap-1">
@@ -82,47 +86,46 @@ export function DataTable<TData, TValue>({
                           )}
                         </div>
                       )}
-                    </th>
+                    </TableHead>
                   )
                 })}
-              </tr>
+              </TableRow>
             ))}
-          </thead>
+          </TableHeader>
 
-          <tbody className="divide-y divide-gray-200">
+          <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <tr
+                <TableRow
                   key={row.id}
-                  className="hover:bg-gray-50 transition-colors"
+                  data-state={row.getIsSelected() && "selected"}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <td key={cell.id} className="px-4 py-3">
+                    <TableCell key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()
                       )}
-                    </td>
+                    </TableCell>
                   ))}
-                </tr>
+                </TableRow>
               ))
             ) : (
-              <tr>
-                <td
+              <TableRow>
+                <TableCell
                   colSpan={columns.length}
                   className="h-24 text-center text-sm text-gray-500"
                 >
                   No results.
-                </td>
-              </tr>
+                </TableCell>
+              </TableRow>
             )}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </div>
 
       <div className="flex items-center justify-between px-4 py-3 border-t border-gray-200">
         <div className="flex items-center gap-2">
-
           <Button
             variant="outline"
             size="sm"
@@ -131,7 +134,6 @@ export function DataTable<TData, TValue>({
           >
             Prev
           </Button>
-
 
           {Array.from({ length: table.getPageCount() }, (_, i) => i + 1)
             .slice(0, 5)
@@ -159,7 +161,6 @@ export function DataTable<TData, TValue>({
               </Button>
             </>
           )}
-
 
           <Button
             variant="outline"
