@@ -1,4 +1,4 @@
-import { FleetManagement } from "@/interface/manager/fleet-management";
+import {FleetManagement} from "@/interface/manager/fleet-management";
 
 export const fleetManagementData : FleetManagement[] = [
   {
