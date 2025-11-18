@@ -7,7 +7,7 @@ export interface DashboardStats {
   subtitle?: string  
   isAlert?: boolean
   clickable?: boolean      
-  onClick?: () => void    
+  href?: string 
 }
 
 export interface DailyTarget {

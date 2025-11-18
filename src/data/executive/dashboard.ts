@@ -29,9 +29,7 @@ export const dashboardStats: DashboardStats[] = [
     subtitle: "Requires immediate action", 
     isAlert: true,
     clickable: true,      
-    onClick: () => {      
-      window.location.href = '/incidents'
-    }
+    href: "/incidents" 
   },
 ]
 
