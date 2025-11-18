@@ -12,7 +12,6 @@ export interface DashboardStats {
   }
 }
 
-// Split stat item (for Fleet & Driver)
 export interface DashboardStatsSplit {
   variant: 'split'
   items: Array<{
@@ -24,7 +23,6 @@ export interface DashboardStatsSplit {
   }>
 }
 
-// Union type for both variants
 export type DashboardStatsItem = DashboardStats | DashboardStatsSplit
 
 export interface SystemAlert {
