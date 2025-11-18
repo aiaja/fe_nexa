@@ -15,7 +15,7 @@ import {
   DailyTarget, 
   EfficiencyScore, 
   FleetInsights, 
-  PerformanceTrend 
+  PerformancePeriodData  
 } from "@/interface/executive/dashboard"
 
 import { StatsCard } from "@/features/executive/dashboard/stats-card"
@@ -29,7 +29,7 @@ interface ExecutiveDashboardProps {
   dailyTarget: DailyTarget
   efficiencyScore: EfficiencyScore
   fleetInsights: FleetInsights[]
-  performanceTrends: PerformanceTrend[]
+  performanceTrends: PerformancePeriodData  // ⭐ UBAH 2
 }
 
 const iconMap: Record<string, LucideIcon> = {

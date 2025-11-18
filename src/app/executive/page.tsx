@@ -4,7 +4,7 @@ import {
   dailyTarget,
   efficiencyScore,
   fleetInsights,
-  performanceTrends
+  performanceTrendsData
 } from "@/data/executive/dashboard"
 
 export default function Page() {
@@ -14,7 +14,7 @@ export default function Page() {
       dailyTarget={dailyTarget}
       efficiencyScore={efficiencyScore}
       fleetInsights={fleetInsights}
-      performanceTrends={performanceTrends}
+      performanceTrends={performanceTrendsData}
     />
   )
 }

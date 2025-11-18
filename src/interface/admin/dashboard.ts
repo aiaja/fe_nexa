@@ -24,3 +24,37 @@ export interface ActivityTrend {
   hour: number
   value: number
 }
+
+export interface DailyTarget {
+  percentage: number
+  target: number
+  status: string
+}
+
+export interface EfficiencyScore {
+  score: number
+  maxScore: number
+  change: string
+  changePositive: boolean
+}
+
+export interface FleetInsights {
+  id: string
+  icon: string
+  iconColor: string
+  title: string
+  description: string
+  action: string
+}
+
+export interface PerformanceTrend {
+  hour: string
+  value: number
+  fleetCount: number
+}
+
+export interface PerformancePeriodData {
+  today: PerformanceTrend[]
+  yesterday: PerformanceTrend[]
+  last7days: PerformanceTrend[]
+}
