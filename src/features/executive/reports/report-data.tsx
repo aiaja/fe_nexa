@@ -1,8 +1,8 @@
 "use client";
 import React, { useState } from 'react';
+import { toast } from 'sonner';
 import { Report } from '@/interface/executive/report';
 import { PageHeader } from './page-header';
-// import { ToastNotification } from './components/toast-notification';
 import { EmptyState } from './empty-state';
 import { LoadingState } from './loading-state';
 import { LatestReportCard } from './latest-report-card';
@@ -24,7 +24,6 @@ export default function StrategicReports({
   const latestReport = reports.find(r => r.isLatest);
   const historyReports = reports.filter(r => !r.isLatest);
   const [downloadingId, setDownloadingId] = useState<string | null>(null);
-  const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleDownload = async (reportId: string, reportTitle: string) => {
@@ -32,8 +31,8 @@ export default function StrategicReports({
     await new Promise(resolve => setTimeout(resolve, 2000));
     console.log('Downloading report:', reportId);
     setDownloadingId(null);
-    setToastMessage(`${reportTitle} downloaded successfully`);
-    setTimeout(() => setToastMessage(null), 3000);
+    
+    toast.success(`${reportTitle} downloaded successfully`);
   };
 
   if (reports.length === 0 && !isLoading) {
@@ -42,9 +41,7 @@ export default function StrategicReports({
 
   return (
     <div className="flex flex-1 flex-col">
-      <div className="flex flex-col gap-6 p-6 bg-gray-50 min-h-screen">
-        {/* {toastMessage && <ToastNotification message={toastMessage} />} */}
-        
+      <div className="flex flex-col gap-6 p-6 min-h-screen">
         <PageHeader 
           autoGenerateSchedule={autoGenerateSchedule}
           infoTooltipText={infoTooltipText}

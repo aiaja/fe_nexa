@@ -1,4 +1,3 @@
-import React from 'react';
 import { Report } from '@/interface/executive/report';
 import { ReportHistoryItem } from './report-history-item';
 
