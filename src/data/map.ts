@@ -74,8 +74,8 @@ export const getMockZones = (checkpoints: Checkpoint[]): Zone[] => {
   return [
     {
       id: 'zone1',
-      name: 'Administrative Zone',
-      color: '#4A90E2',
+      name: 'Mining Area',
+      color: 'bg-blue-500',
       checkpoints: [
         getCheckpoint('cp1'),
         getCheckpoint('cp2'),
@@ -85,7 +85,7 @@ export const getMockZones = (checkpoints: Checkpoint[]): Zone[] => {
     },
     {
       id: 'zone2',
-      name: 'Mining Operations Zone',
+      name: 'Operational Sector',
       color: '#E24A4A',
       checkpoints: [
         getCheckpoint('cp4'),
@@ -95,24 +95,14 @@ export const getMockZones = (checkpoints: Checkpoint[]): Zone[] => {
     },
     {
       id: 'zone3',
-      name: 'Processing Zone',
+      name: 'Restricted',
       color: '#50C878',
       checkpoints: [
         getCheckpoint('cp6'),
         getCheckpoint('cp7'),
         getCheckpoint('cp8'),
       ],
-    },
-    {
-      id: 'zone4',
-      name: 'Logistics & Transport Zone',
-      color: '#F5A623',
-      checkpoints: [
-        getCheckpoint('cp9'),
-        getCheckpoint('cp10'),
-        getCheckpoint('cp3'),
-      ],
-    },
+    }
   ];
 };
 
