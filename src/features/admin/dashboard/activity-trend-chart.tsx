@@ -1,5 +1,8 @@
+"use client"
+
 import { useState } from 'react'
 import { TrendingUp } from 'lucide-react'
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts'
 import { generateTodayData, generateYesterdayData, generateLast7DaysData } from '@/data/admin/dashboard'
 
 interface ActivityTrend {
@@ -54,7 +57,6 @@ export function ActivityTrendsChart({ trends }: ActivityTrendsChartProps) {
   }
 
   const displayData = getPeriodData(selectedPeriod)
-  const maxActivity = Math.max(...displayData.map(d => d.value))
 
   const periods: { value: Period; label: string }[] = [
     { value: 'today', label: 'Today' },
@@ -62,14 +64,21 @@ export function ActivityTrendsChart({ trends }: ActivityTrendsChartProps) {
     { value: 'last7days', label: 'Last 7 Days' },
   ]
 
-  const getLabelInterval = () => {
-    if (selectedPeriod === 'last7days') return 1 //  all days
-    return 4 //  every 4th hour 
+  const CustomTooltip = ({ active, payload }: any) => {
+    if (active && payload && payload.length) {
+      const data = payload[0].payload
+      return (
+        <div className="bg-gray-900 text-white text-xs rounded py-2 px-3 shadow-lg">
+          <p className="font-semibold">{data.fullLabel}</p>
+          <p>{data.value} users</p>
+        </div>
+      )
+    }
+    return null
   }
 
   return (
     <div className="rounded-lg border bg-white p-6 shadow-sm">
-  
       <div className="flex items-start justify-between mb-6">
         <div>
           <div className="flex items-center gap-2">
@@ -102,44 +111,30 @@ export function ActivityTrendsChart({ trends }: ActivityTrendsChartProps) {
         </div>
       </div>
 
-      <div className="relative">
-        <div className="h-64 flex items-end gap-1">
-          {displayData.map((item, index) => (
-            <div
-              key={index}
-              className="group relative flex-1 bg-blue-500 rounded-t hover:bg-blue-600 transition-colors cursor-pointer"
-              style={{ 
-                height: `${(item.value / maxActivity) * 100}%`,
-                minHeight: '20px'
-              }}
-            >
-           
-              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block z-10">
-                <div className="bg-gray-900 text-white text-xs rounded py-1 px-2 whitespace-nowrap">
-                  {item.fullLabel}: {item.value} users
-                </div>
-                <div className="w-2 h-2 bg-gray-900 rotate-45 absolute left-1/2 -translate-x-1/2 -bottom-1"></div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className="flex items-start gap-1 mt-2">
-          {displayData.map((item, index) => {
-            const showLabel = index % getLabelInterval() === 0
-            
-            return (
-              <div key={index} className="flex-1 text-center">
-                {showLabel && (
-                  <span className="text-xs text-gray-500">
-                    {item.label}
-                  </span>
-                )}
-              </div>
-            )
-          })}
-        </div>
-      </div>
+      <ResponsiveContainer width="100%" height={256}>
+        <BarChart data={displayData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+          <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" vertical={false} />
+          <XAxis 
+            dataKey="label" 
+            tick={{ fill: '#6b7280', fontSize: 12 }}
+            axisLine={{ stroke: '#e5e7eb' }}
+            tickLine={false}
+            interval={selectedPeriod === 'last7days' ? 0 : 3} // Show all days, every 4th hour
+          />
+          <YAxis 
+            tick={{ fill: '#6b7280', fontSize: 12 }}
+            axisLine={{ stroke: '#e5e7eb' }}
+            tickLine={false}
+          />
+          <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(59, 130, 246, 0.1)' }} />
+          <Bar 
+            dataKey="value" 
+            fill="#3b82f6" 
+            radius={[4, 4, 0, 0]}
+            maxBarSize={40}
+          />
+        </BarChart>
+      </ResponsiveContainer>
 
       <div className="mt-4 pt-4 border-t">
         <div className="flex items-center justify-between text-sm">
@@ -155,21 +150,6 @@ export function ActivityTrendsChart({ trends }: ActivityTrendsChartProps) {
             })()}
           </span>
         </div>
-      </div>
-    </div>
-  )
-}
-
-export default function ActivityTrendsDemo() {
-  const sampleTrends = Array.from({ length: 24 }, (_, i) => ({
-    hour: i,
-    value: Math.floor(Math.random() * 40) + 20
-  }))
-
-  return (
-    <div className="p-8 bg-gray-50 min-h-screen">
-      <div className="max-w-5xl mx-auto">
-        <ActivityTrendsChart trends={sampleTrends} />
       </div>
     </div>
   )
