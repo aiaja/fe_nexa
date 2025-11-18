@@ -1,9 +1,20 @@
-import React from 'react'
+import ExecutiveDashboard from "@/features/executive/page"
+import { 
+  dashboardStats,
+  dailyTarget,
+  efficiencyScore,
+  fleetInsights,
+  performanceTrendsData
+} from "@/data/executive/dashboard"
 
-function page() {
+export default function Page() {
   return (
-    <div>page</div>
+    <ExecutiveDashboard 
+      stats={dashboardStats}
+      dailyTarget={dailyTarget}
+      efficiencyScore={efficiencyScore}
+      fleetInsights={fleetInsights}
+      performanceTrends={performanceTrendsData}
+    />
   )
 }
-
-export default page

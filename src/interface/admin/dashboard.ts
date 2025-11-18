@@ -1,10 +1,29 @@
+// Single stat item
 export interface DashboardStats {
+  variant?: 'single'
   icon: string 
   label: string
   value: string
   subtitle: string
   color: string
+  trend?: {
+    value: string
+    isPositive: boolean
+  }
 }
+
+export interface DashboardStatsSplit {
+  variant: 'split'
+  items: Array<{
+    icon: string
+    label: string
+    value: string
+    subtitle: string
+    color: string
+  }>
+}
+
+export type DashboardStatsItem = DashboardStats | DashboardStatsSplit
 
 export interface SystemAlert {
   title: string
@@ -31,4 +50,10 @@ export interface UserDistribution {
 export interface ActivityTrend {
   hour: number
   value: number
+}
+
+export interface ChartDataPoint {
+  label: string
+  value: number
+  fullLabel: string
 }

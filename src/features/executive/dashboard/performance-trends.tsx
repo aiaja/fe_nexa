@@ -1,64 +1,43 @@
 "use client"
 
 import { useState } from 'react'
-import { TrendingUp } from 'lucide-react'
+import { BarChart3 } from 'lucide-react'
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts'
-import { generateTodayData, generateYesterdayData, generateLast7DaysData } from '@/data/admin/dashboard'
+import { PerformancePeriodData } from '@/interface/executive/dashboard' // ⭐ TAMBAH IMPORT
 
-interface ActivityTrend {
-  hour: number
-  value: number
-}
-
-interface ActivityTrendsChartProps {
-  trends: ActivityTrend[]
-}
-
-type Period = 'today' | 'yesterday' | 'last7days'
+type PeriodType = 'today' | 'yesterday' | 'last7days'
 
 interface ChartDataPoint {
   label: string
   value: number
+  fleetCount?: number
   fullLabel: string
 }
 
-export function ActivityTrendsChart({ trends }: ActivityTrendsChartProps) {
-  const [selectedPeriod, setSelectedPeriod] = useState<Period>('today')
+// ⭐ TAMBAH PROPS INTERFACE
+interface PerformanceTrendsChartProps {
+  trends: PerformancePeriodData
+}
 
-  const getPeriodData = (period: Period): ChartDataPoint[] => {
-    switch (period) {
-      case 'today':
-        const todayData = generateTodayData(trends)
-        return todayData.map(t => ({
-          label: `${t.hour}:00`,
-          value: t.value,
-          fullLabel: `${String(t.hour).padStart(2, '0')}:00`
-        }))
-      
-      case 'yesterday':
-        const yesterdayData = generateYesterdayData(trends)
-        return yesterdayData.map(t => ({
-          label: `${t.hour}:00`,
-          value: t.value,
-          fullLabel: `${String(t.hour).padStart(2, '0')}:00`
-        }))
-      
-      case 'last7days':
-        const weekData = generateLast7DaysData()
-        return weekData.map(d => ({
-          label: d.day,
-          value: d.value,
-          fullLabel: d.fullDay
-        }))
-      
-      default:
-        return []
-    }
+// ⭐ TERIMA PROPS
+export function PerformanceTrendsChart({ trends }: PerformanceTrendsChartProps) {
+  const [selectedPeriod, setSelectedPeriod] = useState<PeriodType>('today')
+
+  // ⭐ UBAH FUNCTION INI - pakai data dari props
+  const getPeriodData = (period: PeriodType): ChartDataPoint[] => {
+    const data = trends[period] // ambil dari props, bukan import
+    
+    return data.map(t => ({
+      label: t.hour,
+      value: t.value,
+      fleetCount: t.fleetCount,
+      fullLabel: t.hour
+    }))
   }
 
   const displayData = getPeriodData(selectedPeriod)
 
-  const periods: { value: Period; label: string }[] = [
+  const periods: { value: PeriodType; label: string }[] = [
     { value: 'today', label: 'Today' },
     { value: 'yesterday', label: 'Yesterday' },
     { value: 'last7days', label: 'Last 7 Days' },
@@ -70,7 +49,10 @@ export function ActivityTrendsChart({ trends }: ActivityTrendsChartProps) {
       return (
         <div className="bg-gray-900 text-white text-xs rounded py-2 px-3 shadow-lg">
           <p className="font-semibold">{data.fullLabel}</p>
-          <p>{data.value} users</p>
+          <p>{data.value}L consumed</p>
+          {data.fleetCount && (
+            <p>{data.fleetCount} fleet active</p>
+          )}
         </div>
       )
     }
@@ -82,13 +64,13 @@ export function ActivityTrendsChart({ trends }: ActivityTrendsChartProps) {
       <div className="flex items-start justify-between mb-6">
         <div>
           <div className="flex items-center gap-2">
-            <TrendingUp className="h-5 w-5 text-gray-600" />
-            <h3 className="text-lg font-semibold">Activity Trends</h3>
+            <BarChart3 className="h-5 w-5 text-gray-600" />
+            <h3 className="text-lg font-semibold">Performance Trends</h3>
           </div>
           <p className="text-sm text-gray-500 mt-1">
             {selectedPeriod === 'last7days' 
-              ? 'Active users per day' 
-              : 'Active users throughout the day'}
+              ? 'Fuel consumption per day' 
+              : 'Fuel consumption throughout the day (4-hourly)'}
           </p>
         </div>
 
@@ -119,7 +101,6 @@ export function ActivityTrendsChart({ trends }: ActivityTrendsChartProps) {
             tick={{ fill: '#6b7280', fontSize: 12 }}
             axisLine={{ stroke: '#e5e7eb' }}
             tickLine={false}
-            interval={selectedPeriod === 'last7days' ? 0 : 3} // Show all days, every 4th hour
           />
           <YAxis 
             tick={{ fill: '#6b7280', fontSize: 12 }}
@@ -146,7 +127,7 @@ export function ActivityTrendsChart({ trends }: ActivityTrendsChartProps) {
               const peak = displayData.reduce((max, curr) => 
                 curr.value > max.value ? curr : max
               )
-              return `${peak.fullLabel} (${peak.value} users)`
+              return `${peak.fullLabel} (${peak.value}L)`
             })()}
           </span>
         </div>
