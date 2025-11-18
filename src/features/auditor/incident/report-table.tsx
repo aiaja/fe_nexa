@@ -2,10 +2,12 @@
 
 import React from "react";
 import { IncidentReport } from "@/interface/auditor/incident-reports/incidents";
+import { DismissButton } from "@/features/auditor/incident/actions/dismiss-button";
 
 interface ReportTableProps {
   incidents: IncidentReport[];
   onInvestigate?: (id: string) => void;
+  onDismiss?: (id: string) => void;
 }
 
 const getPriorityBadgeColor = (priority: string) => {
@@ -23,7 +25,7 @@ const getPriorityBadgeColor = (priority: string) => {
   }
 };
 
-export function ReportTable({ incidents, onInvestigate }: ReportTableProps) {
+export function ReportTable({ incidents, onInvestigate, onDismiss }: ReportTableProps) {
   return (
     <div className="bg-white rounded-lg shadow-sm overflow-hidden">
       <div className="overflow-x-auto">
@@ -136,18 +138,12 @@ export function ReportTable({ incidents, onInvestigate }: ReportTableProps) {
                 </td>
 
                 <td className="px-4 py-4">
-                  <button
-                    className="text-gray-400 hover:text-gray-600"
-                    aria-label="More options"
-                  >
-                    <svg
-                      className="w-5 h-5"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
-                    </svg>
-                  </button>
+                  <DismissButton
+                    incidentId={incident.id}
+                    incidentTitle={incident.title}
+                    onDismissed={onDismiss}
+                    className="!px-0 !py-0 w-10 h-10 !bg-transparent"
+                  />
                 </td>
               </tr>
             ))}

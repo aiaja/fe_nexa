@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import { Search, Filter } from "lucide-react";
+import { Search, Filter } from 'lucide-react';
 import { ReportCard } from "@/features/auditor/incident/report-card";
 import { ReportTable } from "@/features/auditor/incident/report-table";
 import { ViewToggle } from "@/features/auditor/incident/view-toggle";
@@ -12,11 +12,12 @@ interface IncidentReportsProps {
   incidents: IncidentReport[];
 }
 
-export default function IncidentReports({ incidents }: IncidentReportsProps) {
+export default function IncidentReports({ incidents: initialIncidents }: IncidentReportsProps) {
   const [view, setView] = useState<"card" | "table">("card");
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState(20);
   const [searchQuery, setSearchQuery] = useState("");
+  const [incidents, setIncidents] = useState(initialIncidents);
 
   // Filter incidents based on search
   const filteredIncidents = useMemo(() => {
@@ -56,7 +57,10 @@ export default function IncidentReports({ incidents }: IncidentReportsProps) {
 
   const handleDismiss = (id: string) => {
     console.log("Dismiss:", id);
-    // Add your dismiss logic here
+    // Remove the incident from the list
+    setIncidents(prevIncidents => 
+      prevIncidents.filter(incident => incident.id !== id)
+    );
   };
 
   const handlePageChange = (page: number) => {
@@ -125,6 +129,7 @@ export default function IncidentReports({ incidents }: IncidentReportsProps) {
             <ReportTable
               incidents={paginatedIncidents}
               onInvestigate={handleInvestigate}
+              onDismiss={handleDismiss}
             />
           )}
 

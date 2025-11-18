@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState } from 'react';
@@ -28,7 +29,6 @@ export function QuickConfirmButton({
 
     setIsConfirming(true);
 
-    // Simulate API call
     setTimeout(() => {
       setIsConfirming(false);
       
@@ -36,8 +36,7 @@ export function QuickConfirmButton({
         onConfirmed(incidentId);
       }
 
-      // Navigate to resolve page
-      router.push(`/auditor/incidents/${incidentId}/resolve`);
+      router.push(`/auditor/incident/${incidentId}/resolve`);
     }, 500);
   };
 

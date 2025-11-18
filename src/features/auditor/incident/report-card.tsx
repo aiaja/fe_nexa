@@ -2,6 +2,7 @@
 
 import React from "react";
 import { IncidentReport } from "@/interface/auditor/incident-reports/incidents";
+import { DismissButton } from "@/features/auditor/incident/actions/dismiss-button";
 
 interface ReportCardProps {
   incident: IncidentReport;
@@ -103,8 +104,7 @@ export function ReportCard({
                 : "text-blue-600"
             }`}
           >
-            {incident.severity.level} ({incident.severity.confidence}%
-            confidence)
+            {incident.severity.level} ({incident.severity.confidence}% confidence)
           </p>
         </div>
       </div>
@@ -141,12 +141,13 @@ export function ReportCard({
         >
           Quick Confirm
         </button>
-        <button
-          onClick={() => onDismiss?.(incident.id)}
-          className="flex-1 bg-white text-gray-700 px-4 py-2 rounded-lg text-sm font-medium border border-gray-300 hover:bg-gray-50 transition-colors"
-        >
-          Dismiss
-        </button>
+        <DismissButton
+          incidentId={incident.id}
+          incidentTitle={incident.title}
+          onDismissed={onDismiss}
+          fullWidth
+          className="flex-1 !p-2"
+        />
       </div>
     </div>
   );
