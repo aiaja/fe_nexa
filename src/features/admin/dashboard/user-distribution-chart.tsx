@@ -1,3 +1,5 @@
+import { useState } from 'react'
+import { Users } from 'lucide-react'
 import { UserDistribution } from "@/interface/admin/dashboard"
 
 interface UserDistributionChartProps {
@@ -5,10 +7,18 @@ interface UserDistributionChartProps {
 }
 
 export function UserDistributionChart({ distribution }: UserDistributionChartProps) {
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
+  
+  const totalUsers = distribution.reduce((sum, item) => sum + item.count, 0)
+
   return (
-    <div className="rounded-lg border bg-white p-6 shadow-sm lg:col-span-2">
-      <h3 className="text-lg font-semibold mb-4">User Distribution</h3>
-      <div className="flex items-center justify-center mb-4">
+    <div className="rounded-lg border bg-white p-6 shadow-sm">
+      <div className="flex items-center gap-2 mb-4">
+        <Users className="h-5 w-5 text-gray-600" />
+        <h3 className="text-lg font-semibold">User Distribution by Role</h3>
+      </div>
+
+      <div className="flex items-center justify-center mb-6">
         <div className="relative w-48 h-48">
           <svg viewBox="0 0 100 100" className="transform -rotate-90">
             {distribution.map((item, index) => {
@@ -33,27 +43,60 @@ export function UserDistributionChart({ distribution }: UserDistributionChartPro
                 `Z`
               ].join(' ')
               
+              const isHovered = hoveredIndex === index
+              
               return (
                 <path
                   key={index}
                   d={pathData}
                   fill={item.color}
+                  className="cursor-pointer transition-opacity duration-200"
+                  style={{ 
+                    opacity: hoveredIndex === null ? 1 : isHovered ? 1 : 0.4,
+                    filter: isHovered ? 'brightness(1.1)' : 'none'
+                  }}
+                  onMouseEnter={() => setHoveredIndex(index)}
+                  onMouseLeave={() => setHoveredIndex(null)}
                 />
               )
             })}
           </svg>
         </div>
       </div>
+
       <div className="space-y-2">
-        {distribution.map((item, index) => (
-          <div key={index} className="flex items-center justify-between text-sm">
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }}></div>
-              <span className="text-gray-600">{item.role}</span>
+        {distribution.map((item, index) => {
+          const isHovered = hoveredIndex === index
+          
+          return (
+            <div
+              key={index}
+              className={`
+                flex items-center justify-between text-sm p-2 rounded-lg transition-all cursor-pointer
+                ${isHovered ? 'bg-gray-50' : ''}
+              `}
+              onMouseEnter={() => setHoveredIndex(index)}
+              onMouseLeave={() => setHoveredIndex(null)}
+            >
+              <div className="flex items-center gap-2">
+                <div 
+                  className="w-3 h-3 rounded-full transition-transform"
+                  style={{ 
+                    backgroundColor: item.color,
+                    transform: isHovered ? 'scale(1.3)' : 'scale(1)'
+                  }}
+                />
+                <span className={`text-gray-600 ${isHovered ? 'font-medium' : ''}`}>
+                  {item.role}
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="font-medium text-gray-900">{item.count}</span>
+                <span className="text-xs text-gray-500">({item.percentage.toFixed(1)}%)</span>
+              </div>
             </div>
-            <span className="font-medium">({item.count})</span>
-          </div>
-        ))}
+          )
+        })}
       </div>
     </div>
   )
