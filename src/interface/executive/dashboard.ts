@@ -5,19 +5,22 @@ export interface DashboardStats {
   trend?: string | null  
   trendUp?: boolean 
   subtitle?: string  
-  isAlert?: boolean  
+  isAlert?: boolean
+  clickable?: boolean      
+  onClick?: () => void    
 }
 
-export interface DailyTarget{
+export interface DailyTarget {
   percentage: number  
   target: number
-  status: string 
+  status: "On track" | "At risk" | "Behind" 
 }
 
-export interface EfficiencyScore{
+export interface EfficiencyScore {
   score: number  
   maxScore: number
-  change: string 
+  change: string
+  changePositive: boolean  
 }
 
 export interface FleetInsights {
@@ -32,4 +35,7 @@ export interface FleetInsights {
 export interface PerformanceTrend {
   hour: string
   value: number
+  fleetCount?: number  
 }
+
+export type PeriodType = "today" | "yesterday" | "last7days"  
