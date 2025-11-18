@@ -72,7 +72,7 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
 
   return (
     <Sidebar collapsible="offcanvas" {...props}>
-      <SidebarHeader className="px-2 py-4">
+      <SidebarHeader className="px-2 py-1">
         {isSuperAdmin ? (
           // with dropdown
           <DropdownMenu>
