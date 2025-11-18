@@ -1,6 +1,6 @@
 "use client"
 
-import DriverManagementPage from '@/features/manager/(fleet-driver)/driver/fleet-data'
+import DriverManagementPage from '@/features/manager/(fleet-driver)/driver/driver-data'
 import { driverManagementData } from '@/data/manager/driver-management'
 
 function page() {
