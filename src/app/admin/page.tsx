@@ -1,7 +1,6 @@
 import SuperAdminDashboard from "@/features/admin/page"
 import { 
-  dashboardStats, 
-  systemAlerts, 
+  dashboardStats,  
   activityLogs, 
   userDistribution,
   activityTrends 
