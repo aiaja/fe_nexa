@@ -3,7 +3,7 @@ import { Report } from "@/interface/executive/report"
 export const reports: Report[] = [
   {
     id: '1',
-    title: 'October 2024',
+    title: 'October 2024 Executive Report',
     month: 'October',
     year: 2024,
     generatedDate: 'Nov 01, 2024 00:00',
