@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { AlertTriangle, X } from "lucide-react";
+import { AlertTriangle, X } from 'lucide-react';
 
 interface DismissButtonProps {
   incidentId: string;
@@ -23,7 +23,8 @@ export function DismissButton({
   const [showAlert, setShowAlert] = useState(false);
   const [isDismissing, setIsDismissing] = useState(false);
 
-  const handleInitialClick = () => {
+  const handleInitialClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
     setShowAlert(true);
   };
 
@@ -56,18 +57,31 @@ export function DismissButton({
     "px-4 py-2 rounded-lg text-sm font-medium transition-colors border";
   const widthClass = fullWidth ? "w-full" : "";
 
+  const isIconOnly = className?.includes("w-10");
+
   return (
     <>
       <button
         onClick={handleInitialClick}
-        className={`${baseClasses} ${widthClass} ${className} bg-white text-gray-700 border-gray-300 hover:bg-gray-50`}
+        className={`${isIconOnly ? "p-0 rounded border-0 text-gray-400 hover:text-gray-600" : `${baseClasses} ${widthClass}`} ${className} ${!isIconOnly ? "bg-white text-gray-700 border-gray-300 hover:bg-gray-50" : ""}`}
+        title={isIconOnly ? "Dismiss incident" : undefined}
       >
-        Dismiss
+        {isIconOnly ? (
+          <svg
+            className="w-5 h-5"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+          >
+            <path d="M10.5 1.5H5.75A2.75 2.75 0 003 4.25v11A2.75 2.75 0 005.75 18h8.5A2.75 2.75 0 0017 15.25v-8.5m-5.25-5v5m0 0H8m4 0h4M3 10h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+          </svg>
+        ) : (
+          "Dismiss"
+        )}
       </button>
 
       {/* Alert Modal */}
       {showAlert && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-400/25">
           <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 p-6">
             {/* Alert Header */}
             <div className="flex items-start gap-4 mb-4">
