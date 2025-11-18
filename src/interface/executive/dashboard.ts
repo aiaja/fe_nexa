@@ -33,9 +33,15 @@ export interface FleetInsights {
 }
 
 export interface PerformanceTrend {
-  hour: string
+  hour: string  
   value: number
   fleetCount?: number  
 }
 
-export type PeriodType = "today" | "yesterday" | "last7days"  
+export type PeriodType = "today" | "yesterday" | "last7days"
+
+export interface PerformancePeriodData {
+  today: PerformanceTrend[]
+  yesterday: PerformanceTrend[]
+  last7days: PerformanceTrend[]
+}
