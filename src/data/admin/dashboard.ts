@@ -1,16 +1,64 @@
 import { 
-  DashboardStats, 
+  DashboardStatsItem,
+  SystemAlert, 
   ActivityLog, 
   UserDistribution,
   ActivityTrend 
 } from "@/interface/admin/dashboard"
 
-export const dashboardStats: DashboardStats[] = [
-  { icon: "Users", label: "Total User", value: "78", subtitle: "Data Overview", color: "text-blue-600" },
-  { icon: "Truck", label: "Total Fleet", value: "63", subtitle: "Data Overview", color: "text-orange-600" },
-  { icon: "UserCircle", label: "Total Driver", value: "55", subtitle: "Data Overview", color: "text-purple-600" },
+export const dashboardStats: DashboardStatsItem[] = [
+  // Single stat - Total User with trend
+  { 
+    variant: 'single',
+    icon: "Users", 
+    label: "Total User", 
+    value: "84", 
+    subtitle: "Data Overview", 
+    color: "text-blue-600",
+    trend: {
+      value: "+5 this month",
+      isPositive: true
+    }
+  },
+  
+  // Split stat - Fleet & Driver combined
+  {
+    variant: 'split',
+    items: [
+      {
+        icon: "Truck",
+        label: "Total Fleet",
+        value: "63",
+        subtitle: "Trucks",
+        color: "text-orange-600"
+      },
+      {
+        icon: "UserCircle",
+        label: "Total Driver",
+        value: "55",
+        subtitle: "Drivers",
+        color: "text-purple-600"
+      }
+    ]
+  }
 ]
 
+export const systemAlerts: SystemAlert[] = [
+  { 
+    title: "System Update", 
+    message: "Scheduled maintenance tonight at 11 PM",
+    type: "info",
+    bgColor: "bg-blue-50",
+    borderColor: "border-blue-200"
+  },
+  { 
+    title: "Performance Excellent", 
+    message: "All systems operating optimally",
+    type: "success",
+    bgColor: "bg-green-50",
+    borderColor: "border-green-200"
+  },
+]
 
 export const activityLogs: ActivityLog[] = [
   { name: "Amanda Wan", role: "Supervisor", action: "Logged in to system", time: "22:02" },
@@ -32,3 +80,26 @@ export const activityTrends: ActivityTrend[] = Array.from({ length: 24 }, (_, i)
   hour: i,
   value: Math.floor(Math.random() * 40) + 20
 }))
+
+// Mock data generators for different periods
+export const generateTodayData = (baseData: ActivityTrend[]): ActivityTrend[] => {
+  return baseData
+}
+
+export const generateYesterdayData = (baseData: ActivityTrend[]): ActivityTrend[] => {
+  return baseData.map(t => ({
+    ...t,
+    value: Math.max(10, t.value - Math.floor(Math.random() * 10))
+  }))
+}
+
+export const generateLast7DaysData = (): { day: string; fullDay: string; value: number }[] => {
+  const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+  const fullDaysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+  
+  return daysOfWeek.map((day, index) => ({
+    day,
+    fullDay: fullDaysOfWeek[index],
+    value: Math.floor(Math.random() * 200) + 150 
+  }))
+}

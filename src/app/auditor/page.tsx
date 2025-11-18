@@ -1,8 +1,15 @@
-import React from 'react'
+import AuditorDashboard from '@/features/auditor/dashboard';
+
+import { dashboardItem, anomalyItem, fleetItem, incidentItem } from '@/data/auditor/dashboard'
 
 function page() {
   return (
-    <div>page</div>
+    <AuditorDashboard 
+      card={dashboardItem}
+      anomaly={anomalyItem}
+      fleet={fleetItem}
+      incident={incidentItem}
+    />
   )
 }
 

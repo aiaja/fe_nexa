@@ -1,9 +1,36 @@
+// Single stat item
 export interface DashboardStats {
+  variant?: 'single'
   icon: string 
   label: string
   value: string
   subtitle: string
   color: string
+  trend?: {
+    value: string
+    isPositive: boolean
+  }
+}
+
+export interface DashboardStatsSplit {
+  variant: 'split'
+  items: Array<{
+    icon: string
+    label: string
+    value: string
+    subtitle: string
+    color: string
+  }>
+}
+
+export type DashboardStatsItem = DashboardStats | DashboardStatsSplit
+
+export interface SystemAlert {
+  title: string
+  message: string
+  type: "info" | "success" | "warning" | "error"
+  bgColor: string
+  borderColor: string
 }
 
 export interface ActivityLog {
@@ -25,36 +52,8 @@ export interface ActivityTrend {
   value: number
 }
 
-export interface DailyTarget {
-  percentage: number
-  target: number
-  status: string
-}
-
-export interface EfficiencyScore {
-  score: number
-  maxScore: number
-  change: string
-  changePositive: boolean
-}
-
-export interface FleetInsights {
-  id: string
-  icon: string
-  iconColor: string
-  title: string
-  description: string
-  action: string
-}
-
-export interface PerformanceTrend {
-  hour: string
+export interface ChartDataPoint {
+  label: string
   value: number
-  fleetCount: number
-}
-
-export interface PerformancePeriodData {
-  today: PerformanceTrend[]
-  yesterday: PerformanceTrend[]
-  last7days: PerformanceTrend[]
+  fullLabel: string
 }

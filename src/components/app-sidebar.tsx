@@ -37,17 +37,13 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
           />
         </a>
       </SidebarHeader>
-      
+
       <SidebarContent>
         <NavMain items={navigationItems} />
       </SidebarContent>
-      
+
       <SidebarFooter>
-        <Button 
-          variant="destructive" 
-          onClick={handleLogout}
-          className="w-full"
-        >
+        <Button variant="destructive" onClick={handleLogout} className="w-full">
           Logout
         </Button>
       </SidebarFooter>
