@@ -1,8 +1,9 @@
 import React from 'react'
+import LiveMaps from '@/features/manager/(maps-routes)/maps/LiveMaps'
 
 function page() {
   return (
-    <div>page</div>
+    <div><LiveMaps></LiveMaps></div>
   )
 }
 
