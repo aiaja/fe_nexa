@@ -32,14 +32,7 @@ const MapVisualizer = dynamic(() => import("@/components/Map"), {
   ssr: false,
   loading: () => (
     <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        height: "100vh",
-        fontSize: "18px",
-        color: "#666",
-      }}
+    className="flex justify-center items-center h-100vh text-lg"
     >
       Loading Map...
     </div>
@@ -199,13 +192,11 @@ function Dashboard({
         Live Maps & Anomaly Alerts
       </div>
       <div className="grid grid-cols-2 gap-2">
-        <Card className="gap-0 bg-slate-500">
           <MapVisualizer
             zones={zones}
             checkpoints={checkpoints}
             routes={routes}
           />
-        </Card>
         <div className="grid grid-cols-1 gap-2">
           {anomalyItems.map((item) => {
             return (
