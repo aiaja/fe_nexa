@@ -38,7 +38,6 @@ export default function DriverMaster({ driverItems: initialDriverItems }: Driver
     assignmentStatus: 'all'
   })
 
-  // Load data from localStorage on mount
   useEffect(() => {
     loadDriversData()
   }, [])
@@ -50,16 +49,13 @@ export default function DriverMaster({ driverItems: initialDriverItems }: Driver
       if (savedData) {
         const parsedData = JSON.parse(savedData)
         
-        // Check if it's new format (with drivers and deletedIds)
         if (parsedData.drivers && Array.isArray(parsedData.drivers)) {
           setDriverItems(parsedData.drivers)
           setDeletedIds(parsedData.deletedIds || [])
         } else {
-          // Old format (just array of drivers)
           setDriverItems(parsedData)
         }
       } else {
-        // No saved data, use initial data
         setDriverItems(initialDriverItems)
         saveToStorage(initialDriverItems, [])
       }
@@ -72,7 +68,6 @@ export default function DriverMaster({ driverItems: initialDriverItems }: Driver
     }
   }
 
-  // Save to localStorage
   const saveToStorage = (updatedDrivers: DriverData[], updatedDeletedIds?: string[]) => {
     try {
       const dataToSave = {
@@ -95,7 +90,6 @@ export default function DriverMaster({ driverItems: initialDriverItems }: Driver
   const filteredData = useMemo(() => {
     let result = activeDriverItems
 
-    // Search filter
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase()
       result = result.filter(driver =>
@@ -106,17 +100,14 @@ export default function DriverMaster({ driverItems: initialDriverItems }: Driver
       )
     }
 
-    // SIM Type filter
     if (filters.licenses.length > 0) {
       result = result.filter(driver => filters.licenses.includes(driver.license))
     }
 
-    // Status filter
     if (filters.statuses.length > 0) {
       result = result.filter(driver => filters.statuses.includes(driver.status))
     }
 
-    // Assignment filter
     if (filters.assignmentStatus === 'assigned') {
       result = result.filter(driver => driver.assignedTruck !== undefined)
     } else if (filters.assignmentStatus === 'unassigned') {
@@ -137,6 +128,21 @@ export default function DriverMaster({ driverItems: initialDriverItems }: Driver
     setIsEditOpen(true)
   }
 
+  const handleToggleStatus = (driver: DriverData) => {
+    const newStatus = driver.status === 'Active' ? 'Suspended' : 'Active'
+    const updatedDriver = { ...driver, status: newStatus as DriverData['status'] }
+    
+    const updatedDrivers = driverItems.map(d => 
+      d.id === driver.id ? updatedDriver : d
+    )
+    setDriverItems(updatedDrivers)
+    saveToStorage(updatedDrivers)
+    
+    toast.success(`Driver ${newStatus === 'Active' ? 'activated' : 'suspended'} successfully!`, {
+      description: `${driver.name} is now ${newStatus.toLowerCase()}`
+    })
+  }
+
   const handleSelectionChange = (rows: DriverData[]) => {
     setSelectedRows(rows)
   }
@@ -154,7 +160,6 @@ export default function DriverMaster({ driverItems: initialDriverItems }: Driver
     setDeletedIds(updatedDeletedIds)
     setSelectedRows([])
 
-    // Save to storage
     saveToStorage(driverItems, updatedDeletedIds)
 
     toast.success(`${count} driver${count > 1 ? "s" : ""} deleted successfully!`, {
@@ -166,7 +171,6 @@ export default function DriverMaster({ driverItems: initialDriverItems }: Driver
     const updatedDrivers = [...driverItems, newDriver]
     setDriverItems(updatedDrivers)
     
-    // Save to storage
     saveToStorage(updatedDrivers)
     
     toast.success("Driver added successfully!", {
@@ -180,7 +184,6 @@ export default function DriverMaster({ driverItems: initialDriverItems }: Driver
     )
     setDriverItems(updatedDrivers)
     
-    // Save to storage
     saveToStorage(updatedDrivers)
     
     toast.success("Driver updated successfully!", {
@@ -254,6 +257,9 @@ export default function DriverMaster({ driverItems: initialDriverItems }: Driver
         position={actionPosition}
         onEditClick={handleEditClick}
         detailPath="/admin/driver"
+        onToggleStatus={handleToggleStatus}
+        statusKey="status"
+        activeStatusValue="Active"
       />
 
       <DeleteConfirmationModal
