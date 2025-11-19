@@ -1,8 +1,10 @@
-import React from 'react'
+"use client"
+import FleetManagementPage from '@/features/manager/(fleet-driver)/fleet/fleet-data'
+import { fleetManagementData } from '@/data/manager/fleet-management'
 
 function page() {
   return (
-    <div>page</div>
+    <div><FleetManagementPage fleetItems={fleetManagementData}/></div>
   )
 }
 

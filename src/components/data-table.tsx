@@ -25,6 +25,7 @@ interface DataTableProps<TData, TValue> {
   data: TData[]
   onSelectionChange?: (rows: TData[]) => void
   onActionClick?: (row: TData, position: { top: number; left: number }) => void
+  pageSize?: number
 }
 
 export function DataTable<TData, TValue>({
@@ -32,6 +33,7 @@ export function DataTable<TData, TValue>({
   data,
   onSelectionChange,
   onActionClick,
+  pageSize = 20,
 }: DataTableProps<TData, TValue>) {
 
   const table = useReactTable({
@@ -41,7 +43,7 @@ export function DataTable<TData, TValue>({
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     initialState: {
-      pagination: { pageSize: 20 },
+      pagination: { pageSize: pageSize },
       sorting: [],
     },
     meta: {

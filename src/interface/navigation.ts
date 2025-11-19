@@ -12,6 +12,12 @@ export interface NavItem {
   items?: NavSubItem[];
 }
 
+export interface RoleConfig {
+  label: string;
+  icon: LucideIcon;
+  path: string;
+}
+
 export type UserRole = 
   | "admin" 
   | "executive" 
