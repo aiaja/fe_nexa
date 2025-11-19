@@ -9,8 +9,11 @@ import {
   Map,
   Fuel,
   LayoutDashboard,
+  Shield,
+  Pickaxe,
+  UserCog,
 } from "lucide-react";
-import type { NavItem, UserRole } from "@/interface/navigation";
+import type { NavItem, UserRole, RoleConfig } from "@/interface/navigation";
 
 
 const adminItems: NavItem[] = [
@@ -157,6 +160,29 @@ export const NAVIGATION_MAP: Record<UserRole, NavItem[]> = {
   "auditor": auditorItems,
   "manager": managerItems,
   guest: guestItems,
+} as const;
+
+export const ROLE_CONFIG: Record<Exclude<UserRole, "guest">, RoleConfig> = {
+  admin: {
+    label: "Admin",
+    icon: Shield,
+    path: "/admin",
+  },
+  manager: {
+    label: "Fleet Manager",
+    icon: Truck,
+    path: "/manager",
+  },
+  auditor: {
+    label: "Internal Auditor",
+    icon: Pickaxe,
+    path: "/auditor",
+  },
+  executive: {
+    label: "Mining Company Manager",
+    icon: UserCog,
+    path: "/executive",
+  },
 } as const;
 
 export const getNavigationByRole = (role: UserRole): NavItem[] => {

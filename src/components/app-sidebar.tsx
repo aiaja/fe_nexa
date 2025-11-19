@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { NavMain } from "@/components/nav-main";
+import { NavMain } from "@/data/nav-main";
 import {
   Sidebar,
   SidebarContent,
@@ -11,6 +11,12 @@ import {
 } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import {
+  getNavigationByRole,
+  getRoleFromPathname,
+  NAVIGATION_MAP,
+  ROLE_CONFIG,
+} from "@/data/navigation";
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -18,8 +24,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ChevronsUpDown, Truck, Shield, Pickaxe, UserCog } from "lucide-react";
-import { getNavigationByRole, getRoleFromPathname } from "@/data/navigation";
+import { ChevronsUpDown } from "lucide-react";
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {}
 
@@ -28,9 +33,17 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
   const router = useRouter();
   const currentRole = getRoleFromPathname(pathname);
   const navigationItems = getNavigationByRole(currentRole);
+
+  const isSuperAdmin = pathname.startsWith("/admin");
   
-  // Check if current path is admin (super admin)
-  const isSuperAdmin = pathname.startsWith('/admin');
+  const roleOptions = Object.entries(ROLE_CONFIG).map(([role, config]) => ({
+    value: role,
+    ...config,
+  }));
+
+  const handleRoleSwitch = (path: string) => {
+    router.push(path);
+  };
 
   const handleLogout = () => {
     // Implement logout logic here
@@ -39,59 +52,29 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
     // window.location.href = '/login';
   };
 
-  const roleOptions = [
-    { 
-      label: "Fleet Manager", 
-      value: "fleet-manager", 
-      path: "/manager",
-      icon: Truck 
-    },
-    { 
-      label: "Internal Auditor", 
-      value: "internal-auditor", 
-      path: "/auditor",
-      icon: Shield 
-    },
-    { 
-      label: "Mining Company Management", 
-      value: "mining-company", 
-      path: "/executive",
-      icon: Pickaxe 
-    },
-    { 
-      label: "Super Admin", 
-      value: "super-admin", 
-      path: "/admin",
-      icon: UserCog 
-    },
-  ];
-
-  const handleRoleSwitch = (path: string) => {
-    router.push(path);
-  };
-
   return (
     <Sidebar collapsible="offcanvas" {...props}>
-      <SidebarHeader className="px-2 py-1">
+      <SidebarHeader className="items-center">
         {isSuperAdmin ? (
-          // with dropdown
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="flex items-center gap-3 px-4 py-3 bg-white rounded-lg shadow-lg w-full outline-none focus:outline-none focus:ring-0">
-                <img 
-                  src="/nexa.svg" 
-                  alt="Nexa Logo" 
-                  className="h-6 w-auto shrink-0"
-                />
-                
-                <span className="text-base font-semibold text-gray-800 flex-1 text-left">
-                  Diesel Track
-                </span>
-                
+              <Button className="w-full justify-between p-6" variant="outline">
+                <div className="flex flex-wrap gap-2">
+                  <img
+                    src="/nexa.svg"
+                    alt="Nexa Logo"
+                    className="h-6 w-auto shrink-0"
+                  />
+
+                  <span className="text-base font-semibold text-gray-800 flex-1 text-left">
+                    Diesel Track
+                  </span>
+                </div>
+
                 <ChevronsUpDown className="h-4 w-4 text-gray-500" />
-              </button>
+              </Button>
             </DropdownMenuTrigger>
-            
+
             <DropdownMenuContent align="start" className="w-64">
               <DropdownMenuLabel>Akses Layanan</DropdownMenuLabel>
               <DropdownMenuSeparator />
@@ -113,18 +96,19 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
             </DropdownMenuContent>
           </DropdownMenu>
         ) : (
-          // without dropdown
-          <div className="flex items-center gap-3 px-4 py-3 bg-white rounded-lg shadow-lg w-full outline-none focus:outline-none focus:ring-0">
-            <img 
-              src="/nexa.svg" 
-              alt="Nexa Logo" 
-              className="h-6 w-auto shrink-0"
-            />
-            
-            <span className="text-base font-semibold text-gray-900">
-              Diesel Track
-            </span>
-          </div>
+          <Button className="w-full justify-center p-6" variant="outline">
+            <div className="flex flex-wrap gap-2">
+              <img
+                src="/nexa.svg"
+                alt="Nexa Logo"
+                className="h-6 w-auto shrink-0"
+              />
+
+              <span className="text-base font-semibold text-gray-800 flex-1 text-left">
+                Diesel Track
+              </span>
+            </div>
+          </Button>
         )}
       </SidebarHeader>
 
