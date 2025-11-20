@@ -1,8 +1,10 @@
-import React from 'react'
+"use client"
+import RefuelingLogbookPage from '@/features/manager/refueling/refueling-data'
+import { refuelingLogbook } from '@/data/manager/refueling-logbook'
 
 function page() {
   return (
-    <div>page</div>
+    <div><RefuelingLogbookPage refuelingItems={refuelingLogbook}/></div>
   )
 }
 
