@@ -2,9 +2,9 @@ export interface DriverManagement {
   id: string;                    
   name: string;            
   phone: string;                     
-  assigned_fleet: string;
+  assigned_fleet: string; //ganti jadi assignedFleets
   hos: number;
-  cur_location: string;                  
+  cur_location: string;   //takeout               
   status: DriverDeliveryStatus;              
 }
 

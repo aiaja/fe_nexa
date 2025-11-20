@@ -5,9 +5,9 @@ export type ResolutionType =
   | 'no_violation';
 
 export interface ResolutionOption {
-  id: ResolutionType;
-  title: string;
-  description: string;
+  id: ResolutionType; //id sendiri
+  title: string; //ResolutionType
+  description: string; //ini isi notesnya diganti jadi notes
   icon: string;
   bgColor: string;
   iconBg: string;

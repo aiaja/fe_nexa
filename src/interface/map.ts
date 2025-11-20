@@ -6,25 +6,35 @@ export type GeoJsonPoint = {
   lng: number;
 };
 
-export interface Checkpoint {
-  id: string;
-  name: string;
-  location: GeoJsonPoint;
-  zoneId: string;
-}
-
 export interface Zone {
   id: string;
   name: string;
+  //tambah type: Zone Type ENUM (Mining area, operational area, restricted area, fuel station)
+  // coordinate : lat, lng
   color: string;
-  checkpoints: Checkpoint[];
+  //radius: 
+  checkpoints: Checkpoint[]; //takeout
+}
+
+export interface Checkpoint {
+  id: string;
+  zoneId: string;
+  name: string;
+  //tambah radius
+  location: GeoJsonPoint; //ganti ke coordinate
 }
 
 export interface Route {
   id: string;
   name: string;
-  checkpoints: Checkpoint[];
+  //tambah distance
+  //startPoint
+  //endPoint
+  //estimatedTime
+  checkpoints: Checkpoint[]; //ganti jadi routeCheckpoints ambil table baru
 }
+
+//RouteCheckpoint: id, routeId, checkpointId, sequence, estimatedTimeFromPrevious, distanceFromPrevious
 
 export interface MapVisualizerProps {
   zones: Zone[];

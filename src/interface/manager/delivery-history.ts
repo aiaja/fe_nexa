@@ -1,7 +1,10 @@
 export interface DeliveryHistory {
-    date: Date;
-    id: string;                    
-  name: string;            
+  id: string;     
   fleet_id: string;
+  //driverId 
+  //routeId
+  //scheduleId
+    date: Date;
+  name: string;  //takeout          
   location: string;
 }

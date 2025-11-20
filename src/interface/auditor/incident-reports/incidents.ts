@@ -13,10 +13,14 @@ export interface Fleet{
 }
 
 export interface IncidentReport {
-  id: string;
+  id: string; 
+  //tambah caseNumber
+  //tambah fleetId 
+  //tambah driverId
+  //tambah zoneId
   title: string;
-  vehicleName: string;
-  priority: IncidentPriority;
+  vehicleName: string; //diganti ke fleetID aja
+  priority: IncidentPriority; //take out
   category: IncidentCategory;
   detectionDate: string;
   driver: Driver;
@@ -24,6 +28,6 @@ export interface IncidentReport {
   severity: {
     level: IncidentPriority;
     confidence: number;
-  }
+  } //dipecah severity sendiri, confidence sendiri 
   keyIndicators: string[];
 }

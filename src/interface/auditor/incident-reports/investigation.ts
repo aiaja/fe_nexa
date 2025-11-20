@@ -1,11 +1,12 @@
-export interface RouteTimelineEvent {
+export interface RouteTimelineEvent { //IncidentInvestigationLog 
   id: string;
+  //tambah incidentId
   time: string;
-  location: string;
-  type: 'depot' | 'checkpoint' | 'anomaly';
-  status: 'normal' | 'warning' | 'critical';
-  tankLevel: number;
-  tankCapacity: number;
+  location: string; //dapet dari incident
+  type: 'depot' | 'checkpoint' | 'anomaly'; //takeout
+  status: 'normal' | 'warning' | 'critical'; //ganti severity dapet dr incident 
+  tankLevel: number; //takeout
+  tankCapacity: number; //takeout
   details: string[];
 }
 
