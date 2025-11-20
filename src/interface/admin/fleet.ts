@@ -1,6 +1,6 @@
 export interface FleetData {
   id: string
-  plateNumber: string
+  plateNumber: string 
   photo?: string
   type: FleetType
   brands: string
