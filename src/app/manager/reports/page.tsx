@@ -1,8 +1,10 @@
-import React from 'react'
+"use client"
+import ReportTablePage from '@/features/manager/reports/report-data'
+import { reportTable } from '@/data/manager/reports'
 
 function page() {
   return (
-    <div>page</div>
+    <div><ReportTablePage reportItems={reportTable}/></div>
   )
 }
 
