@@ -1,9 +1,11 @@
-import React from 'react'
+import React from 'react';
+import ReportsFeaturePage from '@/features/auditor/reports/page';
 
-function page() {
-  return (
-    <div>page</div>
-  )
+export const metadata = {
+  title: 'Reports | Auditor',
+  description: 'View and manage resolved incident cases',
+};
+
+export default function ReportsPage() {
+  return <ReportsFeaturePage />;
 }
-
-export default page

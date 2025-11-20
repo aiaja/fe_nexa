@@ -1,37 +1,35 @@
-"use client";
+'use client';
 
 import React from 'react';
-import { AlertCircle, User, Truck, CheckCircle } from 'lucide-react';
-import { ResolutionOption } from '@/interface/auditor/incident-reports/resolve';
+import { CheckCircle } from 'lucide-react';
+import { ResolutionOption as ImportedResolutionOption } from '@/interface/auditor/incident-reports/resolve';
+
+// UI-enhanced version of ResolutionOption
+interface UIResolutionOption extends Omit<ImportedResolutionOption, 'icon'> {
+  icon: React.ReactNode;
+  bgColor: string;
+  iconColor: string;
+}
 
 interface ResolutionCardProps {
-  option: ResolutionOption;
+  option: UIResolutionOption;
   isSelected: boolean;
   onClick: () => void;
 }
 
-const iconMap = {
-  'alert-circle': AlertCircle,
-  'user': User,
-  'truck': Truck,
-  'check-circle': CheckCircle
-};
-
 export function ResolutionCard({ option, isSelected, onClick }: ResolutionCardProps) {
-  const Icon = iconMap[option.icon as keyof typeof iconMap] || AlertCircle;
-
   return (
     <button
       onClick={onClick}
       className={`w-full p-6 rounded-lg border-2 transition-all text-left ${
         isSelected
-          ? 'border-blue-500 shadow-md'
+          ? 'border-blue-500 shadow-md bg-blue-50'
           : 'border-gray-200 hover:border-gray-300 hover:shadow-sm'
       } ${option.bgColor}`}
     >
       <div className="flex items-start gap-4">
-        <div className={`flex-shrink-0 w-12 h-12 rounded-full ${option.iconBg} flex items-center justify-center`}>
-          <Icon className={`w-6 h-6 ${option.iconColor}`} />
+        <div className={`flex-shrink-0 w-12 h-12 rounded-full ${option.iconColor} flex items-center justify-center`}>
+          {option.icon}
         </div>
         <div className="flex-1">
           <h3 className="text-base font-semibold text-gray-900 mb-1">
