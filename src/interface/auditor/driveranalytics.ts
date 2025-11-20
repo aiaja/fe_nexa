@@ -17,8 +17,8 @@ export interface DriverDetail {
   performanceMetrics: {
     onTimeDelivery: number;
     fuelEfficiency: number;
-    safetyScore: number;
-    complianceRate: number;
+      safetyScore: number;
+      complianceRate: number;
   };
   incidentHistory: Array<{
     id: string;
