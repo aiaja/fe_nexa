@@ -1,9 +1,7 @@
-import React from 'react'
+"use client"
 
-function page() {
-  return (
-    <div>page</div>
-  )
+import { DriverAnalyticsPage } from "@/features/auditor/(analytics)/driver/driver-analytics-page"
+
+export default function DriverAnalyticsRoute() {
+  return <DriverAnalyticsPage />
 }
-
-export default page
