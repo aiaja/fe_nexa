@@ -14,7 +14,7 @@ export const columns: ColumnDef<DriverData>[] = [
   createSelectionColumn<DriverData>(),
 
 
-  createTextColumn<DriverData>("id", "Driver ID", {
+  createTextColumn<DriverData>("driverID", "Driver ID", {
     fontWeight: "medium"
   }),
 
@@ -22,7 +22,7 @@ export const columns: ColumnDef<DriverData>[] = [
   createTextColumn<DriverData>("name", "Name"),
 
 
-  createTextColumn<DriverData>("simNumber", "License Number"),
+  createTextColumn<DriverData>("licenseNumber", "License Number"),
 
 
   createTextColumn<DriverData>("phone", "Phone"),

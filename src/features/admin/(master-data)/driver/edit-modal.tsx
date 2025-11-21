@@ -39,17 +39,18 @@ export function EditDriverModal({ open, onClose, driver, onSuccess }: EditDriver
     defaultValues: {
       photo: '',
       name: '',
-      simNumber: '',
-      license: undefined,
+      licenseNumber: '',
+      licenseType: undefined,
       phone: '',
       email: '',
       address: '',
+      assignedTruck: '', // ← Tambah ini
       joinDate: '',
       status: 'Active'
     }
   })
 
-  const watchedLicense = watch('license')
+  const watchedLicenseType = watch('licenseType')
   const watchedStatus = watch('status')
   const watchedJoinDate = watch('joinDate')
 
@@ -64,11 +65,12 @@ export function EditDriverModal({ open, onClose, driver, onSuccess }: EditDriver
       reset({
         photo: driver.photo || '',
         name: driver.name,
-        simNumber: driver.simNumber,
-        license: driver.license,
+        licenseNumber: driver.licenseNumber,
+        licenseType: driver.licenseType,
         phone: driver.phone,
         email: driver.email || '',
         address: driver.address || '',
+        assignedTruck: driver.assignedTruck || '', // ← Tambah ini
         joinDate: driver.joinDate,
         status: driver.status
       })
@@ -100,11 +102,12 @@ export function EditDriverModal({ open, onClose, driver, onSuccess }: EditDriver
       ...driver,
       photo: data.photo || undefined,
       name: data.name,
-      simNumber: data.simNumber,
-      license: data.license,
+      licenseNumber: data.licenseNumber,
+      licenseType: data.licenseType,
       phone: data.phone,
       email: data.email || undefined,
       address: data.address || undefined,
+      assignedTruck: data.assignedTruck || undefined, // ← Tambah ini
       joinDate: data.joinDate,
       status: data.status
     }
@@ -125,7 +128,7 @@ export function EditDriverModal({ open, onClose, driver, onSuccess }: EditDriver
         <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between z-10">
           <div>
             <h3 className="text-lg font-semibold text-gray-900">Edit Driver</h3>
-            <p className="text-sm text-gray-500">{driver.id}</p>
+            <p className="text-sm text-gray-500">{driver.driverID}</p>
           </div>
           <Button 
             variant="ghost" 
@@ -181,7 +184,7 @@ export function EditDriverModal({ open, onClose, driver, onSuccess }: EditDriver
               <FieldLabel>Driver ID</FieldLabel>
               <Input
                 type="text"
-                value={driver.id}
+                value={driver.driverID}
                 disabled
                 className="bg-gray-100 text-gray-500 cursor-not-allowed"
               />
@@ -209,16 +212,16 @@ export function EditDriverModal({ open, onClose, driver, onSuccess }: EditDriver
                 </FieldLabel>
                 <Input
                   type="text"
-                  {...register('simNumber', {
+                  {...register('licenseNumber', {
                     onChange: (e) => {
                       e.target.value = e.target.value.toUpperCase()
                     }
                   })}
-                  placeholder="1234567890ABC"
-                  className={errors.simNumber ? 'border-red-500' : ''}
+                  placeholder="Format: XXXX-XXXX-XXXXXX"
+                  className={errors.licenseNumber ? 'border-red-500' : ''}
                 />
-                {errors.simNumber && (
-                  <p className="text-xs text-red-500 mt-1">⚠️ {errors.simNumber.message}</p>
+                {errors.licenseNumber && (
+                  <p className="text-xs text-red-500 mt-1">⚠️ {errors.licenseNumber.message}</p>
                 )}
               </Field>
 
@@ -228,23 +231,23 @@ export function EditDriverModal({ open, onClose, driver, onSuccess }: EditDriver
                 </FieldLabel>
                 {isReady ? (
                   <Select 
-                    value={watchedLicense} 
-                    onValueChange={(value) => setValue('license', value as LicenseType, { shouldValidate: true })}
+                    value={watchedLicenseType} 
+                    onValueChange={(value) => setValue('licenseType', value as LicenseType, { shouldValidate: true })}
                   >
-                    <SelectTrigger className={errors.license ? 'border-red-500' : ''}>
+                    <SelectTrigger className={errors.licenseType ? 'border-red-500' : ''}>
                       <SelectValue placeholder="Select license type" />
                     </SelectTrigger>
                     <SelectContent>
                       {LICENSE_TYPES.map(type => (
-                        <SelectItem key={type} value={type}>SIM {type}</SelectItem>
+                        <SelectItem key={type} value={type}>License {type}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                 ) : (
                   <div className="w-full h-10 bg-gray-100 animate-pulse rounded-md" />
                 )}
-                {errors.license && (
-                  <p className="text-xs text-red-500 mt-1">⚠️ {errors.license.message}</p>
+                {errors.licenseType && (
+                  <p className="text-xs text-red-500 mt-1">⚠️ {errors.licenseType.message}</p>
                 )}
               </Field>
             </div>
@@ -257,7 +260,7 @@ export function EditDriverModal({ open, onClose, driver, onSuccess }: EditDriver
                 <Input
                   type="text"
                   {...register('phone')}
-                  placeholder="08123456789"
+                  placeholder="Format 08XX or +628XX"
                   className={errors.phone ? 'border-red-500' : ''}
                 />
                 {errors.phone && (
@@ -287,6 +290,17 @@ export function EditDriverModal({ open, onClose, driver, onSuccess }: EditDriver
                 rows={3}
                 className={errors.address ? 'border-red-500' : ''}
               />
+            </Field>
+
+            <Field>
+              <FieldLabel>Assigned Truck</FieldLabel>
+              <Input
+                type="text"
+                {...register('assignedTruck')}
+                placeholder="e.g., TRK-001 (Optional)"
+                className={errors.assignedTruck ? 'border-red-500' : ''}
+              />
+              <p className="text-xs text-gray-500 mt-1">Leave empty if driver has no assigned truck</p>
             </Field>
 
             <div className="grid grid-cols-2 gap-4">

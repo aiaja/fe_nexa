@@ -13,11 +13,11 @@ export const columns: ColumnDef<FleetData>[] = [
 
   createSelectionColumn<FleetData>(),
 
-  createTextColumn<FleetData>("id", "Fleet ID", {
+  createTextColumn<FleetData>("fleetID", "Fleet ID", {
     fontWeight: "medium"
   }),
 
-  createTextColumn<FleetData>("plateNumber", "Plate Number"),
+  createTextColumn<FleetData>("licensePlate", "Plate Number"),
 
   createTextColumn<FleetData>("brands", "Brands"),
 
