@@ -1,16 +1,12 @@
 "use client"
 
 import { useState } from 'react'
-import { X, Upload, CalendarIcon } from 'lucide-react'
+import { X, Upload } from 'lucide-react'
 import { FleetData, FleetType, FleetStatus } from '@/interface/admin/fleet'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Calendar } from "@/components/ui/calendar"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { format } from "date-fns"
-import { cn } from "@/lib/utils"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { fleetSchema, FleetFormData, FLEET_TYPES, FLEET_STATUSES, FLEET_YEARS } from './schema'
@@ -19,9 +15,10 @@ interface AddFleetModalProps {
   open: boolean
   onClose: () => void
   onSuccess: (fleet: FleetData) => void
+  existingFleets: FleetData[]
 }
 
-export function AddFleetModal({ open, onClose, onSuccess }: AddFleetModalProps) {
+export function AddFleetModal({ open, onClose, onSuccess, existingFleets }: AddFleetModalProps) {
   const [previewImage, setPreviewImage] = useState<string>('')
 
   const {
@@ -34,14 +31,12 @@ export function AddFleetModal({ open, onClose, onSuccess }: AddFleetModalProps) 
   } = useForm<FleetFormData>({
     resolver: zodResolver(fleetSchema),
     defaultValues: {
-      plateNumber: '',
+      licensePlate: '',
       photo: '',
       type: undefined,
       brands: '',
       model: '',
       year: '',
-      purchaseDate: undefined,
-      initialMileage: '',
       status: 'Active'
     }
   })
@@ -49,7 +44,6 @@ export function AddFleetModal({ open, onClose, onSuccess }: AddFleetModalProps) 
   const watchedType = watch('type')
   const watchedYear = watch('year')
   const watchedStatus = watch('status')
-  const watchedPurchaseDate = watch('purchaseDate')
 
   if (!open) return null
 
@@ -66,17 +60,25 @@ export function AddFleetModal({ open, onClose, onSuccess }: AddFleetModalProps) 
     }
   }
 
+  const generateFleetID = (): string => {
+    const lastFleet = existingFleets[existingFleets.length - 1]
+    if (!lastFleet) return 'TRK-001'
+    
+    const lastNumber = parseInt(lastFleet.fleetID.split('-')[1])
+    const nextNumber = lastNumber + 1
+    return `TRK-${String(nextNumber).padStart(3, '0')}`
+  }
+
   const onSubmit = (data: FleetFormData) => {
     const newFleet: FleetData = {
-      id: `TRK-${String(Math.floor(Math.random() * 10000)).padStart(4, '0')}`,
-      plateNumber: data.plateNumber,
+      id: crypto.randomUUID(),
+      fleetID: generateFleetID(),
+      licensePlate: data.licensePlate,
       photo: data.photo || undefined,
       type: data.type,
       brands: data.brands,
       model: data.model,
       year: data.year,
-      purchaseDate: data.purchaseDate ? format(data.purchaseDate, 'yyyy-MM-dd') : undefined,
-      initialMileage: data.initialMileage ? parseInt(data.initialMileage) : undefined,
       status: data.status
     }
 
@@ -149,20 +151,20 @@ export function AddFleetModal({ open, onClose, onSuccess }: AddFleetModalProps) 
 
             <Field>
               <FieldLabel>
-                Plate Number <span className="text-red-500">*</span>
+                License Plate <span className="text-red-500">*</span>
               </FieldLabel>
               <Input
                 type="text"
-                {...register('plateNumber', {
+                {...register('licensePlate', {
                   onChange: (e) => {
                     e.target.value = e.target.value.toUpperCase()
                   }
                 })}
                 placeholder="B 1234 ABC"
-                className={errors.plateNumber ? 'border-red-500' : ''}
+                className={errors.licensePlate ? 'border-red-500' : ''}
               />
-              {errors.plateNumber && (
-                <p className="text-xs text-red-500 mt-1">⚠️ {errors.plateNumber.message}</p>
+              {errors.licensePlate && (
+                <p className="text-xs text-red-500 mt-1">⚠️ {errors.licensePlate.message}</p>
               )}
             </Field>
 
@@ -191,7 +193,7 @@ export function AddFleetModal({ open, onClose, onSuccess }: AddFleetModalProps) 
             <div className="grid grid-cols-2 gap-4">
               <Field>
                 <FieldLabel>
-                  Brands <span className="text-red-500">*</span>
+                  Brand <span className="text-red-500">*</span>
                 </FieldLabel>
                 <Input
                   type="text"
@@ -241,45 +243,6 @@ export function AddFleetModal({ open, onClose, onSuccess }: AddFleetModalProps) 
                 <p className="text-xs text-red-500 mt-1">⚠️ {errors.year.message}</p>
               )}
             </Field>
-
-            <div className="grid grid-cols-2 gap-4">
-              <Field>
-                <FieldLabel>Purchase Date</FieldLabel>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      className={cn(
-                        "w-full justify-start text-left font-normal",
-                        !watchedPurchaseDate && "text-muted-foreground"
-                      )}
-                    >
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {watchedPurchaseDate ? format(watchedPurchaseDate, "PPP") : <span>Pick a date</span>}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={watchedPurchaseDate}
-                      onSelect={(date) => setValue('purchaseDate', date)}
-                      initialFocus
-                    />
-                  </PopoverContent>
-                </Popover>
-              </Field>
-
-              <Field>
-                <FieldLabel>Initial Mileage (km)</FieldLabel>
-                <Input
-                  type="number"
-                  {...register('initialMileage')}
-                  placeholder="0"
-                  min="0"
-                />
-              </Field>
-            </div>
 
             <Field>
               <FieldLabel>
