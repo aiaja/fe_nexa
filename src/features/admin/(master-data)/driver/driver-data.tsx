@@ -95,13 +95,13 @@ export default function DriverMaster({ driverItems: initialDriverItems }: Driver
       result = result.filter(driver =>
         driver.id.toLowerCase().includes(query) ||
         driver.name.toLowerCase().includes(query) ||
-        driver.simNumber.toLowerCase().includes(query) ||
+        driver.licenseNumber.toLowerCase().includes(query) ||
         driver.phone.toLowerCase().includes(query)
       )
     }
 
     if (filters.licenses.length > 0) {
-      result = result.filter(driver => filters.licenses.includes(driver.license))
+      result = result.filter(driver => filters.licenses.includes(driver.licenseType))
     }
 
     if (filters.statuses.length > 0) {
@@ -174,7 +174,7 @@ export default function DriverMaster({ driverItems: initialDriverItems }: Driver
     saveToStorage(updatedDrivers)
     
     toast.success("Driver added successfully!", {
-      description: `${newDriver.id} - ${newDriver.name} has been added to the system`
+      description: `${newDriver.driverID} - ${newDriver.name} has been added to the system`
     })
   }
 
@@ -187,7 +187,7 @@ export default function DriverMaster({ driverItems: initialDriverItems }: Driver
     saveToStorage(updatedDrivers)
     
     toast.success("Driver updated successfully!", {
-      description: `${updatedDriver.id} - ${updatedDriver.name} has been updated`
+      description: `${updatedDriver.driverID} - ${updatedDriver.name} has been updated`
     })
   }
 
@@ -273,6 +273,7 @@ export default function DriverMaster({ driverItems: initialDriverItems }: Driver
         open={isAddOpen}
         onClose={() => setIsAddOpen(false)}
         onSuccess={handleAddSuccess}
+        existingDrivers={activeDriverItems}
       />
 
       <EditDriverModal

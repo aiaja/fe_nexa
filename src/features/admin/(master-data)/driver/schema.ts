@@ -5,10 +5,10 @@ import { LicenseType, DriverStatus } from "@/interface/admin/driver"
 export const driverSchema = z.object({
   photo: z.string().optional(),
   name: z.string().min(1, "Full name is required"),
-  simNumber: z.string()
+  licenseNumber: z.string()
     .min(1, "License number is required")
     .regex(/^\d{4}-\d{4}-\d{6}$/, "License number must follow format: XXXX-XXXX-XXXXXX"),
-  license: z.enum(["A", "B1", "B2", "C"])
+  licenseType: z.enum(["A", "B1", "B2", "C"])
   .refine((val) => val !== undefined, {
     message: "Please select a license type"
   }),
@@ -17,6 +17,7 @@ export const driverSchema = z.object({
     .regex(/^(\+62|62|0)[8][0-9]{8,11}$/, "Invalid phone format. Use: 08xx or +628xx"),
   email: z.string().email("Invalid email format").optional().or(z.literal("")),
   address: z.string().optional(),
+  assignedTruck: z.string().optional(), 
   joinDate: z.string().min(1, "Join date is required"),
   status: z.enum(["Active", "Under Review", "Suspended", "On Leave"])
 })

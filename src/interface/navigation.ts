@@ -23,6 +23,7 @@ export type UserRole =
   | "executive" 
   | "auditor" 
   | "manager" 
+  | "superadmin"
   | "guest";
 
 

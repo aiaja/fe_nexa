@@ -93,8 +93,8 @@ export default function FleetMaster({ fleetItems: initialFleetItems }: FleetMast
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase()
       result = result.filter(fleet =>
-        fleet.id.toLowerCase().includes(query) ||
-        fleet.plateNumber.toLowerCase().includes(query) ||
+        fleet.fleetID.toLowerCase().includes(query) ||
+        fleet.licensePlate.toLowerCase().includes(query) ||
         fleet.brands.toLowerCase().includes(query) ||
         fleet.model.toLowerCase().includes(query)
       )
@@ -162,7 +162,7 @@ export default function FleetMaster({ fleetItems: initialFleetItems }: FleetMast
     saveToStorage(updatedFleets)
     
     toast.success("Fleet added successfully!", {
-      description: `${newFleet.id} - ${newFleet.plateNumber} has been added to the system`
+      description: `${newFleet.fleetID} - ${newFleet.licensePlate} has been added to the system`
     })
   }
 
@@ -175,7 +175,7 @@ export default function FleetMaster({ fleetItems: initialFleetItems }: FleetMast
     saveToStorage(updatedFleets)
     
     toast.success("Fleet updated successfully!", {
-      description: `${updatedFleet.id} - ${updatedFleet.plateNumber} has been updated`
+      description: `${updatedFleet.fleetID} - ${updatedFleet.licensePlate} has been updated`
     })
   }
 
@@ -200,7 +200,7 @@ export default function FleetMaster({ fleetItems: initialFleetItems }: FleetMast
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
             <Input
               type="text"
-              placeholder="Search by Fleet ID, Plate Number, Brands, or Model"
+              placeholder="Search by Fleet ID, License Plate, Brand, or Model"
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
               className="pl-10 focus-visible:ring-0 focus-visible:border-[#0047AB]"
@@ -258,6 +258,7 @@ export default function FleetMaster({ fleetItems: initialFleetItems }: FleetMast
         open={isAddOpen}
         onClose={() => setIsAddOpen(false)}
         onSuccess={handleAddSuccess}
+        existingFleets={activeFleetItems}
       />
 
       <EditFleetModal

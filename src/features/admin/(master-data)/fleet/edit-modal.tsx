@@ -1,16 +1,12 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import { X, Upload, CalendarIcon } from 'lucide-react'
+import { X, Upload } from 'lucide-react'
 import { FleetData, FleetType, FleetStatus } from '@/interface/admin/fleet'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Calendar } from "@/components/ui/calendar"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { format } from "date-fns"
-import { cn } from "@/lib/utils"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { fleetSchema, FleetFormData, FLEET_TYPES, FLEET_STATUSES, FLEET_YEARS } from './schema'
@@ -36,14 +32,12 @@ export function EditFleetModal({ open, onClose, fleet, onSuccess }: EditFleetMod
   } = useForm<FleetFormData>({
     resolver: zodResolver(fleetSchema),
     defaultValues: {
-      plateNumber: '',
+      licensePlate: '',
       photo: '',
       type: undefined,
       brands: '',
       model: '',
       year: '',
-      purchaseDate: undefined,
-      initialMileage: '',
       status: 'Active'
     }
   })
@@ -51,7 +45,6 @@ export function EditFleetModal({ open, onClose, fleet, onSuccess }: EditFleetMod
   const watchedType = watch('type')
   const watchedYear = watch('year')
   const watchedStatus = watch('status')
-  const watchedPurchaseDate = watch('purchaseDate')
 
   // Pre-fill form when fleet data changes
   useEffect(() => {
@@ -59,14 +52,12 @@ export function EditFleetModal({ open, onClose, fleet, onSuccess }: EditFleetMod
       setIsReady(false)
       
       reset({
-        plateNumber: fleet.plateNumber,
+        licensePlate: fleet.licensePlate,
         photo: fleet.photo || '',
         type: fleet.type,
         brands: fleet.brands,
         model: fleet.model,
         year: fleet.year,
-        purchaseDate: fleet.purchaseDate ? new Date(fleet.purchaseDate) : undefined,
-        initialMileage: fleet.initialMileage?.toString() || '',
         status: fleet.status
       })
       
@@ -95,14 +86,12 @@ export function EditFleetModal({ open, onClose, fleet, onSuccess }: EditFleetMod
   const onSubmit = (data: FleetFormData) => {
     const updatedFleet: FleetData = {
       ...fleet,
-      plateNumber: data.plateNumber,
+      licensePlate: data.licensePlate,
       photo: data.photo || undefined,
       type: data.type,
       brands: data.brands,
       model: data.model,
       year: data.year,
-      purchaseDate: data.purchaseDate ? format(data.purchaseDate, 'yyyy-MM-dd') : undefined,
-      initialMileage: data.initialMileage ? parseInt(data.initialMileage) : undefined,
       status: data.status
     }
 
@@ -122,7 +111,7 @@ export function EditFleetModal({ open, onClose, fleet, onSuccess }: EditFleetMod
         <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between z-10">
           <div>
             <h3 className="text-lg font-semibold text-gray-900">Edit Fleet</h3>
-            <p className="text-sm text-gray-500">{fleet.id}</p>
+            <p className="text-sm text-gray-500">{fleet.fleetID}</p>
           </div>
           <Button 
             variant="ghost" 
@@ -178,7 +167,7 @@ export function EditFleetModal({ open, onClose, fleet, onSuccess }: EditFleetMod
               <FieldLabel>Fleet ID</FieldLabel>
               <Input
                 type="text"
-                value={fleet.id}
+                value={fleet.fleetID}
                 disabled
                 className="bg-gray-100 text-gray-500 cursor-not-allowed"
               />
@@ -186,20 +175,20 @@ export function EditFleetModal({ open, onClose, fleet, onSuccess }: EditFleetMod
 
             <Field>
               <FieldLabel>
-                Plate Number <span className="text-red-500">*</span>
+                License Plate <span className="text-red-500">*</span>
               </FieldLabel>
               <Input
                 type="text"
-                {...register('plateNumber', {
+                {...register('licensePlate', {
                   onChange: (e) => {
                     e.target.value = e.target.value.toUpperCase()
                   }
                 })}
                 placeholder="B 1234 ABC"
-                className={errors.plateNumber ? 'border-red-500' : ''}
+                className={errors.licensePlate ? 'border-red-500' : ''}
               />
-              {errors.plateNumber && (
-                <p className="text-xs text-red-500 mt-1">⚠️ {errors.plateNumber.message}</p>
+              {errors.licensePlate && (
+                <p className="text-xs text-red-500 mt-1">⚠️ {errors.licensePlate.message}</p>
               )}
             </Field>
 
@@ -232,7 +221,7 @@ export function EditFleetModal({ open, onClose, fleet, onSuccess }: EditFleetMod
             <div className="grid grid-cols-2 gap-4">
               <Field>
                 <FieldLabel>
-                  Brands <span className="text-red-500">*</span>
+                  Brand <span className="text-red-500">*</span>
                 </FieldLabel>
                 <Input
                   type="text"
@@ -286,44 +275,6 @@ export function EditFleetModal({ open, onClose, fleet, onSuccess }: EditFleetMod
                 <p className="text-xs text-red-500 mt-1">⚠️ {errors.year.message}</p>
               )}
             </Field>
-
-            <div className="grid grid-cols-2 gap-4">
-              <Field>
-                <FieldLabel>Purchase Date</FieldLabel>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      className={cn(
-                        "w-full justify-start text-left font-normal",
-                        !watchedPurchaseDate && "text-muted-foreground"
-                      )}
-                    >
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {watchedPurchaseDate ? format(watchedPurchaseDate, "PPP") : <span>Pick a date</span>}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={watchedPurchaseDate}
-                      onSelect={(date) => setValue('purchaseDate', date)}
-                    />
-                  </PopoverContent>
-                </Popover>
-              </Field>
-
-              <Field>
-                <FieldLabel>Initial Mileage (km)</FieldLabel>
-                <Input
-                  type="number"
-                  {...register('initialMileage')}
-                  placeholder="0"
-                  min="0"
-                />
-              </Field>
-            </div>
 
             <Field>
               <FieldLabel>

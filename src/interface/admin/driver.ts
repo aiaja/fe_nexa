@@ -1,15 +1,16 @@
 export interface DriverData {
-  id: string;
+  id: string; // pake uid
+  driverID: string; // ini DRV-001
   photo?: string;                    
   name: string;
-  simNumber: string;                 
-  license: LicenseType;              
+  licenseNumber: string;                 
+  licenseType: LicenseType;              
   assignedTruck?: string;            
   phone: string;                     
   email?: string;                    
   address?: string;                  
   joinDate: string;                  
-  incident: number;                  
+  incidentCount: number;                  
   status: DriverStatus;              
 }
 

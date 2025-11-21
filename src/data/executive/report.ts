@@ -6,7 +6,7 @@ export const reports: Report[] = [
     title: 'October 2024 Executive Report',
     month: 'October',
     year: 2024,
-    generatedDate: 'Nov 01, 2024 00:00',
+    generatedAt: 'Nov 01, 2024 00:00',
     isLatest: true,
     includes: [
       'Fuel Consumption Summary',
@@ -18,15 +18,13 @@ export const reports: Report[] = [
     fileSize: '2.8 MB',
     format: 'PDF',
     totalPages: 24,
-    dataPoints: 1250,
-    chartsIncluded: 12
   },
   {
     id: '2',
     title: 'September 2024 Executive Report',
     month: 'September',
     year: 2024,
-    generatedDate: 'October 01, 2024',
+    generatedAt: 'October 01, 2024',
     fileSize: '2.6 MB',
     format: 'PDF'
   },
@@ -35,7 +33,7 @@ export const reports: Report[] = [
     title: 'August 2024 Executive Report',
     month: 'August',
     year: 2024,
-    generatedDate: 'September 01, 2024',
+    generatedAt: 'September 01, 2024',
     fileSize: '2.4 MB',
     format: 'PDF'
   },
@@ -44,7 +42,7 @@ export const reports: Report[] = [
     title: 'July 2024 Executive Report',
     month: 'July',
     year: 2024,
-    generatedDate: 'August 01, 2024',
+    generatedAt: 'August 01, 2024',
     fileSize: '2.7 MB',
     format: 'PDF'
   },
@@ -53,7 +51,7 @@ export const reports: Report[] = [
     title: 'June 2024 Executive Report',
     month: 'June',
     year: 2024,
-    generatedDate: 'July 01, 2024',
+    generatedAt: 'July 01, 2024',
     fileSize: '2.5 MB',
     format: 'PDF'
   },
@@ -62,7 +60,7 @@ export const reports: Report[] = [
     title: 'May 2024 Executive Report',
     month: 'May',
     year: 2024,
-    generatedDate: 'June 01, 2024',
+    generatedAt: 'June 01, 2024',
     fileSize: '2.3 MB',
     format: 'PDF'
   },
@@ -71,7 +69,7 @@ export const reports: Report[] = [
     title: 'April 2024 Executive Report',
     month: 'April',
     year: 2024,
-    generatedDate: 'May 01, 2024',
+    generatedAt: 'May 01, 2024',
     fileSize: '2.4 MB',
     format: 'PDF'
   }
