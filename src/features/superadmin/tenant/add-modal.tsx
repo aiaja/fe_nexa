@@ -12,10 +12,10 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { 
   addTenantSchema, 
   AddTenantFormData, 
-  TENANT_STATUSES, 
-  SUBSCRIPTION_PLANS,
   generateTenantId,
-  formatDate 
+  formatDate,
+  getDefaultStatusForPlan,
+  getAddModalStatusDescription
 } from './schema'
 
 interface AddTenantModalProps {
@@ -52,7 +52,6 @@ export function AddTenantModal({
   })
 
   const watchedPlan = watch('plan')
-  const watchedStatus = watch('tenantStatus')
 
   if (!open) return null
 
@@ -159,10 +158,16 @@ export function AddTenantModal({
               </FieldLabel>
               <Select 
                 value={watchedPlan} 
-                onValueChange={(value) => setValue('plan', value as SubscriptionPlan, { shouldValidate: true })}
+                onValueChange={(value) => {
+                  const newPlan = value as SubscriptionPlan
+                  setValue('plan', newPlan, { shouldValidate: true })
+                  setValue('tenantStatus', getDefaultStatusForPlan(newPlan))
+                }}
               >
                 <SelectTrigger className={errors.plan ? 'border-red-500' : ''}>
-                  <SelectValue placeholder="Select plan" />
+                  <SelectValue placeholder="Select plan">
+                    {watchedPlan} 
+                  </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="FREE">
@@ -196,30 +201,21 @@ export function AddTenantModal({
               )}
             </Field>
 
+            {/* status */}
             <Field>
               <FieldLabel>
                 Status <span className="text-red-500">*</span>
               </FieldLabel>
-              <Select 
-                value={watchedStatus} 
-                onValueChange={(value) => setValue('tenantStatus', value as TenantStatus, { shouldValidate: true })}
-              >
-                <SelectTrigger className={errors.tenantStatus ? 'border-red-500' : ''}>
-                  <SelectValue placeholder="Select status" />
-                </SelectTrigger>
-                <SelectContent>
-                  {TENANT_STATUSES.map(status => (
-                    <SelectItem key={status} value={status}>
-                      {status.charAt(0) + status.slice(1).toLowerCase()}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {errors.tenantStatus && (
-                <p className="text-xs text-red-500 mt-1">⚠️ {errors.tenantStatus.message}</p>
-              )}
+              
+              <Input
+                type="text"
+                value={getDefaultStatusForPlan(watchedPlan)}
+                disabled
+                className="bg-gray-50 cursor-not-allowed"
+              />
+              
               <p className="text-xs text-gray-500 mt-1">
-                New tenants usually start with TRIAL status
+                {getAddModalStatusDescription(watchedPlan)}
               </p>
             </Field>
 

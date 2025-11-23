@@ -43,7 +43,7 @@ export function AddDriverModal({ open, onClose, onSuccess, existingDrivers }: Ad
       phone: '',
       email: '',
       address: '',
-      assignedTruck: '', // ← Tambah ini
+      assignedTruck: '', 
       joinDate: '',
       status: 'Active'
     }
@@ -90,7 +90,7 @@ export function AddDriverModal({ open, onClose, onSuccess, existingDrivers }: Ad
       phone: data.phone,
       email: data.email || undefined,
       address: data.address || undefined,
-      assignedTruck: data.assignedTruck || undefined, // ← Tambah ini
+      assignedTruck: data.assignedTruck || undefined, 
       joinDate: data.joinDate,
       incidentCount: 0,
       status: data.status

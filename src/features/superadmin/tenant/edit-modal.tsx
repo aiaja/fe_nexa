@@ -12,9 +12,9 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { 
   editTenantSchema, 
-  EditTenantFormData, 
-  TENANT_STATUSES, 
-  SUBSCRIPTION_PLANS 
+  EditTenantFormData,
+  getAvailableStatusesForPlan,
+  getDefaultStatusForPlan,
 } from './schema'
 
 interface EditTenantModalProps {
@@ -56,7 +56,6 @@ export function EditTenantModal({
   const watchedPlan = watch('plan')
   const watchedStatus = watch('tenantStatus')
 
-  // Pre-fill form when tenant data changes
   useEffect(() => {
     if (tenant && open) {
       setIsReady(false)
@@ -75,8 +74,19 @@ export function EditTenantModal({
 
   if (!open || !tenant) return null
 
+
+  const availableStatuses = getAvailableStatusesForPlan(watchedPlan)
+
+  const handlePlanChange = (newPlan: SubscriptionPlan) => {
+    setValue('plan', newPlan, { shouldValidate: true })
+    
+    const allowedStatuses = getAvailableStatusesForPlan(newPlan)
+    if (!allowedStatuses.includes(watchedStatus)) {
+      setValue('tenantStatus', getDefaultStatusForPlan(newPlan))
+    }
+  }
+
   const onSubmit = (data: EditTenantFormData) => {
-    // Check for duplicate email (excluding current tenant)
     if (data.email.toLowerCase() !== tenant.email.toLowerCase() && 
         existingEmails.includes(data.email.toLowerCase())) {
       setError('email', {
@@ -188,10 +198,12 @@ export function EditTenantModal({
               {isReady ? (
                 <Select 
                   value={watchedPlan} 
-                  onValueChange={(value) => setValue('plan', value as SubscriptionPlan, { shouldValidate: true })}
+                  onValueChange={handlePlanChange}
                 >
                   <SelectTrigger className={errors.plan ? 'border-red-500' : ''}>
-                    <SelectValue placeholder="Select plan" />
+                    <SelectValue placeholder="Select plan">
+                      {watchedPlan} 
+                    </SelectValue>
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="FREE">
@@ -227,7 +239,7 @@ export function EditTenantModal({
                 <p className="text-xs text-red-500 mt-1">⚠️ {errors.plan.message}</p>
               )}
             </Field>
-
+            
             <Field>
               <FieldLabel>
                 Status <span className="text-red-500">*</span>
@@ -241,7 +253,7 @@ export function EditTenantModal({
                     <SelectValue placeholder="Select status" />
                   </SelectTrigger>
                   <SelectContent>
-                    {TENANT_STATUSES.map(status => (
+                    {availableStatuses.map(status => (
                       <SelectItem key={status} value={status}>
                         {status.charAt(0) + status.slice(1).toLowerCase()}
                       </SelectItem>

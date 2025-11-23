@@ -23,34 +23,69 @@ export default function TenantDetail({ tenant: initialTenant }: TenantDetailProp
   const [isChangePlanOpen, setIsChangePlanOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(!initialTenant)
 
-  // Load from localStorage if tenant not found in initial props
+  // Load tenant data from localStorage
+  const loadTenantData = () => {
+    const tenantIdFromUrl = window.location.pathname.split('/').pop()
+    
+    try {
+      const savedData = localStorage.getItem(STORAGE_KEY)
+      if (savedData) {
+        const parsedData = JSON.parse(savedData)
+        const tenants = parsedData.tenants || parsedData
+        
+        const foundTenant = tenants.find((t: TenantWithCounts) => 
+          t.id === tenantIdFromUrl
+        )
+        
+        if (foundTenant) {
+          setTenant(foundTenant)
+        }
+      }
+    } catch (error) {
+      console.error('Failed to load tenant from storage:', error)
+    }
+  }
+
+  // Initial load
   useEffect(() => {
     if (!initialTenant && typeof window !== 'undefined') {
-      const tenantIdFromUrl = window.location.pathname.split('/').pop()
-      
-      try {
-        const savedData = localStorage.getItem(STORAGE_KEY)
-        if (savedData) {
-          const parsedData = JSON.parse(savedData)
-          const tenants = parsedData.tenants || parsedData
-          
-          const foundTenant = tenants.find((t: TenantWithCounts) => 
-            t.id === tenantIdFromUrl
-          )
-          
-          if (foundTenant) {
-            setTenant(foundTenant)
-          }
-        }
-      } catch (error) {
-        console.error('Failed to load tenant from storage:', error)
-      } finally {
-        setIsLoading(false)
-      }
+      loadTenantData()
+      setIsLoading(false)
     }
   }, [initialTenant])
 
-  // Update localStorage when tenant is edited
+  // Listen for storage changes from other tabs/windows
+  useEffect(() => {
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === STORAGE_KEY) {
+        loadTenantData()
+      }
+    }
+
+    window.addEventListener('storage', handleStorageChange)
+    return () => window.removeEventListener('storage', handleStorageChange)
+  }, [])
+
+  // Listen for focus event (when returning from another page)
+  useEffect(() => {
+    const handleFocus = () => {
+      loadTenantData()
+    }
+
+    window.addEventListener('focus', handleFocus)
+    return () => window.removeEventListener('focus', handleFocus)
+  }, [])
+
+  // Custom event for same-page updates
+  useEffect(() => {
+    const handleCustomUpdate = () => {
+      loadTenantData()
+    }
+
+    window.addEventListener('tenantDataUpdated', handleCustomUpdate)
+    return () => window.removeEventListener('tenantDataUpdated', handleCustomUpdate)
+  }, [])
+
   const updateTenantInStorage = (updatedTenant: TenantWithCounts) => {
     try {
       const savedData = localStorage.getItem(STORAGE_KEY)
@@ -68,6 +103,9 @@ export default function TenantDetail({ tenant: initialTenant }: TenantDetailProp
         }
         
         localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave))
+        
+        // Dispatch custom event for real-time sync
+        window.dispatchEvent(new Event('tenantDataUpdated'))
       }
     } catch (error) {
       console.error('Failed to update tenant in storage:', error)
@@ -162,6 +200,9 @@ export default function TenantDetail({ tenant: initialTenant }: TenantDetailProp
         }
         
         localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave))
+        
+        // Dispatch event
+        window.dispatchEvent(new Event('tenantDataUpdated'))
       }
     } catch (error) {
       console.error('Failed to delete tenant:', error)
@@ -175,28 +216,12 @@ export default function TenantDetail({ tenant: initialTenant }: TenantDetailProp
     }, 500)
   }
 
-  const handleToggleStatus = () => {
-    const newStatus = tenant.tenantStatus === 'ACTIVE' ? 'SUSPENDED' : 'ACTIVE'
-    const updatedTenant: TenantWithCounts = {
-      ...tenant,
-      tenantStatus: newStatus,
-      updatedAt: new Date().toISOString()
-    }
-    
-    setTenant(updatedTenant)
-    updateTenantInStorage(updatedTenant)
-    
-    toast.success(`Tenant ${newStatus === 'ACTIVE' ? 'activated' : 'suspended'} successfully!`, {
-      description: `${tenant.company_name} is now ${newStatus.toLowerCase()}`
-    })
-  }
-
-  const existingEmails: string[] = [] // Will be populated from parent if needed
+  const existingEmails: string[] = [] 
 
   return (
     <>
       <div className="flex flex-col min-h-screen bg-gray-50">
-        {/* Header */}
+
         <div className="bg-white border-b border-gray-200 px-6 py-4">
           <div className="flex items-center justify-between max-w-7xl mx-auto">
             <button
@@ -208,28 +233,6 @@ export default function TenantDetail({ tenant: initialTenant }: TenantDetailProp
             </button>
 
             <div className="flex items-center gap-2">
-              {(tenant.tenantStatus === 'ACTIVE' || tenant.tenantStatus === 'SUSPENDED') && (
-                <button
-                  onClick={handleToggleStatus}
-                  className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
-                    tenant.tenantStatus === 'ACTIVE'
-                      ? 'text-orange-600 bg-orange-50 border border-orange-200 hover:bg-orange-100'
-                      : 'text-green-600 bg-green-50 border border-green-200 hover:bg-green-100'
-                  }`}
-                >
-                  {tenant.tenantStatus === 'ACTIVE' ? (
-                    <>
-                      <ShieldAlert className="h-4 w-4" />
-                      Suspend
-                    </>
-                  ) : (
-                    <>
-                      <CheckCircle className="h-4 w-4" />
-                      Activate
-                    </>
-                  )}
-                </button>
-              )}
               <button
                 onClick={() => setIsChangePlanOpen(true)}
                 className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-[#0047AB] bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors"
@@ -255,15 +258,15 @@ export default function TenantDetail({ tenant: initialTenant }: TenantDetailProp
           </div>
         </div>
 
-        {/* Main Content */}
+        {/* konten */}
         <div className="flex-1 px-6 py-8">
           <div className="max-w-7xl mx-auto">
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
               <div className="p-8">
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                  {/* Left Column - Stats */}
+                  {/* kiri */}
                   <div className="lg:col-span-1 space-y-4">
-                    {/* Plan Card */}
+                    {/* plan */}
                     <div className="bg-linear-to-br from-[#0047AB] to-[#003580] rounded-lg p-6 text-white">
                       <div className="flex items-center gap-2 mb-3">
                         <CreditCard className="h-5 w-5" />
@@ -273,7 +276,7 @@ export default function TenantDetail({ tenant: initialTenant }: TenantDetailProp
                       <p className="text-sm opacity-75">{getPlanPrice(tenant.plan)}</p>
                     </div>
 
-                    {/* Stats Cards */}
+                    {/* cards */}
                     <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
                       <div className="flex items-center gap-2 mb-2">
                         <Users className="h-4 w-4 text-blue-600" />
@@ -299,9 +302,9 @@ export default function TenantDetail({ tenant: initialTenant }: TenantDetailProp
                     </div>
                   </div>
 
-                  {/* Right Column - Details */}
+                  {/* kanan */}
                   <div className="lg:col-span-2 space-y-6">
-                    {/* Header */}
+                    {/* header */}
                     <div>
                       <h1 className="text-3xl font-bold text-gray-900 mb-2">{tenant.company_name}</h1>
                       <div className="flex items-center gap-2 text-gray-600">
@@ -317,7 +320,7 @@ export default function TenantDetail({ tenant: initialTenant }: TenantDetailProp
                       </div>
                     </div>
 
-                    {/* Contact Information */}
+                    {/* info */}
                     <div>
                       <h2 className="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200 flex items-center gap-2">
                         <Building2 className="h-5 w-5 text-gray-600" />
@@ -348,7 +351,7 @@ export default function TenantDetail({ tenant: initialTenant }: TenantDetailProp
                       </div>
                     </div>
 
-                    {/* Account Details */}
+                    {/* detail */}
                     <div>
                       <h2 className="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200 flex items-center gap-2">
                         <Calendar className="h-5 w-5 text-gray-600" />

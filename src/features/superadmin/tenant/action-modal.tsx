@@ -1,5 +1,6 @@
 "use client"
 
+import { useEffect, useState } from 'react'
 import { Edit, Eye, CreditCard, ShieldAlert, CheckCircle } from 'lucide-react'
 import { TenantWithCounts } from '@/interface/superadmin/tenant'
 
@@ -24,6 +25,39 @@ export function TenantActionModal({
   onChangePlan,
   onToggleStatus
 }: TenantActionModalProps) {
+  const [adjustedPosition, setAdjustedPosition] = useState(position)
+
+  useEffect(() => {
+    if (!open || !data) return
+
+    const modalWidth = 200
+    const modalHeight = 280 
+    
+    const viewportWidth = window.innerWidth
+    const viewportHeight = window.innerHeight
+
+    let { top, left } = position
+
+    if (left + modalWidth > viewportWidth) {
+      left = viewportWidth - modalWidth - 16
+    }
+    if (left < 16) {
+      left = 16
+    }
+
+    const wouldOverflow = top + modalHeight > viewportHeight - 16
+    
+    if (wouldOverflow) {
+      top = position.top - modalHeight - 8
+    }
+    
+    if (top < 16) {
+      top = 16
+    }
+
+    setAdjustedPosition({ top, left })
+  }, [open, position, data])
+
   if (!open || !data) return null
 
   const isActive = data.tenantStatus === 'ACTIVE'
@@ -55,10 +89,10 @@ export function TenantActionModal({
       <div className="fixed inset-0 z-40" onClick={onClose} />
       
       <div 
-        className="fixed z-50 bg-white rounded-lg shadow-xl border border-gray-200 py-1 min-w-[200px]"
+        className="fixed z-50 bg-white rounded-lg shadow-xl border border-gray-200 py-2 min-w-[200px] max-h-[400px] overflow-y-auto"
         style={{
-          top: `${position.top}px`,
-          left: `${position.left}px`,
+          top: `${adjustedPosition.top}px`,
+          left: `${adjustedPosition.left}px`,
         }}
       >
         <button

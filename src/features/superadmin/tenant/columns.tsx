@@ -6,7 +6,8 @@ import {
   createSelectionColumn, 
   createTextColumn, 
   createStatusColumn, 
-  createActionsColumn 
+  createActionsColumn,
+  createDateColumn
 } from "@/components/columns-helper"
 
 export const columns: ColumnDef<TenantWithCounts>[] = [
@@ -36,18 +37,7 @@ export const columns: ColumnDef<TenantWithCounts>[] = [
     "INACTIVE": "bg-gray-100 text-gray-700",
   }),
 
-  {
-    accessorKey: "createdAt",
-    header: "Registered",
-    cell: ({ row }) => {
-      const date = new Date(row.getValue("createdAt"))
-      return date.toLocaleDateString("id-ID", {
-        day: "2-digit",
-        month: "short",
-        year: "numeric"
-      })
-    },
-  },
+  createDateColumn<TenantWithCounts>("createdAt", "Registered"),
 
   createActionsColumn<TenantWithCounts>(),
 ]
