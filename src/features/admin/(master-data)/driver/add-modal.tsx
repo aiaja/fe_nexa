@@ -20,9 +20,10 @@ interface AddDriverModalProps {
   open: boolean
   onClose: () => void
   onSuccess: (driver: DriverData) => void
+  existingDrivers: DriverData[] 
 }
 
-export function AddDriverModal({ open, onClose, onSuccess }: AddDriverModalProps) {
+export function AddDriverModal({ open, onClose, onSuccess, existingDrivers }: AddDriverModalProps) {
   const [previewImage, setPreviewImage] = useState<string>('')
 
   const {
@@ -37,17 +38,18 @@ export function AddDriverModal({ open, onClose, onSuccess }: AddDriverModalProps
     defaultValues: {
       photo: '',
       name: '',
-      simNumber: '',
-      license: undefined,
+      licenseNumber: '',
+      licenseType: undefined,
       phone: '',
       email: '',
       address: '',
+      assignedTruck: '', // ← Tambah ini
       joinDate: '',
       status: 'Active'
     }
   })
 
-  const watchedLicense = watch('license')
+  const watchedLicenseType = watch('licenseType')
   const watchedStatus = watch('status')
   const watchedJoinDate = watch('joinDate')
 
@@ -68,18 +70,29 @@ export function AddDriverModal({ open, onClose, onSuccess }: AddDriverModalProps
     }
   }
 
+  const generateDriverID = (): string => {
+    const lastDriver = existingDrivers[existingDrivers.length - 1]
+    if (!lastDriver) return 'DRV-001'
+    
+    const lastNumber = parseInt(lastDriver.driverID.split('-')[1])
+    const nextNumber = lastNumber + 1
+    return `DRV-${String(nextNumber).padStart(3, '0')}`
+  }
+
   const onSubmit = (data: DriverFormData) => {
     const newDriver: DriverData = {
-      id: `DRV-${String(Math.floor(Math.random() * 10000)).padStart(4, '0')}`,
+      id: crypto.randomUUID(), 
+      driverID: generateDriverID(), 
       photo: data.photo || undefined,
       name: data.name,
-      simNumber: data.simNumber,
-      license: data.license,
+      licenseNumber: data.licenseNumber,
+      licenseType: data.licenseType,
       phone: data.phone,
       email: data.email || undefined,
       address: data.address || undefined,
+      assignedTruck: data.assignedTruck || undefined, // ← Tambah ini
       joinDate: data.joinDate,
-      incident: 0,
+      incidentCount: 0,
       status: data.status
     }
 
@@ -157,7 +170,7 @@ export function AddDriverModal({ open, onClose, onSuccess }: AddDriverModalProps
               <Input
                 type="text"
                 {...register('name')}
-                placeholder="John Doe"
+                placeholder="Insert full name"
                 className={errors.name ? 'border-red-500' : ''}
               />
               {errors.name && (
@@ -172,16 +185,16 @@ export function AddDriverModal({ open, onClose, onSuccess }: AddDriverModalProps
                 </FieldLabel>
                 <Input
                   type="text"
-                  {...register('simNumber', {
+                  {...register('licenseNumber', {
                     onChange: (e) => {
                       e.target.value = e.target.value.toUpperCase()
                     }
                   })}
-                  placeholder="1234567890ABC"
-                  className={errors.simNumber ? 'border-red-500' : ''}
+                  placeholder="Format: XXXX-XXXX-XXXXXX"
+                  className={errors.licenseNumber ? 'border-red-500' : ''}
                 />
-                {errors.simNumber && (
-                  <p className="text-xs text-red-500 mt-1">⚠️ {errors.simNumber.message}</p>
+                {errors.licenseNumber && (
+                  <p className="text-xs text-red-500 mt-1">⚠️ {errors.licenseNumber.message}</p>
                 )}
               </Field>
 
@@ -190,20 +203,20 @@ export function AddDriverModal({ open, onClose, onSuccess }: AddDriverModalProps
                   License Type <span className="text-red-500">*</span>
                 </FieldLabel>
                 <Select 
-                  value={watchedLicense} 
-                  onValueChange={(value) => setValue('license', value as LicenseType, { shouldValidate: true })}
+                  value={watchedLicenseType} 
+                  onValueChange={(value) => setValue('licenseType', value as LicenseType, { shouldValidate: true })}
                 >
-                  <SelectTrigger className={errors.license ? 'border-red-500' : ''}>
+                  <SelectTrigger className={errors.licenseType ? 'border-red-500' : ''}>
                     <SelectValue placeholder="Select license type" />
                   </SelectTrigger>
                   <SelectContent>
                     {LICENSE_TYPES.map(type => (
-                      <SelectItem key={type} value={type}>SIM {type}</SelectItem>
+                      <SelectItem key={type} value={type}>License {type}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
-                {errors.license && (
-                  <p className="text-xs text-red-500 mt-1">⚠️ {errors.license.message}</p>
+                {errors.licenseType && (
+                  <p className="text-xs text-red-500 mt-1">⚠️ {errors.licenseType.message}</p>
                 )}
               </Field>
             </div>
@@ -216,7 +229,7 @@ export function AddDriverModal({ open, onClose, onSuccess }: AddDriverModalProps
                 <Input
                   type="text"
                   {...register('phone')}
-                  placeholder="08123456789"
+                  placeholder="Format 08XX or +628XX"
                   className={errors.phone ? 'border-red-500' : ''}
                 />
                 {errors.phone && (
@@ -246,6 +259,18 @@ export function AddDriverModal({ open, onClose, onSuccess }: AddDriverModalProps
                 rows={3}
                 className={errors.address ? 'border-red-500' : ''}
               />
+            </Field>
+
+            {/* ← Field Assigned Truck (BARU) */}
+            <Field>
+              <FieldLabel>Assigned Truck</FieldLabel>
+              <Input
+                type="text"
+                {...register('assignedTruck')}
+                placeholder="e.g., TRK-001 (Optional)"
+                className={errors.assignedTruck ? 'border-red-500' : ''}
+              />
+              <p className="text-xs text-gray-500 mt-1">Leave empty if driver has no assigned truck</p>
             </Field>
 
             <div className="grid grid-cols-2 gap-4">
