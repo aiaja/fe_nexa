@@ -12,8 +12,22 @@ import {
   Shield,
   Pickaxe,
   UserCog,
+  Landmark
 } from "lucide-react";
 import type { NavItem, UserRole, RoleConfig } from "@/interface/navigation";
+
+const superadminItems: NavItem[] = [
+  {
+    title: "Dashboard",
+    url: "/superadmin",
+    icon: ChartColumn,
+  }, 
+  {
+    title: "Master Tenants",
+    url: "/superadmin/tenants",
+    icon: Landmark,
+  },
+];
 
 
 const adminItems: NavItem[] = [
@@ -156,13 +170,14 @@ const guestItems: NavItem[] = [
 
 export const NAVIGATION_MAP: Record<UserRole, NavItem[]> = {
   "admin": adminItems,
+  "superadmin": superadminItems,
   "executive": executiveItems,
   "auditor": auditorItems,
   "manager": managerItems,
   guest: guestItems,
 } as const;
 
-export const ROLE_CONFIG: Record<Exclude<UserRole, "guest">, RoleConfig> = {
+export const ROLE_CONFIG: Record<Exclude<UserRole, "guest" | "superadmin">, RoleConfig> = {
   admin: {
     label: "Admin",
     icon: Shield,

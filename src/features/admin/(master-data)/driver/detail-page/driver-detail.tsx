@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { ArrowLeft, Edit, Trash2, User, Phone, Mail, MapPin, Truck, Award, AlertTriangle } from 'lucide-react'
 import { DriverData } from '@/interface/admin/driver'
@@ -12,11 +12,75 @@ interface DriverDetailProps {
   driver: DriverData | null
 }
 
+const STORAGE_KEY = 'drivers-data'
+
 export default function DriverDetail({ driver: initialDriver }: DriverDetailProps) {
   const router = useRouter()
   const [driver, setDriver] = useState(initialDriver)
   const [isEditOpen, setIsEditOpen] = useState(false)
   const [isDeleteOpen, setIsDeleteOpen] = useState(false)
+  const [isLoading, setIsLoading] = useState(!initialDriver)
+
+  // Load from localStorage if driver not found in initial props
+  useEffect(() => {
+    if (!initialDriver && typeof window !== 'undefined') {
+      const driverIdFromUrl = window.location.pathname.split('/').pop()
+      
+      try {
+        const savedData = localStorage.getItem(STORAGE_KEY)
+        if (savedData) {
+          const parsedData = JSON.parse(savedData)
+          const drivers = parsedData.drivers || parsedData
+          
+          // Find driver by driverID (DRV-001) or id (UUID)
+          const foundDriver = drivers.find((d: DriverData) => 
+            d.driverID === driverIdFromUrl || d.id === driverIdFromUrl
+          )
+          
+          if (foundDriver) {
+            setDriver(foundDriver)
+          }
+        }
+      } catch (error) {
+        console.error('Failed to load driver from storage:', error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+  }, [initialDriver])
+
+  // Update localStorage when driver is edited
+  const updateDriverInStorage = (updatedDriver: DriverData) => {
+    try {
+      const savedData = localStorage.getItem(STORAGE_KEY)
+      if (savedData) {
+        const parsedData = JSON.parse(savedData)
+        const drivers = parsedData.drivers || parsedData
+        
+        const updatedDrivers = drivers.map((d: DriverData) => 
+          d.id === updatedDriver.id ? updatedDriver : d
+        )
+        
+        const dataToSave = {
+          drivers: updatedDrivers,
+          deletedIds: parsedData.deletedIds || []
+        }
+        
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave))
+      }
+    } catch (error) {
+      console.error('Failed to update driver in storage:', error)
+    }
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#0047AB]"></div>
+        <p className="mt-4 text-sm text-gray-500">Loading driver data...</p>
+      </div>
+    )
+  }
 
   if (!driver) {
     return (
@@ -39,7 +103,6 @@ export default function DriverDetail({ driver: initialDriver }: DriverDetailProp
     if (status === "On Leave") return "bg-blue-100 text-blue-700"
     return "bg-gray-100 text-gray-700"
   }
-
 
   const getLicenseDescription = (license: string) => {
     const descriptions: Record<string, string> = {
@@ -64,26 +127,44 @@ export default function DriverDetail({ driver: initialDriver }: DriverDetailProp
 
   const handleEditSuccess = (updatedDriver: DriverData) => {
     setDriver(updatedDriver)
+    updateDriverInStorage(updatedDriver)
     toast.success('Driver updated successfully!', {
-      description: `${updatedDriver.id} - ${updatedDriver.name} has been updated`
+      description: `${updatedDriver.driverID} - ${updatedDriver.name} has been updated`
     })
   }
 
   const handleDeleteConfirm = () => {
+    // Add to deleted IDs in localStorage
+    try {
+      const savedData = localStorage.getItem(STORAGE_KEY)
+      if (savedData) {
+        const parsedData = JSON.parse(savedData)
+        const updatedDeletedIds = [...(parsedData.deletedIds || []), driver.id]
+        
+        const dataToSave = {
+          drivers: parsedData.drivers || parsedData,
+          deletedIds: updatedDeletedIds
+        }
+        
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave))
+      }
+    } catch (error) {
+      console.error('Failed to delete driver:', error)
+    }
+    
     toast.success('Driver deleted successfully!', {
-      description: `${driver.id} has been removed from the system`
+      description: `${driver.driverID} has been removed from the system`
     })
     setTimeout(() => {
       router.push('/admin/driver')
     }, 500)
   }
 
-  const incidentBadge = getIncidentBadge(driver.incident)
+  const incidentBadge = getIncidentBadge(driver.incidentCount)
 
   return (
     <>
       <div className="flex flex-col min-h-screen bg-gray-50">
-
         <div className="bg-white border-b border-gray-200 px-6 py-4">
           <div className="flex items-center justify-between max-w-7xl mx-auto">
             <button
@@ -113,13 +194,11 @@ export default function DriverDetail({ driver: initialDriver }: DriverDetailProp
           </div>
         </div>
 
-       
         <div className="flex-1 px-6 py-8">
           <div className="max-w-7xl mx-auto">
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
               <div className="p-8">
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              
                   <div className="lg:col-span-1">
                     {driver.photo ? (
                       <div className="rounded-lg aspect-square overflow-hidden border-2 border-gray-200">
@@ -134,7 +213,6 @@ export default function DriverDetail({ driver: initialDriver }: DriverDetailProp
                       </div>
                     )}
 
-                    {/* Quick Stats */}
                     <div className="mt-6 space-y-3">
                       <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
                         <div className="flex items-center justify-between">
@@ -157,12 +235,11 @@ export default function DriverDetail({ driver: initialDriver }: DriverDetailProp
                     </div>
                   </div>
 
-                
                   <div className="lg:col-span-2 space-y-6">
                     <div>
                       <h1 className="text-3xl font-bold text-gray-900 mb-2">{driver.name}</h1>
                       <div className="flex items-center gap-2 text-gray-600">
-                        <span className="font-medium">{driver.id}</span>
+                        <span className="font-medium">{driver.driverID}</span>
                         <span>•</span>
                         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(driver.status)}`}>
                           {driver.status}
@@ -170,7 +247,6 @@ export default function DriverDetail({ driver: initialDriver }: DriverDetailProp
                       </div>
                     </div>
 
-                 
                     <div>
                       <h2 className="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200 flex items-center gap-2">
                         <Award className="h-5 w-5 text-gray-600" />
@@ -178,16 +254,16 @@ export default function DriverDetail({ driver: initialDriver }: DriverDetailProp
                       </h2>
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <p className="text-sm text-gray-500 mb-1">SIM Number</p>
-                          <p className="text-base font-medium text-gray-900">{driver.simNumber}</p>
+                          <p className="text-sm text-gray-500 mb-1">License Number</p>
+                          <p className="text-base font-medium text-gray-900">{driver.licenseNumber}</p>
                         </div>
                         <div>
                           <p className="text-sm text-gray-500 mb-1">License Type</p>
                           <p className="text-base font-medium text-gray-900">
-                            SIM {driver.license}
+                            SIM {driver.licenseType}
                           </p>
                           <p className="text-sm text-gray-500 mt-0.5">
-                            {getLicenseDescription(driver.license)}
+                            {getLicenseDescription(driver.licenseType)}
                           </p>
                         </div>
                       </div>
@@ -248,17 +324,17 @@ export default function DriverDetail({ driver: initialDriver }: DriverDetailProp
                         <div>
                           <p className="text-sm text-gray-500 mb-1">Incident Count</p>
                           <div className="flex items-center gap-2">
-                            {driver.incident === 0 ? (
+                            {driver.incidentCount === 0 ? (
                               <>
-                                <p className="text-base font-medium text-green-600">{driver.incident}</p>
+                                <p className="text-base font-medium text-green-600">{driver.incidentCount}</p>
                                 <span className="text-xs text-green-600">Perfect Record</span>
                               </>
                             ) : (
                               <>
-                                <p className={`text-base font-medium ${driver.incident > 2 ? "text-red-600" : "text-yellow-600"}`}>
-                                  {driver.incident}
+                                <p className={`text-base font-medium ${driver.incidentCount > 2 ? "text-red-600" : "text-yellow-600"}`}>
+                                  {driver.incidentCount}
                                 </p>
-                                {driver.incident > 2 && <AlertTriangle className="h-4 w-4 text-red-500" />}
+                                {driver.incidentCount > 2 && <AlertTriangle className="h-4 w-4 text-red-500" />}
                               </>
                             )}
                           </div>

@@ -1,4 +1,5 @@
 import { LucideIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface AuditorCardProps {
   title: string;
@@ -31,10 +32,10 @@ export function AuditorCard({
 
       <div className="flex items-end justify-between mt-4">
         <span className="text-3xl font-bold text-gray-900">{value}</span>
-        <button className="text-xs text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1">
+        <Button variant="ghost">
           {linkText}
           <span>→</span>
-        </button>
+        </Button>
       </div>
     </div>
   );

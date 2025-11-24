@@ -147,3 +147,30 @@ export function createActionsColumn<T>(options?: {
     },
   }
 }
+
+export function createDateColumn<T>(
+  accessorKey: string,
+  label: string,
+  options?: {
+    locale?: string
+    format?: Intl.DateTimeFormatOptions
+  }
+): ColumnDef<T> {
+  const { 
+    locale = "id-ID", 
+    format = { day: "2-digit", month: "short", year: "numeric" } 
+  } = options || {}
+
+  return {
+    accessorKey,
+    header: ({ column }) => <SortableHeader column={column} label={label} />,
+    cell: ({ row }) => {
+      const date = new Date(row.getValue(accessorKey) as string)
+      return (
+        <div className="text-sm text-gray-600">
+          {date.toLocaleDateString(locale, format)}
+        </div>
+      )
+    },
+  }
+}

@@ -3,23 +3,15 @@ export interface Report {
   title: string
   month: string
   year: number
-  generatedDate: string //generatedAt
+  generatedAt: string
   isLatest?: boolean
   includes?: string[] //
   fileSize?: string 
   format?: string 
   totalPages?: number
-  dataPoints?: number //takeout
-  chartsIncluded?: number //takeout
 }
 
 export interface ReportInclude {
   label: string
   icon?: string
-}
-
-export interface ReportBriefStats {
-  totalPages: number
-  dataPoints: number
-  chartsIncluded: number
 }

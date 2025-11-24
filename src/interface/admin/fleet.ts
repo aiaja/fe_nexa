@@ -1,14 +1,12 @@
 export interface FleetData {
   id: string
-  //fleetId: string
-  plateNumber: string //ganti jd licensePlate
+  fleetID: string // TRK-001
+  licensePlate: string
   photo?: string
   type: FleetType
   brands: string
   model: string
   year: string
-  purchaseDate?: string //takeout
-  initialMileage?: number //takeout
   status: FleetStatus
 }
 

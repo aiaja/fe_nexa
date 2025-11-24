@@ -1,16 +1,16 @@
 export interface DriverData {
-  id: string;
-  //tambah driverID
+  id: string; // pake uid
+  driverID: string; // ini DRV-001
   photo?: string;                    
   name: string;
-  simNumber: string; // ganti ke licenseNumber                 
-  license: LicenseType; // ganti ke licenseType           
+  licenseNumber: string;                 
+  licenseType: LicenseType;              
   assignedTruck?: string;            
   phone: string;  
   email?: string;                    
   address?: string;                  
-  joinDate: string;           
-  incident: number; //ganti ke incidentCount                 
+  joinDate: string;                  
+  incidentCount: number;                  
   status: DriverStatus;              
 }
 
