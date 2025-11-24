@@ -17,12 +17,10 @@ export const columns: ColumnDef<DriverManagement>[] = [
     fontWeight: "medium"
   }),
 
+  createTextColumn<DriverManagement>("name", "Name"),
   createTextColumn<DriverManagement>("phone", "Contact"),
-  createTextColumn<DriverManagement>("assigned_fleet", "Assigned Fleet"),
+  createTextColumn<DriverManagement>("assignedFleet", "Assigned Fleet"),
   createTextColumn<DriverManagement>("hos", "HOS"),
-
-  createTextColumn<DriverManagement>("cur_location", "Current Location"),
-
   createStatusColumn<DriverManagement>("status", "Status", {
     "On Duty": "bg-green-100 text-green-700",
     "On Break": "bg-gray-100 text-gray-700",
