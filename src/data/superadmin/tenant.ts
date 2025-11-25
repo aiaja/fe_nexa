@@ -1,4 +1,4 @@
-import { Tenant, TenantWithCounts } from '@/interface/superadmin/tenant'
+import { Tenant, TenantWithCounts, TelemetryLogCounts } from '@/interface/superadmin/tenant'
 
 export const mockTenants: Tenant[] = [
   {
@@ -98,7 +98,7 @@ export const mockTenants: Tenant[] = [
     address: 'Jl. HR Rasuna Said, Jakarta Selatan',
     plan: 'FREE',
     tenantStatus: 'TRIAL',
-    createdAt: '2025-11-17T10:00:00Z', // 6 days ago (8 days left)
+    createdAt: '2025-11-17T10:00:00Z',
     updatedAt: '2025-11-17T10:00:00Z'
   },
   {
@@ -118,7 +118,7 @@ export const mockTenants: Tenant[] = [
     address: 'Jl. Gajah Mada, Pontianak',
     plan: 'FREE',
     tenantStatus: 'TRIAL',
-    createdAt: '2025-11-21T13:00:00Z', // 2 days ago (12 days left)
+    createdAt: '2025-11-21T13:00:00Z',
     updatedAt: '2025-11-21T13:00:00Z'
   },
   {
@@ -153,14 +153,68 @@ export const mockTenants: Tenant[] = [
   }
 ]
 
-// Mock Tenants with Counts (untuk tabel dengan usage info)
+// Helper: Generate realistic telemetry data based on plan
+const generateTelemetryData = (plan: string, tenantStatus: string): TelemetryLogCounts => {
+  // Base multiplier based on plan
+  const planMultiplier = {
+    FREE: 0.05,
+    STARTER: 0.15,
+    BUSINESS: 0.5,
+    ENTERPRISE: 1.0
+  }[plan] || 0.05
+
+  // Status affects activity
+  const statusMultiplier = tenantStatus === 'ACTIVE' ? 1.0 : 
+                          tenantStatus === 'SUSPENDED' ? 0.1 : 
+                          tenantStatus === 'TRIAL' ? 0.3 : 0
+
+  const multiplier = planMultiplier * statusMultiplier
+
+  // Generate base numbers
+  const avgPerDay = Math.floor(1200 * multiplier)
+  const last7days = avgPerDay * 7
+  const last30days = avgPerDay * 30
+  const last24h = Math.floor(avgPerDay * (0.8 + Math.random() * 0.4))
+  const total = Math.floor(last30days * 12) // ~1 year of data
+
+  // Generate activity trend (last 7 days)
+  const activityTrend = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(day => ({
+    date: day,
+    logs: Math.floor(avgPerDay * (0.7 + Math.random() * 0.6))
+  }))
+
+  // Distribute by sensor type (realistic proportions)
+  const byType = {
+    gps: Math.floor(last30days * 0.35),        // 35% - GPS most frequent
+    temperature: Math.floor(last30days * 0.25), // 25%
+    fuel: Math.floor(last30days * 0.20),       // 20%
+    speed: Math.floor(last30days * 0.12),      // 12%
+    rpm: Math.floor(last30days * 0.05),        // 5%
+    battery: Math.floor(last30days * 0.03)     // 3%
+  }
+
+  return {
+    total,
+    last24h,
+    last7days,
+    last30days,
+    avgPerDay,
+    byType,
+    activityTrend,
+    isActive: tenantStatus === 'ACTIVE' || tenantStatus === 'TRIAL',
+    lastUpdate: new Date(Date.now() - Math.floor(Math.random() * 300000)).toISOString() // Random 0-5 mins ago
+  }
+}
+
+// Mock Tenants with Counts
 export const mockTenantsWithCounts: TenantWithCounts[] = [
   {
     ...mockTenants[0], // PT Adaro Mining - ENTERPRISE
     _count: {
       users: 48,
       fleets: 247,
-      drivers: 156
+      drivers: 156,
+      telemetryLogs: generateTelemetryData('ENTERPRISE', 'ACTIVE')
     }
   },
   {
@@ -168,7 +222,8 @@ export const mockTenantsWithCounts: TenantWithCounts[] = [
     _count: {
       users: 42,
       fleets: 96,
-      drivers: 87
+      drivers: 87,
+      telemetryLogs: generateTelemetryData('BUSINESS', 'ACTIVE')
     }
   },
   {
@@ -176,7 +231,8 @@ export const mockTenantsWithCounts: TenantWithCounts[] = [
     _count: {
       users: 35,
       fleets: 89,
-      drivers: 68
+      drivers: 68,
+      telemetryLogs: generateTelemetryData('BUSINESS', 'ACTIVE')
     }
   },
   {
@@ -184,7 +240,8 @@ export const mockTenantsWithCounts: TenantWithCounts[] = [
     _count: {
       users: 52,
       fleets: 312,
-      drivers: 201
+      drivers: 201,
+      telemetryLogs: generateTelemetryData('ENTERPRISE', 'ACTIVE')
     }
   },
   {
@@ -192,7 +249,8 @@ export const mockTenantsWithCounts: TenantWithCounts[] = [
     _count: {
       users: 67,
       fleets: 456,
-      drivers: 289
+      drivers: 289,
+      telemetryLogs: generateTelemetryData('ENTERPRISE', 'ACTIVE')
     }
   },
   {
@@ -200,7 +258,8 @@ export const mockTenantsWithCounts: TenantWithCounts[] = [
     _count: {
       users: 38,
       fleets: 78,
-      drivers: 62
+      drivers: 62,
+      telemetryLogs: generateTelemetryData('BUSINESS', 'ACTIVE')
     }
   },
   {
@@ -208,7 +267,8 @@ export const mockTenantsWithCounts: TenantWithCounts[] = [
     _count: {
       users: 8,
       fleets: 18,
-      drivers: 15
+      drivers: 15,
+      telemetryLogs: generateTelemetryData('STARTER', 'ACTIVE')
     }
   },
   {
@@ -216,15 +276,17 @@ export const mockTenantsWithCounts: TenantWithCounts[] = [
     _count: {
       users: 25,
       fleets: 67,
-      drivers: 45
+      drivers: 45,
+      telemetryLogs: generateTelemetryData('BUSINESS', 'SUSPENDED')
     }
   },
   {
     ...mockTenants[8], // PT Expired - EXPIRED
     _count: {
       users: 3,
-      fleets: 5, // At limit!
-      drivers: 4
+      fleets: 5,
+      drivers: 4,
+      telemetryLogs: generateTelemetryData('STARTER', 'EXPIRED')
     }
   },
   {
@@ -232,7 +294,8 @@ export const mockTenantsWithCounts: TenantWithCounts[] = [
     _count: {
       users: 2,
       fleets: 3,
-      drivers: 2
+      drivers: 2,
+      telemetryLogs: generateTelemetryData('FREE', 'TRIAL')
     }
   },
   {
@@ -240,15 +303,17 @@ export const mockTenantsWithCounts: TenantWithCounts[] = [
     _count: {
       users: 9,
       fleets: 15,
-      drivers: 12
+      drivers: 12,
+      telemetryLogs: generateTelemetryData('STARTER', 'ACTIVE')
     }
   },
   {
     ...mockTenants[11], // PT Bauxite - TRIAL (FREE)
     _count: {
-      users: 3, // At limit!
-      fleets: 5, // At limit!
-      drivers: 3
+      users: 3,
+      fleets: 5,
+      drivers: 3,
+      telemetryLogs: generateTelemetryData('FREE', 'TRIAL')
     }
   },
   {
@@ -256,7 +321,8 @@ export const mockTenantsWithCounts: TenantWithCounts[] = [
     _count: {
       users: 45,
       fleets: 92,
-      drivers: 73
+      drivers: 73,
+      telemetryLogs: generateTelemetryData('BUSINESS', 'ACTIVE')
     }
   },
   {
@@ -264,7 +330,8 @@ export const mockTenantsWithCounts: TenantWithCounts[] = [
     _count: {
       users: 7,
       fleets: 12,
-      drivers: 9
+      drivers: 9,
+      telemetryLogs: generateTelemetryData('STARTER', 'ACTIVE')
     }
   },
   {
@@ -272,7 +339,8 @@ export const mockTenantsWithCounts: TenantWithCounts[] = [
     _count: {
       users: 0,
       fleets: 0,
-      drivers: 0
+      drivers: 0,
+      telemetryLogs: generateTelemetryData('FREE', 'INACTIVE')
     }
   }
 ]
@@ -299,4 +367,11 @@ export const getPlanLimits = (plan: string) => {
     ENTERPRISE: { fleets: 999, users: 999 }
   }
   return limits[plan as keyof typeof limits] || limits.FREE
+}
+
+// Helper: Format telemetry numbers
+export const formatTelemetryCount = (count: number): string => {
+  if (count >= 1000000) return `${(count / 1000000).toFixed(1)}M`
+  if (count >= 1000) return `${(count / 1000).toFixed(1)}K`
+  return count.toString()
 }
