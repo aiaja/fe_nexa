@@ -1,12 +1,12 @@
 export interface RefuelingLogbook { //ambil dari fuel transaction
-  id: string; //F-001, F-002
-  //transactionCode unique
-  driver_id: string;
-  fleet_id: string;
+  id: string; 
+  transactionCode: string;
+  driverId: string;
+  fleetId: string;
   location: string;
-  fuel_before: number; //fuelBefore 
-  fuel_after: number; //fuelAfter
-  date: Date; //timestamp
+  fuelBefore: number; 
+  fuelAfter: number; 
+  date: Date; 
   name: string; //ambil dari driver Name
   status: RefuelingStatus;
 }
