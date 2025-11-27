@@ -1,4 +1,4 @@
-import { ReportsCard, ReportTable } from "@/interface/manager/reports";
+import { ReportsCard, ReportTable, BarChart, LineChart } from "@/interface/manager/reports";
 
 export const reportItem : ReportsCard[] = [
     {
@@ -14,6 +14,22 @@ export const reportItem : ReportsCard[] = [
         value:"Budi Santoso",
     },
 ];
+
+export const barChartData: BarChart[] = [
+  { caseType: "Sudden Drop", case: 25 },
+  { caseType: "Out of Zone", case: 15 },
+  { caseType: "Overconsumption", case: 12 }
+]
+
+export const lineChartData: LineChart[] = [
+  { week: "Monday", case: 10 },
+  { week: "Tuesday", case: 8 },
+  { week: "Wednesday", case: 7 },
+  { week: "Thursday", case: 6 },
+  { week: "Friday", case: 9 },
+  { week: "Saturday", case: 4 },
+  { week: "Sunday", case: 8 },
+]
 
 export const reportTable: ReportTable[] = [
   // --- Laporan Periode November 2025 (REP-001 hingga REP-015) ---

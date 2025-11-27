@@ -15,13 +15,14 @@ export const columns: ColumnDef<RefuelingLogbook>[] = [
   createTextColumn<RefuelingLogbook>("date", "Date", {
     fontWeight: "medium",
   }),
+  createTextColumn<RefuelingLogbook>("transactionCode", "Transaction Code"),
   
-  createTextColumn<RefuelingLogbook>("driver_id", "Driver ID"),
+  createTextColumn<RefuelingLogbook>("driverId", "Driver ID"),
   createTextColumn<RefuelingLogbook>("name", "Driver Name"),
-  createTextColumn<RefuelingLogbook>("fleet_id", "Fleet ID"),
+  createTextColumn<RefuelingLogbook>("fleetId", "Fleet ID"),
 
-  createTextColumn<RefuelingLogbook>("fuel_before", "Fuel Before"),
-  createTextColumn<RefuelingLogbook>("fuel_after", "Fuel After"),
+  createTextColumn<RefuelingLogbook>("fuelBefore", "Fuel Before"),
+  createTextColumn<RefuelingLogbook>("fuelAfter", "Fuel After"),
   createTextColumn<RefuelingLogbook>("location", "Location"),
 
   createActionsColumn<RefuelingLogbook>(),

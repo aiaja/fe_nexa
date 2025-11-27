@@ -1,10 +1,9 @@
-"use client"
-import ReportTablePage from '@/features/manager/reports/report-data'
-import { reportTable } from '@/data/manager/reports'
+import { reportItem } from "@/data/manager/reports"
+import ReportPage from "@/features/manager/reports/ReportPage"
 
 function page() {
   return (
-    <div><ReportTablePage reportItems={reportTable}/></div>
+    <div><ReportPage reportItems={reportItem}/></div>
   )
 }
 

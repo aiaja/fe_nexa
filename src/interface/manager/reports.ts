@@ -3,6 +3,17 @@ export interface ReportsCard {
   value: string;
 }
 
+export interface BarChart {
+  caseType: string;
+  case: number;
+}
+
+export interface LineChart {
+  week?: string;
+  month?: string;
+  year?: string;
+  case: number;
+}
 export interface ReportTable {
   id: string;
   driver_id: string;
