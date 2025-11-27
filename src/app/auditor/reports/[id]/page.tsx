@@ -1,6 +1,6 @@
 // app/auditor/reports/[id]/resolve/page.tsx
-import { notFound } from 'next/navigation';
-import ResolvePage from "@/features/auditor/reports/resolve/page";
+import { notFound } from "next/navigation";
+import ResolvePage from "@/features/auditor/incident/reports/resolve/page";
 import { resolutionOptions } from "@/data/auditor/resolve";
 import { getCaseById } from "@/data/auditor/reports";
 
@@ -22,10 +22,6 @@ export default async function Page({ params }: PageProps) {
   }
 
   return (
-    <ResolvePage 
-      caseId={id} 
-      caseData={caseData} 
-      options={resolutionOptions} 
-    />
+    <ResolvePage caseId={id} caseData={caseData} options={resolutionOptions} />
   );
 }

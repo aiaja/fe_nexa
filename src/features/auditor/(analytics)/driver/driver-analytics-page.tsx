@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Search, Eye, Filter } from 'lucide-react';
+import { Search, Eye, Filter } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
@@ -16,8 +16,10 @@ export function DriverAnalyticsPage() {
   const [riskLevelFilter, setRiskLevelFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState(20);
-  const [sortBy, setSortBy] = useState<'rank' | 'incidents' | 'riskScore'>('rank');
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+  const [sortBy, setSortBy] = useState<"rank" | "incidents" | "riskScore">(
+    "rank"
+  );
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
   const filteredDrivers = useMemo(() => {
     let result = driverAnalyticsData;
@@ -47,21 +49,21 @@ export function DriverAnalyticsPage() {
       let aVal: number, bVal: number;
 
       switch (sortBy) {
-        case 'rank':
+        case "rank":
           aVal = a.rank;
           bVal = b.rank;
           break;
-        case 'incidents':
+        case "incidents":
           aVal = a.incidents;
           bVal = b.incidents;
           break;
-        case 'riskScore':
+        case "riskScore":
           aVal = a.riskScore;
           bVal = b.riskScore;
           break;
       }
 
-      return sortOrder === 'asc' ? aVal - bVal : bVal - aVal;
+      return sortOrder === "asc" ? aVal - bVal : bVal - aVal;
     });
 
     return result;
@@ -106,7 +108,9 @@ export function DriverAnalyticsPage() {
               Risk Scoring Criteria
             </h3>
             <p className="text-sm text-blue-800">
-              Critical (80-100), High (60-79), Medium (40-59), Low (0-39). Risk scores are calculated based on incident frequency, severity, compliance rate, and safety metrics.
+              Critical (80-100), High (60-79), Medium (40-59), Low (0-39). Risk
+              scores are calculated based on incident frequency, severity,
+              compliance rate, and safety metrics.
             </p>
           </div>
         </div>
@@ -145,7 +149,8 @@ export function DriverAnalyticsPage() {
 
         {/* Results Count */}
         <p className="text-sm text-gray-600">
-          Showing {paginatedDrivers.length} of {sortedFilteredDrivers.length} drivers
+          Showing {paginatedDrivers.length} of {sortedFilteredDrivers.length}{" "}
+          drivers
         </p>
 
         <div className="border border-gray-200 rounded-lg overflow-hidden bg-white">
@@ -158,15 +163,16 @@ export function DriverAnalyticsPage() {
                       <th
                         className="px-6 py-3 text-left text-xs font-semibold text-gray-700 cursor-pointer hover:bg-gray-100 select-none"
                         onClick={() => {
-                          if (sortBy === 'rank') {
-                            setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+                          if (sortBy === "rank") {
+                            setSortOrder(sortOrder === "asc" ? "desc" : "asc");
                           } else {
-                            setSortBy('rank');
-                            setSortOrder('asc');
+                            setSortBy("rank");
+                            setSortOrder("asc");
                           }
                         }}
                       >
-                        RANK {sortBy === 'rank' && (sortOrder === 'asc' ? '↑' : '↓')}
+                        RANK{" "}
+                        {sortBy === "rank" && (sortOrder === "asc" ? "↑" : "↓")}
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700">
                         DRIVER ID
@@ -177,30 +183,32 @@ export function DriverAnalyticsPage() {
                       <th
                         className="px-6 py-3 text-left text-xs font-semibold text-gray-700 cursor-pointer hover:bg-gray-100 select-none"
                         onClick={() => {
-                          if (sortBy === 'incidents') {
-                            setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+                          if (sortBy === "incidents") {
+                            setSortOrder(sortOrder === "asc" ? "desc" : "asc");
                           } else {
-                            setSortBy('incidents');
-                            setSortOrder('desc');
+                            setSortBy("incidents");
+                            setSortOrder("desc");
                           }
                         }}
                       >
-                        INCIDENTS{' '}
-                        {sortBy === 'incidents' && (sortOrder === 'asc' ? '↑' : '↓')}
+                        INCIDENTS{" "}
+                        {sortBy === "incidents" &&
+                          (sortOrder === "asc" ? "↑" : "↓")}
                       </th>
                       <th
                         className="px-6 py-3 text-left text-xs font-semibold text-gray-700 cursor-pointer hover:bg-gray-100 select-none"
                         onClick={() => {
-                          if (sortBy === 'riskScore') {
-                            setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+                          if (sortBy === "riskScore") {
+                            setSortOrder(sortOrder === "asc" ? "desc" : "asc");
                           } else {
-                            setSortBy('riskScore');
-                            setSortOrder('desc');
+                            setSortBy("riskScore");
+                            setSortOrder("desc");
                           }
                         }}
                       >
-                        RISK SCORE{' '}
-                        {sortBy === 'riskScore' && (sortOrder === 'asc' ? '↑' : '↓')}
+                        RISK SCORE{" "}
+                        {sortBy === "riskScore" &&
+                          (sortOrder === "asc" ? "↑" : "↓")}
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700">
                         ACTION
@@ -229,12 +237,26 @@ export function DriverAnalyticsPage() {
           ) : (
             <div className="px-6 py-12 text-center">
               <div className="flex justify-center mb-4">
-                <svg className="w-12 h-12 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                <svg
+                  className="w-12 h-12 text-gray-300"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={1.5}
+                    d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
+                  />
                 </svg>
               </div>
-              <h3 className="text-gray-700 font-medium mb-1">No high-risk drivers found</h3>
-              <p className="text-gray-500 text-sm">Try adjusting your search or filter criteria</p>
+              <h3 className="text-gray-700 font-medium mb-1">
+                No high-risk drivers found
+              </h3>
+              <p className="text-gray-500 text-sm">
+                Try adjusting your search or filter criteria
+              </p>
             </div>
           )}
         </div>
@@ -245,18 +267,20 @@ export function DriverAnalyticsPage() {
 
 function DriverRow({ driver }: { driver: DriverAnalytics }) {
   const getIncidentColor = (incidents: number) => {
-    if (incidents >= 5) return 'bg-red-100 text-red-700';
-    if (incidents >= 3) return 'bg-orange-100 text-orange-700';
-    return 'bg-yellow-100 text-yellow-700';
+    if (incidents >= 5) return "bg-red-100 text-red-700";
+    if (incidents >= 3) return "bg-orange-100 text-orange-700";
+    return "bg-yellow-100 text-yellow-700";
   };
 
   const isTopThree = driver.rank <= 3;
-  const rowHighlightClass = isTopThree 
-    ? 'bg-yellow-50 border-l-4 border-l-yellow-400 shadow-sm' 
-    : 'hover:bg-gray-50';
+  const rowHighlightClass = isTopThree
+    ? "bg-yellow-50 border-l-4 border-l-yellow-400 shadow-sm"
+    : "hover:bg-gray-50";
 
   return (
-    <tr className={`border-b border-gray-200 transition-colors ${rowHighlightClass}`}>
+    <tr
+      className={`border-b border-gray-200 transition-colors ${rowHighlightClass}`}
+    >
       <td className="px-6 py-4 text-sm">
         <RankMedal rank={driver.rank} />
       </td>

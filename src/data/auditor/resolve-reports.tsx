@@ -1,36 +1,36 @@
-// src/data/auditor/resolve.ts
-import { ResolutionType } from '@/interface/auditor/reports';
+import { ResolutionType, ResolveData } from '@/interface/auditor/incident-reports/resolve';
 
-export interface ResolutionOption {
-  id: ResolutionType;
-  title: string;
-  description: string;
-  icon: string;
-}
-
-export const resolutionOptions: ResolutionOption[] = [
+export const resolutionOptionsTemplate: Omit<ResolveData["options"][number], "caseNumber" | "notes">[] = [
   {
-    id: 'confirmed_theft',
+    resolutionType: 'confirmed_theft',
     title: 'Confirmed Theft',
-    description: 'The incident was confirmed as fuel theft based on investigation',
     icon: 'lock',
+    bgColor: 'bg-red-100',
+    iconBg: 'bg-red-600/10',
+    iconColor: 'text-red-600',
   },
   {
-    id: 'driver_behavior',
+    resolutionType: 'driver_behavior',
     title: 'Driver Behavior',
-    description: 'The incident was caused by driver behavior or route deviation',
     icon: 'user',
+    bgColor: 'bg-yellow-100',
+    iconBg: 'bg-yellow-600/10',
+    iconColor: 'text-yellow-600',
   },
   {
-    id: 'fleet_issue',
-    title: 'Fleet Issue',
-    description: 'The incident was caused by vehicle malfunction or maintenance issue',
+    resolutionType: 'vehicle_problem',
+    title: 'Vehicle Problem',
     icon: 'truck',
+    bgColor: 'bg-blue-100',
+    iconBg: 'bg-blue-600/10',
+    iconColor: 'text-blue-600',
   },
   {
-    id: 'no_violation',
+    resolutionType: 'no_violation',
     title: 'No Violation',
-    description: 'No violation found, incident was within normal parameters',
     icon: 'check-circle',
+    bgColor: 'bg-green-100',
+    iconBg: 'bg-green-600/10',
+    iconColor: 'text-green-600',
   },
 ];

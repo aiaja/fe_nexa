@@ -1,9 +1,9 @@
 "use client";
 
-import React from 'react';
-import { Eye } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import { DriverAnalytics } from '@/interface/auditor/driveranalytics';
+import React from "react";
+import { Eye } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { DriverAnalytics } from "@/interface/auditor/driveranalytics";
 
 interface DriverTableProps {
   drivers: DriverAnalytics[];
@@ -12,29 +12,33 @@ interface DriverTableProps {
 
 const getMedalEmoji = (rank: number) => {
   switch (rank) {
-    case 1: return '🥇';
-    case 2: return '🥈';
-    case 3: return '🥉';
-    default: return null;
+    case 1:
+      return "🥇";
+    case 2:
+      return "🥈";
+    case 3:
+      return "🥉";
+    default:
+      return null;
   }
 };
 
 const getRiskScoreBadge = (score: number, level: string) => {
   const badges = {
-    CRITICAL: 'bg-red-500 text-white',
-    HIGH: 'bg-orange-500 text-white',
-    MEDIUM: 'bg-yellow-500 text-white',
-    LOW: 'bg-green-500 text-white'
+    CRITICAL: "bg-red-500 text-white",
+    HIGH: "bg-orange-500 text-white",
+    MEDIUM: "bg-yellow-500 text-white",
+    LOW: "bg-green-500 text-white",
   };
-  
+
   return badges[level as keyof typeof badges] || badges.LOW;
 };
 
 const getIncidentBadge = (count: number) => {
-  if (count >= 4) return 'bg-red-100 text-red-700 border-red-200';
-  if (count >= 2) return 'bg-orange-100 text-orange-700 border-orange-200';
-  if (count >= 1) return 'bg-yellow-100 text-yellow-700 border-yellow-200';
-  return 'bg-green-100 text-green-700 border-green-200';
+  if (count >= 4) return "bg-red-100 text-red-700 border-red-200";
+  if (count >= 2) return "bg-orange-100 text-orange-700 border-orange-200";
+  if (count >= 1) return "bg-yellow-100 text-yellow-700 border-yellow-200";
+  return "bg-green-100 text-green-700 border-green-200";
 };
 
 export function DriverTable({ drivers, onSort }: DriverTableProps) {
@@ -74,33 +78,46 @@ export function DriverTable({ drivers, onSort }: DriverTableProps) {
             {drivers.map((driver, index) => {
               const isTopThree = driver.rank <= 3;
               const medal = getMedalEmoji(driver.rank);
-              
+
               return (
-                <tr 
+                <tr
                   key={driver.driverId}
-                  className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'} ${
-                    isTopThree ? 'border-l-4 border-l-yellow-400' : ''
+                  className={`${index % 2 === 0 ? "bg-white" : "bg-gray-50"} ${
+                    isTopThree ? "border-l-4 border-l-yellow-400" : ""
                   } hover:bg-gray-100 transition-colors`}
                 >
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center gap-2">
                       {medal && <span className="text-2xl">{medal}</span>}
-                      <span className="text-sm font-semibold text-gray-900">{driver.rank}</span>
+                      <span className="text-sm font-semibold text-gray-900">
+                        {driver.rank}
+                      </span>
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="text-sm font-medium text-gray-900">{driver.driverId}</span>
+                    <span className="text-sm font-medium text-gray-900">
+                      {driver.driverId}
+                    </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className="text-sm text-gray-900">{driver.name}</span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border ${getIncidentBadge(driver.incidents)}`}>
+                    <span
+                      className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border ${getIncidentBadge(
+                        driver.incidents
+                      )}`}
+                    >
                       {driver.incidents}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`inline-flex items-center px-3 py-1.5 rounded-full text-xs font-bold ${getRiskScoreBadge(driver.riskScore, driver.riskLevel)}`}>
+                    <span
+                      className={`inline-flex items-center px-3 py-1.5 rounded-full text-xs font-bold ${getRiskScoreBadge(
+                        driver.riskScore,
+                        driver.riskLevel
+                      )}`}
+                    >
                       {driver.riskScore}
                     </span>
                   </td>

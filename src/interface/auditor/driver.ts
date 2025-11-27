@@ -14,12 +14,6 @@ export interface DriverDetail {
   name: string;
   riskScore: number;
   joinDate: string;
-  performanceMetrics: {
-    onTimeDelivery: number;
-    fuelEfficiency: number;
-      safetyScore: number;
-      complianceRate: number;
-  };
   incidentHistory: Array<{
     id: string;
     date: string;
