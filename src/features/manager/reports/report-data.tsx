@@ -17,14 +17,14 @@ interface ReportTableProps {
 const STORAGE_KEY = "reports-data";
 
 export default function ReportTablePage({
-  reportItems: initialRefuelingItems,
+  reportItems: initialReportItems,
 }: ReportTableProps) {
-  const [reportItems, setRefuelingItems] = useState<ReportTable[]>([]);
+  const [reportItems, setReportItems] = useState<ReportTable[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [isActionOpen, setIsActionOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
-  const [selectedRefueling, setSelectedRefueling] = useState<ReportTable | null>(
+  const [selectedReport, setSelectedReport] = useState<ReportTable | null>(
     null
   );
   const [selectedRows, setSelectedRows] = useState<ReportTable[]>([]);
@@ -34,10 +34,10 @@ export default function ReportTablePage({
   });
 
   useEffect(() => {
-    loadRefuelingsData();
-  }, [initialRefuelingItems]);
+    loadReportsData();
+  }, [initialReportItems]);
 
-  const loadRefuelingsData = () => {
+  const loadReportsData = () => {
     setIsLoading(true);
     try {
       // Clear old admin report data from localStorage
@@ -56,32 +56,32 @@ export default function ReportTablePage({
 
         // Validate data has correct structure (check for ReportTable fields)
         if (data.length > 0 && data[0].hasOwnProperty("fuel_consumption")) {
-          setRefuelingItems(data);
+          setReportItems(data);
         } else {
-          // If data structure is wrong, use initialRefuelingItems
-          setRefuelingItems(initialRefuelingItems);
-          saveToStorage(initialRefuelingItems, []);
+          // If data structure is wrong, use initialReportItems
+          setReportItems(initialReportItems);
+          saveToStorage(initialReportItems, []);
         }
       } else {
-        setRefuelingItems(initialRefuelingItems);
-        saveToStorage(initialRefuelingItems, []);
+        setReportItems(initialReportItems);
+        saveToStorage(initialReportItems, []);
       }
     } catch (error) {
       console.error("Failed to load data:", error);
-      setRefuelingItems(initialRefuelingItems);
-      saveToStorage(initialRefuelingItems, []);
+      setReportItems(initialReportItems);
+      saveToStorage(initialReportItems, []);
     } finally {
       setIsLoading(false);
     }
   };
 
   const saveToStorage = (
-    updatedRefuelings: ReportTable[],
+    updatedReports: ReportTable[],
     updatedDeletedIds?: string[]
   ) => {
     try {
       const dataToSave = {
-        reports: updatedRefuelings,
+        reports: updatedReports,
         deletedIds: updatedDeletedIds !== undefined ? updatedDeletedIds : "",
       };
       localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
@@ -93,12 +93,12 @@ export default function ReportTablePage({
     }
   };
 
-  const activeRefuelingItems = useMemo(() => {
+  const activeReportItems = useMemo(() => {
     return reportItems;
   }, [reportItems]);
 
   const filteredData = useMemo(() => {
-    let result = activeRefuelingItems;
+    let result = activeReportItems;
 
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
@@ -107,23 +107,23 @@ export default function ReportTablePage({
           report.id.toLowerCase().includes(query) ||
           report.driver_id.toLowerCase().includes(query) ||
           report.fleet_id.toLowerCase().includes(query) ||
-          report.name.toLowerCase().includes(query) 
+          report.name.toLowerCase().includes(query)
       );
     }
     return result;
-  }, [activeRefuelingItems, searchQuery, filters]);
+  }, [activeReportItems, searchQuery, filters]);
 
   const handleActionClick = (
     report: ReportTable,
     position: { top: number; left: number }
   ) => {
-    setSelectedRefueling(report);
+    setSelectedReport(report);
     setActionPosition(position);
     setIsActionOpen(true);
   };
 
   const handleEditClick = (report: ReportTable) => {
-    setSelectedRefueling(report);
+    setSelectedReport(report);
     setIsEditOpen(true);
   };
 
@@ -141,39 +141,21 @@ export default function ReportTablePage({
   }
 
   return (
-    <div className="flex flex-1 flex-col">
-      <div className="flex flex-1 flex-col gap-4 p-6">
-        <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-gray-900">Refueling Logbook</h1>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <div className="relative flex-1 max-w-64">
-            <Input
-              type="text"
-              placeholder="Search Refueling"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="focus-visible:ring-0 focus-visible:border-[#0047AB]"
-            />
-            <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
-          </div>
-
-          <FilterPopover onApply={setFilters} currentFilters={filters} />
-        </div>
-
-        <DataTable
-          columns={columns}
-          data={filteredData}
-          onActionClick={handleActionClick}
-          onSelectionChange={handleSelectionChange}
-        />
+    <div className="flex flex-1 flex-col gap-4">
+      <div className="text-md font-semibold">
+        Table Report
       </div>
 
+      <DataTable
+        columns={columns}
+        data={filteredData}
+        onActionClick={handleActionClick}
+        onSelectionChange={handleSelectionChange}
+      />
       <ActionModal<ReportTable>
         open={isActionOpen}
         onClose={() => setIsActionOpen(false)}
-        data={selectedRefueling}
+        data={selectedReport}
         position={actionPosition}
         onEditClick={handleEditClick}
         detailPath="/manager/report"
