@@ -5,16 +5,17 @@ export type ResolutionType =
   | 'no_violation';
 
 export interface ResolutionOption {
-  id: ResolutionType; //id sendiri
-  title: string; //ResolutionType
-  description: string; //ini isi notesnya diganti jadi notes
-  icon: string;
-  bgColor: string;
-  iconBg: string;
-  iconColor: string;
+  caseNumber: string
+  resolutionType: ResolutionType
+  title: string
+  notes: string
+  icon: string
+  bgColor: string
+  iconBg: string
+  iconColor: string
 }
 
 export interface ResolveData {
-  caseId: string;
-  options: ResolutionOption[];
+  caseId: string
+  options: ResolutionOption[]
 }

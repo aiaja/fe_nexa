@@ -1,12 +1,11 @@
-export interface RouteTimelineEvent { //IncidentInvestigationLog 
+export type IncidentSaverity = 'CRICTICAL' | 'HIGH' | 'MEDIUM' | 'LOW';
+
+export interface IncidentInvestigationLog {
   id: string;
-  //tambah incidentId
+  incidentId: string;
   time: string;
-  location: string; //dapet dari incident
-  type: 'depot' | 'checkpoint' | 'anomaly'; //takeout
-  status: 'normal' | 'warning' | 'critical'; //ganti severity dapet dr incident 
-  tankLevel: number; //takeout
-  tankCapacity: number; //takeout
+  location: string;
+  saverity:IncidentSaverity;
   details: string[];
 }
 
@@ -16,10 +15,10 @@ export interface CaseSummary {
   fleet: string;
   driver: string;
   date: string;
-  severity: 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW';
+  severity: IncidentSaverity;
 }
 
 export interface InvestigationData {
   summary: CaseSummary;
-  timeline: RouteTimelineEvent[];
+  timeline: IncidentInvestigationLog[];
 }
