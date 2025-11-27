@@ -1,8 +1,9 @@
 import React from 'react'
+import SchedulePage from '@/features/manager/(maps-routes)/schedule/SchedulePage'
 
 function page() {
   return (
-    <div>page</div>
+    <div><SchedulePage/></div>
   )
 }
 
