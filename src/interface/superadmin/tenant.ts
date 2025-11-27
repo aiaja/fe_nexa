@@ -20,7 +20,7 @@ export interface TelemetryByType {
   battery: number
 }
 
-// Complete Telemetry Logs Structure
+
 export interface TelemetryLogCounts {
   total: number
   last24h: number
@@ -28,9 +28,9 @@ export interface TelemetryLogCounts {
   last30days: number
   avgPerDay: number
   byType: TelemetryByType
-  activityTrend: TelemetryActivityPoint[] // Data untuk chart
-  isActive: boolean // Real-time status
-  lastUpdate: string // ISO timestamp
+  activityTrend: TelemetryActivityPoint[] 
+  isActive: boolean 
+  lastUpdate: string 
 }
 
 export interface Tenant {
@@ -44,13 +44,13 @@ export interface Tenant {
   updatedAt: string
 }
 
-// Updated TenantWithCounts to include telemetry
+
 export interface TenantWithCounts extends Tenant {
   _count: {
     users: number
     fleets: number
     drivers: number
-    telemetryLogs: TelemetryLogCounts // ← NEW!
+    telemetryLogs: TelemetryLogCounts 
   }
 }
 
