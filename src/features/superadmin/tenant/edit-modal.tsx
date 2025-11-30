@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { X } from 'lucide-react'
-import { Tenant, TenantStatus, SubscriptionPlan } from "@/interface/superadmin/tenant"
+import { Tenant, TenantStatus, SubscriptionPlan, SubscriptionPeriod } from "@/interface/superadmin/tenant"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -14,8 +14,14 @@ import {
   editTenantSchema, 
   EditTenantFormData,
   getAvailableStatusesForPlan,
+  getAvailablePeriodsForPlan,
   getDefaultStatusForPlan,
+  getDefaultPeriodForPlan,
+  getEditModalStatusDescription,
+  getPlanDisplayName,
+  getPeriodDisplayName
 } from './schema'
+import { calculateSubscriptionEnd } from '@/data/superadmin/tenant'
 
 interface EditTenantModalProps {
   open: boolean
@@ -48,12 +54,14 @@ export function EditTenantModal({
       company_name: '',
       email: '',
       address: '',
-      plan: 'FREE',
-      tenantStatus: 'TRIAL'
+      plan: 'BASIC',
+      period: 'TRIAL',
+      tenantStatus: 'ACTIVE'
     }
   })
 
   const watchedPlan = watch('plan')
+  const watchedPeriod = watch('period')
   const watchedStatus = watch('tenantStatus')
 
   useEffect(() => {
@@ -65,6 +73,7 @@ export function EditTenantModal({
         email: tenant.email,
         address: tenant.address,
         plan: tenant.plan,
+        period: tenant.period,
         tenantStatus: tenant.tenantStatus
       })
       
@@ -74,12 +83,19 @@ export function EditTenantModal({
 
   if (!open || !tenant) return null
 
-
   const availableStatuses = getAvailableStatusesForPlan(watchedPlan)
+  const availablePeriods = getAvailablePeriodsForPlan(watchedPlan)
 
   const handlePlanChange = (newPlan: SubscriptionPlan) => {
     setValue('plan', newPlan, { shouldValidate: true })
     
+    // Auto-adjust period if invalid for new plan
+    const allowedPeriods = getAvailablePeriodsForPlan(newPlan)
+    if (!allowedPeriods.includes(watchedPeriod)) {
+      setValue('period', getDefaultPeriodForPlan(newPlan))
+    }
+    
+    // Auto-adjust status if invalid for new plan
     const allowedStatuses = getAvailableStatusesForPlan(newPlan)
     if (!allowedStatuses.includes(watchedStatus)) {
       setValue('tenantStatus', getDefaultStatusForPlan(newPlan))
@@ -87,6 +103,7 @@ export function EditTenantModal({
   }
 
   const onSubmit = (data: EditTenantFormData) => {
+    // Check for duplicate email (if changed)
     if (data.email.toLowerCase() !== tenant.email.toLowerCase() && 
         existingEmails.includes(data.email.toLowerCase())) {
       setError('email', {
@@ -96,14 +113,23 @@ export function EditTenantModal({
       return
     }
 
+    // Recalculate subscription end if period changed
+    const now = new Date().toISOString()
+    const shouldRecalculateEnd = data.period !== tenant.period
+    const newSubscriptionEnd = shouldRecalculateEnd 
+      ? calculateSubscriptionEnd(now, data.period)
+      : tenant.subscriptionEnd
+
     const updatedTenant: Tenant = {
       ...tenant,
       company_name: data.company_name,
       email: data.email,
       address: data.address,
       plan: data.plan,
+      period: data.period,
       tenantStatus: data.tenantStatus,
-      updatedAt: new Date().toISOString()
+      subscriptionEnd: newSubscriptionEnd,
+      updatedAt: now
     }
 
     onSuccess(updatedTenant)
@@ -134,7 +160,7 @@ export function EditTenantModal({
           </Button>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="p-6">
+        <div className="p-6">
           <FieldGroup>
             <Field>
               <FieldLabel>Tenant ID</FieldLabel>
@@ -201,32 +227,20 @@ export function EditTenantModal({
                   onValueChange={handlePlanChange}
                 >
                   <SelectTrigger className={errors.plan ? 'border-red-500' : ''}>
-                    <SelectValue placeholder="Select plan">
-                      {watchedPlan} 
+                    <SelectValue>
+                      {getPlanDisplayName(watchedPlan)}
                     </SelectValue>
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="FREE">
+                    <SelectItem value="BASIC">
                       <div className="flex flex-col">
-                        <span className="font-medium">Free</span>
+                        <span className="font-medium">Basic (Free Trial)</span>
                         <span className="text-xs text-gray-500">5 fleets, 3 users</span>
                       </div>
                     </SelectItem>
-                    <SelectItem value="STARTER">
+                    <SelectItem value="PREMIUM">
                       <div className="flex flex-col">
-                        <span className="font-medium">Starter</span>
-                        <span className="text-xs text-gray-500">20 fleets, 10 users</span>
-                      </div>
-                    </SelectItem>
-                    <SelectItem value="BUSINESS">
-                      <div className="flex flex-col">
-                        <span className="font-medium">Business</span>
-                        <span className="text-xs text-gray-500">100 fleets, 50 users</span>
-                      </div>
-                    </SelectItem>
-                    <SelectItem value="ENTERPRISE">
-                      <div className="flex flex-col">
-                        <span className="font-medium">Enterprise</span>
+                        <span className="font-medium">Premium</span>
                         <span className="text-xs text-gray-500">Unlimited</span>
                       </div>
                     </SelectItem>
@@ -238,6 +252,52 @@ export function EditTenantModal({
               {errors.plan && (
                 <p className="text-xs text-red-500 mt-1">⚠️ {errors.plan.message}</p>
               )}
+            </Field>
+
+            <Field>
+              <FieldLabel>
+                Subscription Period <span className="text-red-500">*</span>
+              </FieldLabel>
+              {isReady ? (
+                <Select 
+                  value={watchedPeriod} 
+                  onValueChange={(value) => setValue('period', value as SubscriptionPeriod, { shouldValidate: true })}
+                >
+                  <SelectTrigger className={errors.period ? 'border-red-500' : ''}>
+                    <SelectValue>
+                      {getPeriodDisplayName(watchedPeriod)}
+                    </SelectValue>
+                  </SelectTrigger>
+                  <SelectContent>
+                    {availablePeriods.map(period => (
+                      <SelectItem key={period} value={period}>
+                        <div className="flex flex-col">
+                          <span className="font-medium">
+                            {period === "TRIAL" ? "14-Day Trial" :
+                             period === "MONTHLY" ? "Monthly" :
+                             period === "QUARTERLY" ? "Quarterly (3 Months)" :
+                             "Yearly (12 Months)"}
+                          </span>
+                          <span className="text-xs text-gray-500">
+                            {period === "TRIAL" ? "FREE" :
+                             period === "MONTHLY" ? "$99/month" :
+                             period === "QUARTERLY" ? "$269" :
+                             "$999"}
+                          </span>
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              ) : (
+                <div className="w-full h-10 bg-gray-100 animate-pulse rounded-md" />
+              )}
+              {errors.period && (
+                <p className="text-xs text-red-500 mt-1">⚠️ {errors.period.message}</p>
+              )}
+              <p className="text-xs text-gray-500 mt-1">
+                ⚠️ Changing period will recalculate subscription end date
+              </p>
             </Field>
             
             <Field>
@@ -266,6 +326,9 @@ export function EditTenantModal({
               {errors.tenantStatus && (
                 <p className="text-xs text-red-500 mt-1">⚠️ {errors.tenantStatus.message}</p>
               )}
+              <p className="text-xs text-gray-500 mt-1">
+                {getEditModalStatusDescription(watchedPlan)}
+              </p>
             </Field>
 
             <div className="border-t pt-4 mt-4">
@@ -293,7 +356,7 @@ export function EditTenantModal({
               </div>
             </div>
 
-            <Field orientation="horizontal" className="pt-4 gap-3">
+            <div className="flex items-center pt-4 gap-3">
               <Button
                 type="button"
                 variant="outline"
@@ -303,14 +366,15 @@ export function EditTenantModal({
                 Cancel
               </Button>
               <Button
-                type="submit"
+                type="button"
+                onClick={handleSubmit(onSubmit)}
                 className="flex-1 bg-[#0047AB] hover:bg-[#003580]"
               >
                 Update Tenant
               </Button>
-            </Field>
+            </div>
           </FieldGroup>
-        </form>
+        </div>
       </div>
     </>
   )

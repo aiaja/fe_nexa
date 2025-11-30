@@ -78,6 +78,9 @@ export default function TenantManagement({ tenantItems: initialTenantItems }: Te
         deletedIds: updatedDeletedIds !== undefined ? updatedDeletedIds : deletedIds
       }
       localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave))
+      
+      // Dispatch event agar halaman detail tau ada perubahan
+      window.dispatchEvent(new Event('tenantDataUpdated'))
     } catch (error) {
       console.error('Failed to save to storage:', error)
       toast.error("Failed to save data", {
@@ -185,7 +188,15 @@ export default function TenantManagement({ tenantItems: initialTenantItems }: Te
       _count: {
         users: 0,
         fleets: 0,
-        drivers: 0
+        drivers: 0,
+        zones: 0,
+        routes: 0,
+        transactions: 0,
+        schedules: 0,
+        telemetry: 0,
+        incidents: 0,
+        checkpoints: 0,
+        notifications: 0
       }
     }
     
@@ -212,9 +223,11 @@ export default function TenantManagement({ tenantItems: initialTenantItems }: Te
     })
   }
 
-  const handleChangePlanSuccess = (updatedTenant: TenantWithCounts) => {
+  const handleChangePlanSuccess = (updatedTenant: Tenant) => {
     const updatedTenants: TenantWithCounts[] = tenantItems.map(tenant => 
-      tenant.id === updatedTenant.id ? updatedTenant : tenant
+      tenant.id === updatedTenant.id 
+        ? { ...tenant, ...updatedTenant } as TenantWithCounts
+        : tenant
     )
     setTenantItems(updatedTenants)
     saveToStorage(updatedTenants)

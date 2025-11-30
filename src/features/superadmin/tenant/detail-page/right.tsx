@@ -8,7 +8,6 @@ interface TenantRightColumnProps {
 export function TenantRightColumn({ tenant }: TenantRightColumnProps) {
   const getStatusColor = (status: string) => {
     if (status === "ACTIVE") return "bg-green-100 text-green-700"
-    if (status === "TRIAL") return "bg-blue-100 text-blue-700"
     if (status === "SUSPENDED") return "bg-red-100 text-red-700"
     if (status === "EXPIRED") return "bg-orange-100 text-orange-700"
     if (status === "INACTIVE") return "bg-gray-100 text-gray-700"
@@ -16,10 +15,8 @@ export function TenantRightColumn({ tenant }: TenantRightColumnProps) {
   }
 
   const getPlanColor = (plan: string) => {
-    if (plan === "FREE") return "bg-gray-100 text-gray-700"
-    if (plan === "STARTER") return "bg-blue-100 text-blue-700"
-    if (plan === "BUSINESS") return "bg-purple-100 text-purple-700"
-    if (plan === "ENTERPRISE") return "bg-amber-100 text-amber-700"
+    if (plan === "BASIC") return "bg-blue-100 text-blue-700"
+    if (plan === "PREMIUM") return "bg-purple-100 text-purple-700"
     return "bg-gray-100 text-gray-700"
   }
 
