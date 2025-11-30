@@ -1,8 +1,9 @@
 "use client";
 
-import React from "react";
-import { ArrowLeft, Info } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { ArrowLeft, Info } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
 
 interface ResolveHeaderProps {
   caseId: string;
@@ -11,43 +12,36 @@ interface ResolveHeaderProps {
 export function ResolveHeader({ caseId }: ResolveHeaderProps) {
   const router = useRouter();
 
-  const formattedCaseId = caseId && caseId.startsWith("Case ") ? caseId : `Case ${caseId || ''}`;
-
   return (
-    <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-      {/* Back Button */}
+    <div className="mb-6">
+      {/* Back Button and Title */}
       <div className="flex items-center gap-4 mb-6">
-        <button
-          type="button"
+        <Button
+          variant="ghost"
+          size="icon"
           onClick={() => router.back()}
-          aria-label="Go back"
-          title="Go back"
-          className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+          className="h-10 w-10"
         >
-          <ArrowLeft className="w-5 h-5 text-gray-600" />
-        </button>
+          <ArrowLeft className="w-5 h-5" />
+        </Button>
 
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Resolve Case</h1>
-          <p className="text-sm text-gray-600 mt-1">
-            {formattedCaseId}
-          </p>
+          <p className="text-sm text-gray-500 mt-1">Case {caseId}</p>
         </div>
       </div>
 
-      {/* Info Banner */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 flex items-start gap-3">
-        <Info className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
-        <div>
-          <h3 className="text-sm font-semibold text-blue-900 mb-1">
-            Choose the most accurate resolution type based on your investigation
-          </h3>
-          <p className="text-sm text-blue-700">
-            Ensure supporting data and evidence are reviewed before finalizing
-            the case
-          </p>
-        </div>
-      </div>
+      {/* Info Alert */}
+      <Alert className="bg-blue-50 border-blue-200">
+        <Info className="h-5 w-5 text-blue-600" />
+        <AlertTitle className="text-blue-900 font-semibold">
+          Choose the most accurate resolution type based on your investigation
+        </AlertTitle>
+        <AlertDescription className="text-blue-700 text-sm">
+          Ensure supporting data and evidence are reviewed before finalizing the
+          case
+        </AlertDescription>
+      </Alert>
     </div>
   );
 }

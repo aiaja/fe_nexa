@@ -1,9 +1,7 @@
-import {
-  DriverAnalytics,
-  DriverDetail,
-} from "@/interface/auditor/driveranalytics";
+import { DriverAnalytics, DriverDetail } from "@/interface/auditor/driver";
 
-export const driverAnalyticsData: DriverAnalytics[] = [
+
+export const DriverAnalyticsData: DriverAnalytics[] = [
   {
     rank: 1,
     driverId: "DRV-005",
@@ -166,18 +164,13 @@ export const driverAnalyticsData: DriverAnalytics[] = [
   },
 ];
 
+
 export const driverDetailData: Record<string, DriverDetail> = {
   "DRV-005": {
     driverId: "DRV-005",
     name: "Bambang Ari",
     riskScore: 85,
     joinDate: "Mar 2020",
-    performanceMetrics: {
-      onTimeDelivery: 88,
-      fuelEfficiency: 70,
-      safetyScore: 62,
-      complianceRate: 79,
-    },
     incidentHistory: [
       {
         id: "INC-1",
@@ -247,12 +240,6 @@ export const driverDetailData: Record<string, DriverDetail> = {
     name: "Budi Santoso",
     riskScore: 78,
     joinDate: "May 2021",
-    performanceMetrics: {
-      onTimeDelivery: 90,
-      fuelEfficiency: 74,
-      safetyScore: 66,
-      complianceRate: 84,
-    },
     incidentHistory: [
       {
         id: "INC-1",
@@ -305,12 +292,6 @@ export const driverDetailData: Record<string, DriverDetail> = {
     name: "Hamish Dawud",
     riskScore: 75,
     joinDate: "Feb 2020",
-    performanceMetrics: {
-      onTimeDelivery: 89,
-      fuelEfficiency: 77,
-      safetyScore: 71,
-      complianceRate: 82,
-    },
     incidentHistory: [
       {
         id: "INC-1",
@@ -363,12 +344,6 @@ export const driverDetailData: Record<string, DriverDetail> = {
     name: "Fransius",
     riskScore: 71,
     joinDate: "Aug 2021",
-    performanceMetrics: {
-      onTimeDelivery: 87,
-      fuelEfficiency: 73,
-      safetyScore: 69,
-      complianceRate: 81,
-    },
     incidentHistory: [
       {
         id: "INC-1",
@@ -413,12 +388,6 @@ export const driverDetailData: Record<string, DriverDetail> = {
     name: "Januar Sulung",
     riskScore: 71,
     joinDate: "Jan 2019",
-    performanceMetrics: {
-      onTimeDelivery: 85,
-      fuelEfficiency: 71,
-      safetyScore: 67,
-      complianceRate: 80,
-    },
     incidentHistory: [
       {
         id: "INC-1",
@@ -463,12 +432,6 @@ export const driverDetailData: Record<string, DriverDetail> = {
     name: "Gregorius",
     riskScore: 54,
     joinDate: "Jul 2022",
-    performanceMetrics: {
-      onTimeDelivery: 83,
-      fuelEfficiency: 69,
-      safetyScore: 72,
-      complianceRate: 88,
-    },
     incidentHistory: [
       {
         id: "INC-1",
@@ -497,12 +460,6 @@ export const driverDetailData: Record<string, DriverDetail> = {
     name: "Ahmad Suryanto",
     riskScore: 68,
     joinDate: "Jan 2021",
-    performanceMetrics: {
-      onTimeDelivery: 94,
-      fuelEfficiency: 75,
-      safetyScore: 68,
-      complianceRate: 88,
-    },
     incidentHistory: [
       {
         id: "INC-1",
@@ -555,12 +512,6 @@ export const driverDetailData: Record<string, DriverDetail> = {
     name: "Dika Kusuma",
     riskScore: 62,
     joinDate: "Apr 2021",
-    performanceMetrics: {
-      onTimeDelivery: 88,
-      fuelEfficiency: 70,
-      safetyScore: 73,
-      complianceRate: 84,
-    },
     incidentHistory: [
       {
         id: "INC-1",
@@ -597,12 +548,6 @@ export const driverDetailData: Record<string, DriverDetail> = {
     name: "Eko Prasetyo",
     riskScore: 59,
     joinDate: "Feb 2018",
-    performanceMetrics: {
-      onTimeDelivery: 82,
-      fuelEfficiency: 68,
-      safetyScore: 70,
-      complianceRate: 86,
-    },
     incidentHistory: [
       {
         id: "INC-1",
@@ -639,12 +584,6 @@ export const driverDetailData: Record<string, DriverDetail> = {
     name: "Fajar Hidayat",
     riskScore: 56,
     joinDate: "Dec 2020",
-    performanceMetrics: {
-      onTimeDelivery: 85,
-      fuelEfficiency: 71,
-      safetyScore: 67,
-      complianceRate: 83,
-    },
     incidentHistory: [
       {
         id: "INC-1",
@@ -681,12 +620,6 @@ export const driverDetailData: Record<string, DriverDetail> = {
     name: "Gilang Ramadhan",
     riskScore: 48,
     joinDate: "Jun 2022",
-    performanceMetrics: {
-      onTimeDelivery: 80,
-      fuelEfficiency: 66,
-      safetyScore: 72,
-      complianceRate: 85,
-    },
     incidentHistory: [
       {
         id: "INC-1",
@@ -715,12 +648,6 @@ export const driverDetailData: Record<string, DriverDetail> = {
     name: "Hendra Wijaya",
     riskScore: 45,
     joinDate: "Aug 2019",
-    performanceMetrics: {
-      onTimeDelivery: 84,
-      fuelEfficiency: 67,
-      safetyScore: 70,
-      complianceRate: 86,
-    },
     incidentHistory: [
       {
         id: "INC-1",
@@ -749,12 +676,6 @@ export const driverDetailData: Record<string, DriverDetail> = {
     name: "Irfan Hakim",
     riskScore: 42,
     joinDate: "Sep 2018",
-    performanceMetrics: {
-      onTimeDelivery: 83,
-      fuelEfficiency: 68,
-      safetyScore: 71,
-      complianceRate: 84,
-    },
     incidentHistory: [
       {
         id: "INC-1",
@@ -783,12 +704,6 @@ export const driverDetailData: Record<string, DriverDetail> = {
     name: "Joko Widodo",
     riskScore: 38,
     joinDate: "Jul 2020",
-    performanceMetrics: {
-      onTimeDelivery: 82,
-      fuelEfficiency: 70,
-      safetyScore: 73,
-      complianceRate: 89,
-    },
     incidentHistory: [
       {
         id: "INC-1",
@@ -817,12 +732,6 @@ export const driverDetailData: Record<string, DriverDetail> = {
     name: "Kurniawan Adi",
     riskScore: 35,
     joinDate: "May 2021",
-    performanceMetrics: {
-      onTimeDelivery: 84,
-      fuelEfficiency: 72,
-      safetyScore: 75,
-      complianceRate: 87,
-    },
     incidentHistory: [
       {
         id: "INC-1",
@@ -851,12 +760,6 @@ export const driverDetailData: Record<string, DriverDetail> = {
     name: "Lutfi Ramadhan",
     riskScore: 28,
     joinDate: "Oct 2022",
-    performanceMetrics: {
-      onTimeDelivery: 82,
-      fuelEfficiency: 74,
-      safetyScore: 78,
-      complianceRate: 90,
-    },
     incidentHistory: [],
     recentTrips: [
       {
@@ -876,12 +779,6 @@ export const driverDetailData: Record<string, DriverDetail> = {
     name: "Made Wirawan",
     riskScore: 25,
     joinDate: "Dec 2021",
-    performanceMetrics: {
-      onTimeDelivery: 85,
-      fuelEfficiency: 76,
-      safetyScore: 79,
-      complianceRate: 92,
-    },
     incidentHistory: [],
     recentTrips: [
       {
@@ -901,12 +798,6 @@ export const driverDetailData: Record<string, DriverDetail> = {
     name: "Nanda Pratama",
     riskScore: 22,
     joinDate: "Jan 2023",
-    performanceMetrics: {
-      onTimeDelivery: 83,
-      fuelEfficiency: 75,
-      safetyScore: 79,
-      complianceRate: 90,
-    },
     incidentHistory: [],
     recentTrips: [
       {
@@ -926,12 +817,6 @@ export const driverDetailData: Record<string, DriverDetail> = {
     name: "Omar Syarif",
     riskScore: 18,
     joinDate: "May 2023",
-    performanceMetrics: {
-      onTimeDelivery: 84,
-      fuelEfficiency: 73,
-      safetyScore: 77,
-      complianceRate: 91,
-    },
     incidentHistory: [],
     recentTrips: [
       {
@@ -951,12 +836,6 @@ export const driverDetailData: Record<string, DriverDetail> = {
     name: "Putra Mahendra",
     riskScore: 15,
     joinDate: "Jul 2023",
-    performanceMetrics: {
-      onTimeDelivery: 86,
-      fuelEfficiency: 74,
-      safetyScore: 80,
-      complianceRate: 93,
-    },
     incidentHistory: [],
     recentTrips: [
       {

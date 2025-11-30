@@ -15,7 +15,6 @@ interface IncidentDetailProps {
 
 const STORAGE_KEY = "incidents-data";
 
-// Badge Colors
 const categoryBadge: Record<IncidentCategory, string> = {
   "SUDDEN DROP": "bg-red-100 text-red-700",
   "OUT OF ZONE": "bg-orange-100 text-orange-700",
@@ -35,7 +34,6 @@ export default function IncidentDetail({
   const [incident, setIncident] = useState(initialIncident);
   const [isLoading, setIsLoading] = useState(!initialIncident);
 
-  // Load from localStorage untuk direct access
   useEffect(() => {
     if (!initialIncident && typeof window !== "undefined") {
       const idFromUrl = window.location.pathname.split("/").pop();
@@ -59,6 +57,18 @@ export default function IncidentDetail({
     }
   }, [initialIncident]);
 
+  const handleQuickConfirm = () => {
+    if (incident) {
+      router.push(`/auditor/incident/${incident.id}/resolve`);
+    }
+  };
+
+  const handleDismiss = () => {
+    if (incident) {
+      router.push("/auditor/incident");
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -72,7 +82,7 @@ export default function IncidentDetail({
       <div className="flex flex-col items-center justify-center h-screen">
         <p className="text-lg font-semibold">Incident Not Found</p>
         <button
-          onClick={() => router.push("/admin/incidents")}
+          onClick={() => router.push("/auditor/incident")}
           className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg"
         >
           Back to Incidents
@@ -177,16 +187,22 @@ export default function IncidentDetail({
             onClick={() =>
               router.push(`/auditor/incident/${incident.id}/investigation`)
             }
-            className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg"
+            className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors"
           >
             Investigate
           </button>
 
-          <button className="px-6 py-2 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-semibold rounded-lg">
+          <button
+            onClick={handleQuickConfirm}
+            className="px-6 py-2 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-semibold rounded-lg transition-colors"
+          >
             Quick Confirm
           </button>
 
-          <button className="px-6 py-2 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-semibold rounded-lg">
+          <button
+            onClick={handleDismiss}
+            className="px-6 py-2 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-semibold rounded-lg transition-colors"
+          >
             Dismiss
           </button>
         </div>

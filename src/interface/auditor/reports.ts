@@ -1,38 +1,41 @@
-// src/interface/auditor/reports.ts
-export type ResolutionType = 
-  | 'confirmed_theft'
-  | 'driver_behavior'
-  | 'fleet_issue'
-  | 'no_violation';
+export type ResolutionType =
+  | "confirmed_theft"
+  | "driver_behavior"
+  | "fleet_issue"
+  | "no_violation";
 
-export type CategoryType = 'SUDDEN DROP' | 'OUT OF ZONE' | 'OVERCONSUMPTION' | 'SENSOR MALFUNCTION';
-export type SeverityType = 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW';
+export type IncidentCategory =
+| "SUDDEN DROP"
+| "OUT OF ZONE"
+| "OVERCONSUMPTION"
+
+export type IncidentSaverity =
+| "CRITICAL"
+| "HIGH"
+| "MEDIUM"
+| "LOW"
+
+export type IncidentStatus =
+| "RESOLVED"
+| "UNRESOLVED"
 
 export interface ReportCase {
   id: string;
-  caseId: string;
+  caseNumber: string;
   dateTime: string;
   fleetId: string;
-  fleetName?: string;
+  model: string;
   driverId: string;
-  driverName: string;
-  category: CategoryType;
-  severity: SeverityType;
-  status: 'RESOLVED' | 'UNRESOLVED';
+  name: string;
+  category: IncidentCategory;
+  severity: IncidentSaverity;
+  status: IncidentStatus
   resolution: ResolutionType;
   notes: string;
 }
 
-export interface ReportsPageData {
-  cases: ReportCase[];
-  total: number;
-}
+// export interface ReportsPageData {
+//   cases: ReportCase[];
+//   total: number;
+// }
 
-export interface FilterOptions {
-  category?: CategoryType[];
-  severity?: SeverityType[];
-  resolution?: ResolutionType[];
-  dateFrom?: string;
-  dateTo?: string;
-  searchQuery?: string;
-}

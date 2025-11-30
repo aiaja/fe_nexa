@@ -1,7 +1,11 @@
-"use client"
+import DriverAnalytics from '@/features/auditor/(analytics)/driver/driver-analytics-data';
+import { DriverAnalyticsData } from '@/data/auditor/driver-analytics';
 
-import { DriverAnalyticsPage } from "@/features/auditor/(analytics)/driver/driver-analytics-page"
 
-export default function DriverAnalyticsRoute() {
-  return <DriverAnalyticsPage />
+function Page() {
+  return (
+    <DriverAnalytics DriverAnalyticsItems={DriverAnalyticsData} />
+  );
 }
+
+export default Page;

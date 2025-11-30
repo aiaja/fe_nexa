@@ -1,5 +1,5 @@
-import ResolvePage from '@/features/auditor/incident/resolve/page';
-import { resolutionOptions } from '@/data/auditor/resolve';
+import ResolvePage from "@/features/auditor/incident/resolve/page";
+import { resolutionOptions } from "@/data/auditor/resolve";
 
 interface PageProps {
   params: Promise<{
@@ -10,12 +10,11 @@ interface PageProps {
 export default async function Page({ params }: PageProps) {
   const { id } = await params;
 
-  console.log('Resolve Page - ID:', id);
+  // Map options with case ID
+  const optionsWithCaseId = resolutionOptions.map((option) => ({
+    ...option,
+    caseNumber: id,
+  }));
 
-  return (
-    <ResolvePage 
-      caseId={id}
-      options={resolutionOptions}
-    />
-  );
+  return <ResolvePage caseId={id} options={optionsWithCaseId} />;
 }

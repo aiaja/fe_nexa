@@ -1,4 +1,8 @@
-export type RiskLevel = 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW';
+export type RiskLevel =
+| "CRITICAL"
+| "HIGH"
+| "MEDIUM"
+| "LOW"
 
 export interface DriverAnalytics {
   rank: number;
