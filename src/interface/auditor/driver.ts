@@ -12,12 +12,17 @@ export interface DriverAnalytics {
   riskScore: number;
   riskLevel: RiskLevel;
 }
-
 export interface DriverDetail {
   driverId: string;
   name: string;
   riskScore: number;
   joinDate: string;
+  performanceMetrics: {
+    onTimeDelivery: number;
+    fuelEfficiency: number;
+      safetyScore: number;
+      complianceRate: number;
+  };
   incidentHistory: Array<{
     id: string;
     date: string;

@@ -1,14 +1,14 @@
-"use client"
+"use client";
 
-import { useParams } from 'next/navigation'
-import DriverDetail from '@/features/admin/(master-data)/driver/detail-page/driver-detail'
-import { driverData } from '@/data/admin/driver'
+import { useParams } from "next/navigation";
+import DriverDetailAnalytics from "@/features/auditor/(analytics)/driver/view-detail/detail-data";
+import { DriverAnalyticsData } from "@/data/auditor/driver-analytics";
 
 export default function Page() {
-  const params = useParams()
-  const driverId = params.id as string
+  const params = useParams();
+  const driverId = params.id as string;
 
-  const driver = driverData.find(f => f.id === driverId)
+  const driver = DriverAnalyticsData.find((item) => item.driverId === driverId) || null;
 
-  return <DriverDetail driver={driver || null} />
+  return <DriverDetailAnalytics driver={driver} />;
 }

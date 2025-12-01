@@ -28,13 +28,13 @@ export const columns: ColumnDef<ReportCase>[] = [
     accessorKey: "fleetDriver",
     header: "Fleet/Driver",
     cell: ({ row }) => {
-      const fleet = row.original.model;
+      const fleet = row.original.fleetId;
       const driver = row.original.name;
 
       return (
         <div className="flex flex-col">
-          <span className="font-medium">{fleet.fleetId}</span>
-          <span className="text-sm text-gray-500">{driver.name}</span>
+          <span className="font-medium">{fleet}</span>
+          <span className="text-sm text-gray-500">{driver}</span>
         </div>
       );
     },
@@ -48,9 +48,11 @@ export const columns: ColumnDef<ReportCase>[] = [
     "MEDIUM": "bg-yellow-100 text-yellow-700",
   }),
 
-  createTextColumn<ReportCase>("detectionDate", "Detection Time"),
+  createTextColumn<ReportCase>("severity", "Severity"),
 
-  createTextColumn<ReportCase>("confidence", "Confidence"),
+  createTextColumn<ReportCase>("resolution", "Resolution"),
+
+  createTextColumn<ReportCase>("notes", "Notes"),
 
   createActionsColumn<ReportCase>(),
 ];

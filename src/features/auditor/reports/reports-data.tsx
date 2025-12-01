@@ -6,27 +6,27 @@ import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { columns } from "./columns";
 import { DataTable } from "@/components/data-table";
-import type { IncidentReport } from "@/interface/auditor/incident-reports/incidents";
+import type { ReportCase } from "@/interface/auditor/reports";
 import { FilterPopover, FilterValues } from "./filter-popover";
 import { ActionModal } from "@/components/action-modal";
 
-interface IncidentReportProps {
-  incidentItems: IncidentReport[];
+interface ReportCaseProps {
+  ReportsItems: ReportCase[];
 }
 
-const STORAGE_KEY = "incident-data";
+const STORAGE_KEY = "reports-data";
 
-export default function IncidentReportPage({
-  incidentItems: initialIncidentItems,
-}: IncidentReportProps) {
-  const [incidentItems, setIncidentItems] = useState<IncidentReport[]>([]);
+export default function ReportCasePage({
+  ReportsItems: initialReportsItems,
+}: ReportCaseProps) {
+  const [ReportsItems, setReportsItems] = useState<ReportCase[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [isActionOpen, setIsActionOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [selectedIncident, setSelectedIncident] =
-    useState<IncidentReport | null>(null);
-  const [selectedRows, setSelectedRows] = useState<IncidentReport[]>([]);
+    useState<ReportCase | null>(null);
+  const [selectedRows, setSelectedRows] = useState<ReportCase[]>([]);
   const [actionPosition, setActionPosition] = useState({ top: 0, left: 0 });
   const [filters, setFilters] = useState<FilterValues>({
     statuses: [],
@@ -34,18 +34,18 @@ export default function IncidentReportPage({
 
   useEffect(() => {
     loadFleetsData();
-  }, [initialIncidentItems]);
+  }, [initialReportsItems]);
 
   const loadFleetsData = () => {
     setIsLoading(true);
     try {
       // Clear old admin fleet data from localStorage
-      localStorage.removeItem("incident-data");
+      localStorage.removeItem("reports-data");
 
       const savedData = localStorage.getItem(STORAGE_KEY);
       if (savedData) {
         const parsedData = JSON.parse(savedData);
-        let data: IncidentReport[] = [];
+        let data: ReportCase[] = [];
 
         if (parsedData.fleets && Array.isArray(parsedData.fleets)) {
           data = parsedData.fleets;
@@ -53,29 +53,29 @@ export default function IncidentReportPage({
           data = parsedData;
         }
 
-        // Validate data has correct structure (check for IncidentReport fields)
+        // Validate data has correct structure (check for ReportCase fields)
         if (data.length > 0 && data[0].hasOwnProperty("fuel_consumption")) {
-          setIncidentItems(data);
+          setReportsItems(data);
         } else {
-          // If data structure is wrong, use initialIncidentItems
-          setIncidentItems(initialIncidentItems);
-          saveToStorage(initialIncidentItems, []);
+          // If data structure is wrong, use initialReportsItems
+          setReportsItems(initialReportsItems);
+          saveToStorage(initialReportsItems, []);
         }
       } else {
-        setIncidentItems(initialIncidentItems);
-        saveToStorage(initialIncidentItems, []);
+        setReportsItems(initialReportsItems);
+        saveToStorage(initialReportsItems, []);
       }
     } catch (error) {
       console.error("Failed to load data:", error);
-      setIncidentItems(initialIncidentItems);
-      saveToStorage(initialIncidentItems, []);
+      setReportsItems(initialReportsItems);
+      saveToStorage(initialReportsItems, []);
     } finally {
       setIsLoading(false);
     }
   };
 
   const saveToStorage = (
-    updatedFleets: IncidentReport[],
+    updatedFleets: ReportCase[],
     updatedDeletedIds?: string[]
   ) => {
     try {
@@ -92,19 +92,22 @@ export default function IncidentReportPage({
     }
   };
 
-  const activeIncidentItems = useMemo(() => {
-    return incidentItems;
-  }, [incidentItems]);
+  const activeReportsItems = useMemo(() => {
+    return ReportsItems;
+  }, [ReportsItems]);
 
   const filteredData = useMemo(() => {
-    let result = activeIncidentItems;
+    let result = activeReportsItems;
 
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
       result = result.filter(
         (caseNumber) =>
           caseNumber.id.toLowerCase().includes(query) ||
-          caseNumber.location.toLowerCase().includes(query)      );
+          caseNumber.caseNumber.toLowerCase().includes(query) ||
+          caseNumber.fleetId.toLowerCase().includes(query) ||
+          caseNumber.name.toLowerCase().includes(query)
+      );
     }
 
     if (filters.statuses.length > 0) {
@@ -114,10 +117,10 @@ export default function IncidentReportPage({
     }
 
     return result;
-  }, [activeIncidentItems, searchQuery, filters]);
+  }, [activeReportsItems, searchQuery, filters]);
 
   const handleActionClick = (
-    fleet: IncidentReport,
+    fleet: ReportCase,
     position: { top: number; left: number }
   ) => {
     setSelectedIncident(fleet);
@@ -125,12 +128,12 @@ export default function IncidentReportPage({
     setIsActionOpen(true);
   };
 
-  const handleEditClick = (incident: IncidentReport) => {
+  const handleEditClick = (incident: ReportCase) => {
     setSelectedIncident(incident);
     setIsEditOpen(true);
   };
 
-  const handleSelectionChange = (rows: IncidentReport[]) => {
+  const handleSelectionChange = (rows: ReportCase[]) => {
     setSelectedRows(rows);
   };
 
@@ -176,13 +179,13 @@ export default function IncidentReportPage({
         />
       </div>
 
-      <ActionModal<IncidentReport>
+      <ActionModal<ReportCase>
         open={isActionOpen}
         onClose={() => setIsActionOpen(false)}
         data={selectedIncident}
         position={actionPosition}
         onEditClick={handleEditClick}
-        detailPath="/auditor/incident"
+        detailPath="/auditor/reports"
       />
     </div>
   );
