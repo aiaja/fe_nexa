@@ -1,61 +1,112 @@
+// features/superadmin/tenants/schema.ts
 import { z } from "zod"
-import { TenantStatus, SubscriptionPlan } from "@/interface/superadmin/tenant"
+import { TenantStatus, SubscriptionPlan, SubscriptionPeriod } from "@/interface/superadmin/tenant"
 
-// Constants
+// ==========================================
+// CONSTANTS (UPDATED)
+// ==========================================
+
 export const TENANT_STATUSES: TenantStatus[] = [
   "ACTIVE",
-  "TRIAL", 
   "SUSPENDED",
   "EXPIRED",
   "INACTIVE"
+  // Note: "TRIAL" removed - use BASIC + ACTIVE instead
 ]
 
 export const SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
-  "FREE",
-  "STARTER",
-  "BUSINESS",
-  "ENTERPRISE"
+  "BASIC",    // Free trial
+  "PREMIUM"   // Paid subscription
 ]
 
-// Business Rules: Valid status combinations per plan
+export const SUBSCRIPTION_PERIODS: SubscriptionPeriod[] = [
+  "TRIAL",      // 14 days (BASIC only)
+  "MONTHLY",    // 30 days (PREMIUM only)
+  "QUARTERLY",  // 90 days (PREMIUM only)
+  "YEARLY"      // 365 days (PREMIUM only)
+]
+
+// ==========================================
+// BUSINESS RULES
+// ==========================================
+
+// Valid status combinations per plan
 export const PLAN_STATUS_RULES = {
-  FREE: ['TRIAL', 'INACTIVE'] as TenantStatus[],
-  STARTER: ['ACTIVE', 'SUSPENDED', 'EXPIRED'] as TenantStatus[],
-  BUSINESS: ['ACTIVE', 'SUSPENDED', 'EXPIRED'] as TenantStatus[],
-  ENTERPRISE: ['ACTIVE', 'SUSPENDED', 'EXPIRED'] as TenantStatus[]
+  BASIC: ['ACTIVE', 'EXPIRED', 'INACTIVE'] as TenantStatus[],
+  PREMIUM: ['ACTIVE', 'SUSPENDED', 'EXPIRED', 'INACTIVE'] as TenantStatus[]
 } as const
 
-// Helper: Get available statuses for a plan
+// Valid period combinations per plan
+export const PLAN_PERIOD_RULES = {
+  BASIC: ['TRIAL'] as SubscriptionPeriod[],
+  PREMIUM: ['MONTHLY', 'QUARTERLY', 'YEARLY'] as SubscriptionPeriod[]
+} as const
+
+// ==========================================
+// HELPER FUNCTIONS
+// ==========================================
+
+// Get available statuses for a plan
 export function getAvailableStatusesForPlan(plan: SubscriptionPlan): TenantStatus[] {
   return PLAN_STATUS_RULES[plan]
 }
 
-// Helper: Check if plan-status combination is valid
+// Get available periods for a plan
+export function getAvailablePeriodsForPlan(plan: SubscriptionPlan): SubscriptionPeriod[] {
+  return PLAN_PERIOD_RULES[plan]
+}
+
+// Check if plan-status combination is valid
 export function isValidPlanStatusCombo(plan: SubscriptionPlan, status: TenantStatus): boolean {
   return PLAN_STATUS_RULES[plan].includes(status)
 }
 
-// Helper: Get default status for a plan
+// Check if plan-period combination is valid
+export function isValidPlanPeriodCombo(plan: SubscriptionPlan, period: SubscriptionPeriod): boolean {
+  return PLAN_PERIOD_RULES[plan].includes(period)
+}
+
+// Get default status for a plan (always ACTIVE when creating)
 export function getDefaultStatusForPlan(plan: SubscriptionPlan): TenantStatus {
-  return plan === 'FREE' ? 'TRIAL' : 'ACTIVE'
+  return 'ACTIVE'
 }
 
-// Helper: Get status description for Add Modal
-export function getAddModalStatusDescription(plan: SubscriptionPlan): string {
-  switch(plan) {
-    case 'FREE':
-      return '🔒 FREE plan: 14-day trial with 5 fleets & 3 users'
-    case 'STARTER':
-      return '🔒 STARTER plan: Active subscription with 20 fleets & 10 users'
-    case 'BUSINESS':
-      return '🔒 BUSINESS plan: Active subscription with 100 fleets & 50 users'
-    case 'ENTERPRISE':
-      return '🔒 ENTERPRISE plan: Active subscription with unlimited resources'
-    default:
-      return ''
+// Get default period for a plan
+export function getDefaultPeriodForPlan(plan: SubscriptionPlan): SubscriptionPeriod {
+  return plan === 'BASIC' ? 'TRIAL' : 'MONTHLY'
+}
+
+// Check if tenant is on trial
+export function isOnTrial(plan: SubscriptionPlan, status: TenantStatus): boolean {
+  return plan === 'BASIC' && status === 'ACTIVE'
+}
+
+// Get status description for Add Modal
+export function getAddModalStatusDescription(plan: SubscriptionPlan, period: SubscriptionPeriod): string {
+  if (plan === 'BASIC') {
+    return '🟢 New tenant will be ACTIVE with 14-day free trial (5 fleets, 3 users)'
   }
+  
+  const periodText = {
+    TRIAL: '14-day trial',
+    MONTHLY: 'monthly',
+    QUARTERLY: '3-month',
+    YEARLY: '12-month'
+  }[period] || period.toLowerCase()
+  
+  return `🟢 New tenant will be ACTIVE with ${periodText} subscription (unlimited resources)`
 }
 
+// Get status description for Edit Modal
+export function getEditModalStatusDescription(plan: SubscriptionPlan): string {
+  if (plan === 'BASIC') {
+    return 'ℹ️ BASIC plan: Limited to ACTIVE, EXPIRED, or INACTIVE status'
+  }
+  return 'ℹ️ PREMIUM plan: Can be ACTIVE, SUSPENDED, EXPIRED, or INACTIVE'
+}
+
+
+// Add Tenant Schema
 export const addTenantSchema = z.object({
   company_name: z.string()
     .min(3, "Company name must be at least 3 characters")
@@ -69,24 +120,24 @@ export const addTenantSchema = z.object({
     .min(10, "Address must be at least 10 characters")
     .max(200, "Address must be less than 200 characters"),
   
-  plan: z.enum(["FREE", "STARTER", "BUSINESS", "ENTERPRISE"], {
+  plan: z.enum(["BASIC", "PREMIUM"], {
     message: "Please select a subscription plan"
   }),
   
-  tenantStatus: z.enum(["ACTIVE", "TRIAL", "SUSPENDED", "EXPIRED", "INACTIVE"], {
-    message: "Please select a status"
+  period: z.enum(["TRIAL", "MONTHLY", "QUARTERLY", "YEARLY"], {
+    message: "Please select a subscription period"
   })
 }).refine(
-  (data) => isValidPlanStatusCombo(data.plan, data.tenantStatus),
+  (data) => isValidPlanPeriodCombo(data.plan, data.period),
   {
-    message: "Invalid status for the selected plan",
-    path: ["tenantStatus"]
+    message: "Invalid period for the selected plan",
+    path: ["period"]
   }
 )
 
 export type AddTenantFormData = z.infer<typeof addTenantSchema>
 
-
+// Edit Tenant Schema
 export const editTenantSchema = z.object({
   company_name: z.string()
     .min(3, "Company name must be at least 3 characters")
@@ -100,11 +151,15 @@ export const editTenantSchema = z.object({
     .min(10, "Address must be at least 10 characters")
     .max(200, "Address must be less than 200 characters"),
   
-  plan: z.enum(["FREE", "STARTER", "BUSINESS", "ENTERPRISE"], {
+  plan: z.enum(["BASIC", "PREMIUM"], {
     message: "Please select a subscription plan"
   }),
   
-  tenantStatus: z.enum(["ACTIVE", "TRIAL", "SUSPENDED", "EXPIRED", "INACTIVE"], {
+  period: z.enum(["TRIAL", "MONTHLY", "QUARTERLY", "YEARLY"], {
+    message: "Please select a subscription period"
+  }),
+  
+  tenantStatus: z.enum(["ACTIVE", "SUSPENDED", "EXPIRED", "INACTIVE"], {
     message: "Please select a status"
   })
 }).refine(
@@ -113,52 +168,68 @@ export const editTenantSchema = z.object({
     message: "Invalid status for the selected plan",
     path: ["tenantStatus"]
   }
+).refine(
+  (data) => isValidPlanPeriodCombo(data.plan, data.period),
+  {
+    message: "Invalid period for the selected plan",
+    path: ["period"]
+  }
 )
 
 export type EditTenantFormData = z.infer<typeof editTenantSchema>
 
-
+// Change Plan Schema
 export const changePlanSchema = z.object({
-  plan: z.enum(["FREE", "STARTER", "BUSINESS", "ENTERPRISE"], {
+  plan: z.enum(["BASIC", "PREMIUM"], {
     message: "Please select a subscription plan"
+  }),
+  period: z.enum(["TRIAL", "MONTHLY", "QUARTERLY", "YEARLY"], {
+    message: "Please select a subscription period"
   })
-})
+}).refine(
+  (data) => isValidPlanPeriodCombo(data.plan, data.period),
+  {
+    message: "Invalid period for the selected plan",
+    path: ["period"]
+  }
+)
 
 export type ChangePlanFormData = z.infer<typeof changePlanSchema>
 
-// Helper: Get auto status when changing plan
-export function getAutoStatusForPlanChange(newPlan: SubscriptionPlan): TenantStatus {
-  return newPlan === 'FREE' ? 'TRIAL' : 'ACTIVE'
-}
 
-// Helper: Check if plan change is a downgrade
+// Check if plan change is a downgrade
 export function isDowngrade(currentPlan: SubscriptionPlan, newPlan: SubscriptionPlan): boolean {
   const planHierarchy: Record<SubscriptionPlan, number> = {
-    'FREE': 0,
-    'STARTER': 1,
-    'BUSINESS': 2,
-    'ENTERPRISE': 3
+    'BASIC': 0,
+    'PREMIUM': 1
   }
   
   return planHierarchy[newPlan] < planHierarchy[currentPlan]
 }
 
-// Helper: Get plan change description
+// Get plan change description
 export function getPlanChangeDescription(
   currentPlan: SubscriptionPlan, 
-  newPlan: SubscriptionPlan
+  newPlan: SubscriptionPlan,
+  newPeriod: SubscriptionPeriod
 ): string {
-  const newStatus = getAutoStatusForPlanChange(newPlan)
   const changeType = isDowngrade(currentPlan, newPlan) ? 'downgrade' : 'upgrade'
   
-  if (newPlan === 'FREE') {
-    return `⚠️ Downgrade to FREE will set status to TRIAL (14-day trial period)`
+  if (newPlan === 'BASIC') {
+    return `Downgrade to BASIC will start a 14-day trial period with limited features`
   }
   
-  return `✅ ${changeType === 'upgrade' ? 'Upgrade' : 'Change'} to ${newPlan} will set status to ACTIVE`
+  const periodText = {
+    TRIAL: '14-day trial',
+    MONTHLY: 'monthly',
+    QUARTERLY: 'quarterly',
+    YEARLY: 'yearly'
+  }[newPeriod] || newPeriod.toLowerCase()
+  
+  return `✅ ${changeType === 'upgrade' ? 'Upgrade' : 'Change'} to PREMIUM (${periodText}) will unlock unlimited features`
 }
 
-// Helper: Generate Tenant ID
+// Generate Tenant ID
 export function generateTenantId(): string {
   const prefix = "TNT"
   const timestamp = Date.now().toString().slice(-6)
@@ -166,18 +237,32 @@ export function generateTenantId(): string {
   return `${prefix}-${timestamp}${random}`
 }
 
-// Helper: Format Date
+// Format Date
 export function formatDate(date: Date): string {
   return date.toISOString()
 }
 
-// Helper: Get Plan Limits
+// Get Plan Limits
 export function getPlanLimits(plan: SubscriptionPlan) {
   const limits = {
-    FREE: { fleets: 5, users: 3 },
-    STARTER: { fleets: 20, users: 10 },
-    BUSINESS: { fleets: 100, users: 50 },
-    ENTERPRISE: { fleets: 999, users: 999 }
+    BASIC: { fleets: 5, users: 3 },
+    PREMIUM: { fleets: 'unlimited' as const, users: 'unlimited' as const }
   }
   return limits[plan]
+}
+
+// Get Plan Display Name
+export function getPlanDisplayName(plan: SubscriptionPlan): string {
+  return plan === 'BASIC' ? 'Basic (Free Trial)' : 'Premium'
+}
+
+// Get Period Display Name
+export function getPeriodDisplayName(period: SubscriptionPeriod): string {
+  const names = {
+    TRIAL: '14-Day Trial',
+    MONTHLY: 'Monthly',
+    QUARTERLY: 'Quarterly (3 Months)',
+    YEARLY: 'Yearly (12 Months)'
+  }
+  return names[period]
 }

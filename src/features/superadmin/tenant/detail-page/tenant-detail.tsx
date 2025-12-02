@@ -20,12 +20,13 @@ const STORAGE_KEY = 'tenants-data'
 
 export default function TenantDetail({ tenant: initialTenant }: TenantDetailProps) {
   const router = useRouter()
-  const [tenant, setTenant] = useState(initialTenant)
+  const [tenant, setTenant] = useState<TenantWithCounts | null>(null)
   const [isEditOpen, setIsEditOpen] = useState(false)
   const [isDeleteOpen, setIsDeleteOpen] = useState(false)
   const [isChangePlanOpen, setIsChangePlanOpen] = useState(false)
-  const [isLoading, setIsLoading] = useState(!initialTenant)
+  const [isLoading, setIsLoading] = useState(true)
 
+  // Function untuk load data tenant dari localStorage
   const loadTenantData = () => {
     const tenantIdFromUrl = window.location.pathname.split('/').pop()
     
@@ -41,20 +42,40 @@ export default function TenantDetail({ tenant: initialTenant }: TenantDetailProp
         
         if (foundTenant) {
           setTenant(foundTenant)
+          return foundTenant
         }
       }
+      
+      // Fallback ke initialTenant jika tidak ada di localStorage
+      if (initialTenant) {
+        setTenant(initialTenant)
+        return initialTenant
+      }
+      
+      return null
     } catch (error) {
       console.error('Failed to load tenant from storage:', error)
+      // Fallback ke initialTenant jika error
+      if (initialTenant) {
+        setTenant(initialTenant)
+        return initialTenant
+      }
+      return null
     }
   }
 
+  // Load data pertama kali saat component mount
   useEffect(() => {
-    if (!initialTenant && typeof window !== 'undefined') {
-      loadTenantData()
+    const loadedTenant = loadTenantData()
+    setIsLoading(false)
+    
+    // Jika tidak ada tenant sama sekali
+    if (!loadedTenant) {
       setIsLoading(false)
     }
-  }, [initialTenant])
+  }, [])
 
+  // Listen untuk perubahan dari tab/window lain
   useEffect(() => {
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === STORAGE_KEY) {
@@ -66,15 +87,7 @@ export default function TenantDetail({ tenant: initialTenant }: TenantDetailProp
     return () => window.removeEventListener('storage', handleStorageChange)
   }, [])
 
-  useEffect(() => {
-    const handleFocus = () => {
-      loadTenantData()
-    }
-
-    window.addEventListener('focus', handleFocus)
-    return () => window.removeEventListener('focus', handleFocus)
-  }, [])
-
+  // Listen untuk perubahan dari tab yang sama (custom event)
   useEffect(() => {
     const handleCustomUpdate = () => {
       loadTenantData()
@@ -84,6 +97,17 @@ export default function TenantDetail({ tenant: initialTenant }: TenantDetailProp
     return () => window.removeEventListener('tenantDataUpdated', handleCustomUpdate)
   }, [])
 
+  // Listen ketika window kembali focus (switch tab)
+  useEffect(() => {
+    const handleFocus = () => {
+      loadTenantData()
+    }
+
+    window.addEventListener('focus', handleFocus)
+    return () => window.removeEventListener('focus', handleFocus)
+  }, [])
+
+  // Function untuk update tenant di localStorage
   const updateTenantInStorage = (updatedTenant: TenantWithCounts) => {
     try {
       const savedData = localStorage.getItem(STORAGE_KEY)
@@ -102,10 +126,17 @@ export default function TenantDetail({ tenant: initialTenant }: TenantDetailProp
         
         localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave))
         
+        // Update state lokal
+        setTenant(updatedTenant)
+        
+        // Trigger event untuk memberitahu komponen lain
         window.dispatchEvent(new Event('tenantDataUpdated'))
       }
     } catch (error) {
       console.error('Failed to update tenant in storage:', error)
+      toast.error("Failed to update data", {
+        description: "Your changes may not persist"
+      })
     }
   }
 
@@ -123,7 +154,7 @@ export default function TenantDetail({ tenant: initialTenant }: TenantDetailProp
       <div className="flex flex-col items-center justify-center min-h-screen">
         <h1 className="text-2xl font-bold text-gray-900 mb-4">Tenant Not Found</h1>
         <button
-          onClick={() => router.push('/superadmin/tenant')}
+          onClick={() => router.push('/superadmin/tenants')}
           className="px-4 py-2 bg-[#0047AB] text-white rounded-lg hover:bg-[#003580]"
         >
           Back to Tenant Management
@@ -135,18 +166,50 @@ export default function TenantDetail({ tenant: initialTenant }: TenantDetailProp
   const handleEditSuccess = (updatedTenant: Tenant) => {
     const updatedTenantWithCounts: TenantWithCounts = {
       ...updatedTenant,
-      _count: tenant?._count || { users: 0, fleets: 0, drivers: 0 }
+      _count: tenant?._count || { 
+        users: 0, 
+        fleets: 0, 
+        drivers: 0,
+        zones: 0,
+        routes: 0,
+        transactions: 0,
+        schedules: 0,
+        telemetry: 0,
+        incidents: 0,
+        checkpoints: 0,
+        notifications: 0
+      },
+      telemetryLogs: tenant?.telemetryLogs
     }
-    setTenant(updatedTenantWithCounts)
+    
     updateTenantInStorage(updatedTenantWithCounts)
+    
     toast.success('Tenant updated successfully!', {
       description: `${updatedTenant.company_name} has been updated`
     })
   }
 
-  const handleChangePlanSuccess = (updatedTenant: TenantWithCounts) => {
-    setTenant(updatedTenant)
-    updateTenantInStorage(updatedTenant)
+  const handleChangePlanSuccess = (updatedTenant: Tenant) => {
+    const updatedTenantWithCounts: TenantWithCounts = {
+      ...updatedTenant,
+      _count: tenant?._count || { 
+        users: 0, 
+        fleets: 0, 
+        drivers: 0,
+        zones: 0,
+        routes: 0,
+        transactions: 0,
+        schedules: 0,
+        telemetry: 0,
+        incidents: 0,
+        checkpoints: 0,
+        notifications: 0
+      },
+      telemetryLogs: tenant?.telemetryLogs
+    }
+    
+    updateTenantInStorage(updatedTenantWithCounts)
+    
     toast.success('Plan changed successfully!', {
       description: `${updatedTenant.company_name} is now on ${updatedTenant.plan} plan`
     })
@@ -176,7 +239,7 @@ export default function TenantDetail({ tenant: initialTenant }: TenantDetailProp
       description: `${tenant.company_name} has been removed from the system`
     })
     setTimeout(() => {
-      router.push('/superadmin/tenant')
+      router.push('/superadmin/tenants')
     }, 500)
   }
 
@@ -188,7 +251,6 @@ export default function TenantDetail({ tenant: initialTenant }: TenantDetailProp
       updatedAt: new Date().toISOString()
     }
     
-    setTenant(updatedTenant)
     updateTenantInStorage(updatedTenant)
     
     toast.success(`Tenant ${newStatus === 'ACTIVE' ? 'activated' : 'suspended'} successfully!`, {
@@ -200,7 +262,7 @@ export default function TenantDetail({ tenant: initialTenant }: TenantDetailProp
 
   return (
     <>
-      <div className="flex flex-col min-h-screen bg-gray-50">
+      <div className="flex flex-col min-h-screen">
         <TenantDetailHeader
           tenant={tenant}
           onBack={() => router.push('/superadmin/tenants')}
@@ -219,9 +281,9 @@ export default function TenantDetail({ tenant: initialTenant }: TenantDetailProp
                   <TenantRightColumn tenant={tenant} />
                 </div>
 
-                {tenant._count.telemetryLogs?.total > 0 && (
+                {tenant.telemetryLogs && tenant.telemetryLogs.total > 0 && (
                   <div className="mt-8">
-                    <TelemetryOverviewCard telemetryData={tenant._count.telemetryLogs} />
+                    <TelemetryOverviewCard telemetryData={tenant.telemetryLogs} />
                   </div>
                 )}
               </div>

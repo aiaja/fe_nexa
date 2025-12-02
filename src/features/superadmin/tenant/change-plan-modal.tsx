@@ -1,198 +1,322 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import { X, Check, AlertCircle } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { TenantWithCounts, SubscriptionPlan } from '@/interface/superadmin/tenant'
+import { X, CreditCard, AlertCircle } from 'lucide-react'
+import { Tenant, SubscriptionPlan, SubscriptionPeriod } from "@/interface/superadmin/tenant"
+import { Button } from "@/components/ui/button"
+import { Field, FieldGroup, FieldLabel } from "@/components/ui/field"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
 import { 
-  getAutoStatusForPlanChange, 
+  changePlanSchema, 
+  ChangePlanFormData,
+  isDowngrade,
   getPlanChangeDescription,
-  isDowngrade
+  getAvailablePeriodsForPlan,
+  getDefaultPeriodForPlan,
+  getPlanDisplayName,
+  getPeriodDisplayName
 } from './schema'
+import { calculateSubscriptionEnd, PLAN_DETAILS } from '@/data/superadmin/tenant'
 
 interface ChangePlanModalProps {
   open: boolean
   onClose: () => void
-  tenant: TenantWithCounts | null
-  onSuccess: (updatedTenant: TenantWithCounts) => void
+  tenant: Tenant | null
+  onSuccess: (tenant: Tenant) => void
 }
 
-const PLANS: Array<{ value: SubscriptionPlan; label: string; price: string; description: string }> = [
-  { 
-    value: 'FREE', 
-    label: 'Free', 
-    price: '$0/month',
-    description: '5 fleets, 3 users'
-  },
-  { 
-    value: 'STARTER', 
-    label: 'Starter', 
-    price: '$29/month',
-    description: '20 fleets, 10 users'
-  },
-  { 
-    value: 'BUSINESS', 
-    label: 'Business', 
-    price: '$99/month',
-    description: '100 fleets, 50 users'
-  },
-  { 
-    value: 'ENTERPRISE', 
-    label: 'Enterprise', 
-    price: '$299/month',
-    description: 'Unlimited resources'
-  },
-]
+// Helper untuk dapetin price berdasarkan period
+function getPeriodPrice(period: SubscriptionPeriod): string {
+  const prices = {
+    TRIAL: 'FREE',
+    MONTHLY: '$99',
+    QUARTERLY: '$249',
+    YEARLY: '$999'
+  }
+  return prices[period]
+}
 
 export function ChangePlanModal({ 
   open, 
   onClose, 
-  tenant,
+  tenant, 
   onSuccess
 }: ChangePlanModalProps) {
-  const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlan>('STARTER')
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isReady, setIsReady] = useState(false)
+
+  const {
+    handleSubmit,
+    formState: { errors },
+    setValue,
+    watch,
+    reset
+  } = useForm<ChangePlanFormData>({
+    resolver: zodResolver(changePlanSchema),
+    defaultValues: {
+      plan: 'BASIC',
+      period: 'TRIAL'
+    }
+  })
+
+  const watchedPlan = watch('plan')
+  const watchedPeriod = watch('period')
 
   useEffect(() => {
-    if (open && tenant) {
-      setSelectedPlan(tenant.plan)
+    if (tenant && open) {
+      setIsReady(false)
+      
+      reset({
+        plan: tenant.plan,
+        period: tenant.period
+      })
+      
+      setTimeout(() => setIsReady(true), 0)
     }
-  }, [open, tenant])
+  }, [tenant, open, reset])
 
   if (!open || !tenant) return null
 
-  // auto status 
-  const newStatus = getAutoStatusForPlanChange(selectedPlan)
-  const changeDescription = tenant ? getPlanChangeDescription(tenant.plan, selectedPlan) : ''
-  const isDowngrading = tenant ? isDowngrade(tenant.plan, selectedPlan) : false
-  const isPlanChanged = selectedPlan !== tenant.plan
+  const availablePeriods = getAvailablePeriodsForPlan(watchedPlan)
+  const isChangingPlan = watchedPlan !== tenant.plan
+  const isDowngrading = isDowngrade(tenant.plan, watchedPlan)
 
-  const handleSubmit = async () => {
-    if (!isPlanChanged) {
-      onClose()
-      return
+  const handlePlanChange = (newPlan: SubscriptionPlan) => {
+    setValue('plan', newPlan, { shouldValidate: true })
+    
+    // Auto-adjust period if invalid for new plan
+    const allowedPeriods = getAvailablePeriodsForPlan(newPlan)
+    if (!allowedPeriods.includes(watchedPeriod)) {
+      setValue('period', getDefaultPeriodForPlan(newPlan))
+    }
+  }
+
+  const onSubmit = (data: ChangePlanFormData) => {
+    const now = new Date().toISOString()
+    const newSubscriptionEnd = calculateSubscriptionEnd(now, data.period)
+
+    const updatedTenant: Tenant = {
+      ...tenant,
+      plan: data.plan,
+      period: data.period,
+      tenantStatus: 'ACTIVE',
+      subscriptionStart: now,
+      subscriptionEnd: newSubscriptionEnd,
+      updatedAt: now
     }
 
-    setIsSubmitting(true) 
-    setTimeout(() => {
-      const updatedTenant: TenantWithCounts = {
-        ...tenant,
-        plan: selectedPlan,
-        tenantStatus: newStatus, 
-        updatedAt: new Date().toISOString()
-      }
-      
-      onSuccess(updatedTenant)
-      setIsSubmitting(false)
-      onClose()
-    }, 500)
+    onSuccess(updatedTenant)
+    handleClose()
   }
+
+  const handleClose = () => {
+    reset()
+    onClose()
+  }
+
+  const currentPlanDetails = PLAN_DETAILS[tenant.plan]
+  const newPlanDetails = PLAN_DETAILS[watchedPlan]
 
   return (
     <>
-      <div className="fixed inset-0 bg-black/50 z-50" onClick={onClose} />
-      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg shadow-xl w-full max-w-md z-50 max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between p-6 border-b sticky top-0 bg-white">
-          <div>
-            <h2 className="text-xl font-bold text-gray-900">Change Plan</h2>
-            <p className="text-sm text-gray-500 mt-1">{tenant.company_name}</p>
+      <div className="fixed inset-0 bg-black/50 z-50" onClick={handleClose} />
+      
+      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg shadow-xl w-full max-w-2xl z-50 max-h-[90vh] overflow-y-auto">
+        <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between z-10">
+          <div className="flex items-center gap-2">
+            <CreditCard className="h-5 w-5 text-[#0047AB]" />
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900">Change Subscription Plan</h3>
+              <p className="text-sm text-gray-500">{tenant.company_name}</p>
+            </div>
           </div>
-          <Button variant="ghost" size="icon" onClick={onClose}>
+          <Button 
+            variant="ghost" 
+            size="icon"
+            onClick={handleClose}
+            className="h-8 w-8"
+          >
             <X className="h-4 w-4" />
           </Button>
         </div>
 
-        <div className="p-6 space-y-4">
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <p className="text-sm font-medium text-gray-700">
-              Current Plan: <span className="font-bold text-[#0047AB]">{tenant.plan}</span>
-            </p>
-            <p className="text-sm text-gray-600 mt-1">
-              Current Status: <span className="font-semibold">{tenant.tenantStatus}</span>
-            </p>
-          </div>
-
-          <div className="space-y-3">
-            <label className="text-sm font-medium text-gray-700">Select New Plan</label>
-            {PLANS.map((plan) => (
-              <button
-                key={plan.value}
-                onClick={() => setSelectedPlan(plan.value)}
-                className={`w-full flex items-center justify-between p-4 rounded-lg border-2 transition-all ${
-                  selectedPlan === plan.value
-                    ? 'border-[#0047AB] bg-blue-50'
-                    : 'border-gray-200 hover:border-gray-300'
-                }`}
-              >
-                <div className="flex items-center gap-3">
-                  <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                    selectedPlan === plan.value
-                      ? 'border-[#0047AB] bg-[#0047AB]'
-                      : 'border-gray-300'
-                  }`}>
-                    {selectedPlan === plan.value && (
-                      <Check className="h-3 w-3 text-white" />
-                    )}
-                  </div>
-                  <div className="text-left">
-                    <p className="font-semibold text-gray-900">{plan.label}</p>
-                    <p className="text-sm text-gray-500">{plan.price}</p>
-                    <p className="text-xs text-gray-400">{plan.description}</p>
-                  </div>
+        <div className="p-6">
+          <FieldGroup>
+            {/* Current Plan Info */}
+            <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+              <p className="text-sm text-gray-600 mb-2">Current Plan</p>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-lg font-bold text-gray-900">{currentPlanDetails.displayName}</p>
+                  <p className="text-sm text-gray-600">{currentPlanDetails.price}</p>
                 </div>
-                {tenant.plan === plan.value && (
-                  <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">
-                    Current
-                  </span>
-                )}
-              </button>
-            ))}
-          </div>
-
-          {isPlanChanged && (
-            <div className={`flex items-start gap-3 p-4 rounded-lg border ${
-              isDowngrading 
-                ? 'bg-orange-50 border-orange-200' 
-                : 'bg-green-50 border-green-200'
-            }`}>
-              <AlertCircle className={`h-5 w-5 mt-0.5 shrink-0 ${
-                isDowngrading ? 'text-orange-600' : 'text-green-600'
-              }`} />
-              <div className="flex-1">
-                <p className="text-sm font-medium text-gray-900">
-                  Automatic Status Change
-                </p>
-                <p className="text-sm text-gray-600 mt-1">
-                  {changeDescription}
-                </p>
-                <p className="text-xs text-gray-500 mt-2">
-                  New status will be: <span className="font-semibold text-gray-900">{newStatus}</span>
-                </p>
+                <div className="text-right">
+                  <p className="text-xs text-gray-500">Period</p>
+                  <p className="text-sm font-medium text-gray-900">
+                    {getPeriodDisplayName(tenant.period)}
+                  </p>
+                </div>
               </div>
             </div>
-          )}
-        </div>
 
-        <div className="flex items-center gap-3 p-6 border-t bg-gray-50 sticky bottom-0">
-          <Button
-            variant="outline"
-            onClick={onClose}
-            className="flex-1"
-            disabled={isSubmitting}
-          >
-            Cancel
-          </Button>
-          <Button
-            onClick={handleSubmit}
-            className={`flex-1 ${
-              isDowngrading 
-                ? 'bg-orange-600 hover:bg-orange-700' 
-                : 'bg-[#0047AB] hover:bg-[#003580]'
-            }`}
-            disabled={isSubmitting || !isPlanChanged}
-          >
-            {isSubmitting ? 'Saving...' : isPlanChanged ? 'Change Plan' : 'No Changes'}
-          </Button>
+            {/* New Plan Selection */}
+            <Field>
+              <FieldLabel>
+                New Subscription Plan <span className="text-red-500">*</span>
+              </FieldLabel>
+              {isReady ? (
+                <Select 
+                  value={watchedPlan} 
+                  onValueChange={handlePlanChange}
+                >
+                  <SelectTrigger className={errors.plan ? 'border-red-500' : ''}>
+                    <SelectValue>
+                      {getPlanDisplayName(watchedPlan)}
+                    </SelectValue>
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="BASIC">
+                      <div className="flex flex-col py-2">
+                        <span className="font-medium">Basic (Free Trial)</span>
+                        <span className="text-xs text-gray-500">10 fleets, 5 users • 14-day trial</span>
+                        <span className="text-xs font-semibold text-green-600 mt-1">FREE</span>
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="PREMIUM">
+                      <div className="flex flex-col py-2">
+                        <span className="font-medium">Premium</span>
+                        <span className="text-xs text-gray-500">Unlimited fleets & users</span>
+                        <span className="text-xs font-semibold text-blue-600 mt-1">Starting from $99/month</span>
+                      </div>
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              ) : (
+                <div className="w-full h-10 bg-gray-100 animate-pulse rounded-md" />
+              )}
+              {errors.plan && (
+                <p className="text-xs text-red-500 mt-1">⚠️ {errors.plan.message}</p>
+              )}
+            </Field>
+
+            {/* Period Selection */}
+            <Field>
+              <FieldLabel>
+                Subscription Period <span className="text-red-500">*</span>
+              </FieldLabel>
+              {isReady ? (
+                <Select 
+                  value={watchedPeriod} 
+                  onValueChange={(value) => setValue('period', value as SubscriptionPeriod, { shouldValidate: true })}
+                  disabled={watchedPlan === "BASIC"}
+                >
+                  <SelectTrigger className={errors.period ? 'border-red-500' : ''}>
+                    <SelectValue>
+                      {getPeriodDisplayName(watchedPeriod)}
+                    </SelectValue>
+                  </SelectTrigger>
+                  <SelectContent>
+                    {availablePeriods.map(period => (
+                      <SelectItem key={period} value={period}>
+                        <div className="flex flex-col py-1">
+                          <span className="font-medium">
+                            {getPeriodDisplayName(period)}
+                          </span>
+                          <span className="text-xs text-gray-500">
+                            {getPeriodPrice(period)}
+                          </span>
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              ) : (
+                <div className="w-full h-10 bg-gray-100 animate-pulse rounded-md" />
+              )}
+              {errors.period && (
+                <p className="text-xs text-red-500 mt-1">⚠️ {errors.period.message}</p>
+              )}
+            </Field>
+
+            {/* Plan Change Warning */}
+            {isChangingPlan && (
+              <div className={`rounded-lg p-4 border ${
+                isDowngrading 
+                  ? 'bg-orange-50 border-orange-200' 
+                  : 'bg-blue-50 border-blue-200'
+              }`}>
+                <div className="flex items-start gap-3">
+                  <AlertCircle className={`h-5 w-5 mt-0.5 ${
+                    isDowngrading ? 'text-orange-600' : 'text-blue-600'
+                  }`} />
+                  <div className="flex-1">
+                    <p className={`text-sm font-medium ${
+                      isDowngrading ? 'text-orange-900' : 'text-blue-900'
+                    }`}>
+                      {getPlanChangeDescription(tenant.plan, watchedPlan, watchedPeriod)}
+                    </p>
+                    {isDowngrading && (
+                      <ul className="mt-2 text-xs text-orange-700 space-y-1">
+                        <li>• Fleet limit will be reduced to 10</li>
+                        <li>• User limit will be reduced to 5</li>
+                        <li>• Advanced features will be disabled</li>
+                      </ul>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* New Plan Preview */}
+            <div className="bg-linear-to-br from-blue-50 to-indigo-50 rounded-lg p-4 border border-blue-200">
+              <p className="text-sm font-medium text-gray-700 mb-3">New Plan Details</p>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-600">Plan</span>
+                  <span className="font-semibold text-gray-900">{newPlanDetails.displayName}</span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-600">Period</span>
+                  <span className="font-semibold text-gray-900">
+                    {getPeriodDisplayName(watchedPeriod)}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-600">Price</span>
+                  <span className="font-semibold text-gray-900">
+                    {getPeriodPrice(watchedPeriod)}
+                  </span>
+                </div>
+                <div className="border-t border-blue-200 pt-2 mt-2">
+                  <p className="text-xs text-gray-600 mb-1">Features:</p>
+                  <ul className="text-xs text-gray-700 space-y-1">
+                    {newPlanDetails.features.slice(0, 4).map((feature, idx) => (
+                      <li key={idx}>✓ {feature}</li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex items-center pt-4 gap-3">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleClose}
+                className="flex-1"
+              >
+                Cancel
+              </Button>
+              <Button
+                type="button"
+                onClick={handleSubmit(onSubmit)}
+                className="flex-1 bg-[#0047AB] hover:bg-[#003580]"
+              >
+                {isDowngrading ? 'Downgrade Plan' : 'Upgrade Plan'}
+              </Button>
+            </div>
+          </FieldGroup>
         </div>
       </div>
     </>

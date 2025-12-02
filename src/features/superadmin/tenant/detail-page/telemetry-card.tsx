@@ -177,7 +177,7 @@ export function TelemetryOverviewCard({ telemetryData }: TelemetryOverviewCardPr
 
         {/* Logs by Sensor Type */}
         <div>
-          <h4 className="text-sm font-semibold text-gray-700 mb-4"> Logs by Sensor Type</h4>
+          <h4 className="text-sm font-semibold text-gray-700 mb-4">Logs by Sensor Type</h4>
           <div className="space-y-3">
             {sensorTypes.map((sensor) => {
               const Icon = sensor.icon
@@ -231,7 +231,7 @@ export function TelemetryOverviewCard({ telemetryData }: TelemetryOverviewCardPr
 
         {/* Footer - Last Update */}
         <div className="flex items-center justify-between pt-2 text-xs text-gray-500">
-          <span> Last update: {formatLastUpdate(lastUpdate)}</span>
+          <span>Last update: {formatLastUpdate(lastUpdate)}</span>
           <span className="text-gray-400">Real-time monitoring</span>
         </div>
       </div>
