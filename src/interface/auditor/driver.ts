@@ -4,8 +4,20 @@ export type RiskLevel =
 | "MEDIUM"
 | "LOW"
 
+export type ResolutionType =
+| "confirmed_theft"
+| "driver_behavior"
+| "vehicle_problem"
+| "no_violation"
+
+export type IncidentCategory =
+| "SUDDEN DROP"
+| "OUT OF ZONE"
+| "OVERCONSUMPTION"
+
+
 export interface DriverAnalytics {
-  rank: number;
+  id: number;
   driverId: string;
   name: string;
   incidents: number;
@@ -13,6 +25,7 @@ export interface DriverAnalytics {
   riskLevel: RiskLevel;
 }
 export interface DriverDetail {
+  id: number;
   driverId: string;
   name: string;
   riskScore: number;
@@ -20,16 +33,16 @@ export interface DriverDetail {
   performanceMetrics: {
     onTimeDelivery: number;
     fuelEfficiency: number;
-      safetyScore: number;
-      complianceRate: number;
+    safetyScore: number;
+    complianceRate: number;
   };
   incidentHistory: Array<{
     id: string;
     date: string;
-    type: string;
+    type: IncidentCategory;
     severity: string;
     description: string;
-    resolution: string;
+    resolution: ResolutionType;
   }>;
   recentTrips: Array<{
     date: string;

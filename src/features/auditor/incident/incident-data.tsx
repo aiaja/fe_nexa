@@ -104,7 +104,12 @@ export default function IncidentReportPage({
       result = result.filter(
         (caseNumber) =>
           caseNumber.id.toLowerCase().includes(query) ||
-          caseNumber.location.toLowerCase().includes(query)      );
+          caseNumber.caseNumber.toLowerCase().includes(query) ||    
+          caseNumber.fleet?.fleetId?.toLowerCase().includes(query) ||
+          caseNumber.title.toLowerCase().includes(query) ||
+          caseNumber.driver?.name?.toLowerCase().includes(query) ||
+          caseNumber.severity.toLowerCase().includes(query) 
+        );
     }
 
     if (filters.statuses.length > 0) {

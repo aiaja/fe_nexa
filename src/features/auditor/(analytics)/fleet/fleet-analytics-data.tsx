@@ -19,7 +19,9 @@ const STORAGE_KEY = "fleet-analytics-data";
 export default function FleetAnalyticsPage({
   FleetAnalyticsItems: initialFleetAnalyticsItems,
 }: FleetAnalyticsProps) {
-  const [FleetAnalyticsItems, setFleetAnalyticsItems] = useState<FleetAnalytics[]>([]);
+  const [FleetAnalyticsItems, setFleetAnalyticsItems] = useState<
+    FleetAnalytics[]
+  >([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [isActionOpen, setIsActionOpen] = useState(false);
@@ -148,9 +150,19 @@ export default function FleetAnalyticsPage({
     <div className="flex flex-1 flex-col">
       <div className="flex flex-1 flex-col gap-4 p-6">
         <div className="flex flex-col">
-          <h1 className="text-2xl font-bold text-gray-900">Incident Reports</h1>
+          <h1 className="text-2xl font-bold text-gray-900">Fleet Analysis</h1>
           <p className="text-base text-gray-600 mt-1">
-            Manage and review all investigation cases
+            Monitor and manage fleet vehicles with potential risks. Click on any
+            vehicle to view detailed analytics and incident history.
+          </p>
+        </div>
+
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <p className="text-sm text-blue-900">
+            <strong>Risk Criteria:</strong> Issues Count -{" "}
+            <span className="text-red-600">High (≥10)</span>,{" "}
+            <span className="text-orange-600">Medium (5-9)</span>,{" "}
+            <span className="text-yellow-600">Low (1-4)</span>
           </p>
         </div>
 

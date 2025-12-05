@@ -12,7 +12,7 @@ import {
 export const columns: ColumnDef<DriverAnalytics>[] = [
   createSelectionColumn<DriverAnalytics>(),
 
-  createTextColumn<DriverAnalytics>("rank", "Rank", {
+  createTextColumn<DriverAnalytics>("id", "ID", {
     fontWeight: "medium",
   }),
 

@@ -31,7 +31,7 @@ export default function ResolvePage({ caseId, options }: ResolvePageProps) {
     setIsSubmitting(true);
 
     try {
-      console.log("Submitting resolution:", {
+      console.log("Update resolution:", {
         caseId,
         resolution: selectedOption,
         notes,
@@ -62,7 +62,7 @@ export default function ResolvePage({ caseId, options }: ResolvePageProps) {
   const isSubmitDisabled = !selectedOption || isSubmitting;
 
   return (
-    <div className="flex flex-1 flex-col bg-gray-50 min-h-screen">
+    <div className="flex flex-1 flex-col w-full">
       <div className="w-full h-full">
         <ResolveHeader caseId={caseId} />
         

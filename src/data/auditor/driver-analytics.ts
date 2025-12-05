@@ -1,11 +1,8 @@
-import {
-  DriverAnalytics,
-  DriverDetail,
-} from "@/interface/auditor/driver";
+import { DriverAnalytics, DriverDetail } from "@/interface/auditor/driver";
 
 export const DriverAnalyticsData: DriverAnalytics[] = [
   {
-    rank: 1,
+    id: 1,
     driverId: "DRV-005",
     name: "Bambang Ari",
     incidents: 5,
@@ -13,7 +10,7 @@ export const DriverAnalyticsData: DriverAnalytics[] = [
     riskLevel: "CRITICAL",
   },
   {
-    rank: 2,
+    id: 2,
     driverId: "DRV-010",
     name: "Budi Santoso",
     incidents: 4,
@@ -21,7 +18,7 @@ export const DriverAnalyticsData: DriverAnalytics[] = [
     riskLevel: "HIGH",
   },
   {
-    rank: 3,
+    id: 3,
     driverId: "DRV-032",
     name: "Hamish Dawud",
     incidents: 4,
@@ -29,7 +26,7 @@ export const DriverAnalyticsData: DriverAnalytics[] = [
     riskLevel: "HIGH",
   },
   {
-    rank: 4,
+    id: 4,
     driverId: "DRV-046",
     name: "Fransius",
     incidents: 3,
@@ -37,7 +34,7 @@ export const DriverAnalyticsData: DriverAnalytics[] = [
     riskLevel: "HIGH",
   },
   {
-    rank: 5,
+    id: 5,
     driverId: "DRV-001",
     name: "Januar Sulung",
     incidents: 3,
@@ -45,7 +42,7 @@ export const DriverAnalyticsData: DriverAnalytics[] = [
     riskLevel: "HIGH",
   },
   {
-    rank: 6,
+    id: 6,
     driverId: "DRV-026",
     name: "Gregorius",
     incidents: 1,
@@ -53,7 +50,7 @@ export const DriverAnalyticsData: DriverAnalytics[] = [
     riskLevel: "MEDIUM",
   },
   {
-    rank: 7,
+    id: 7,
     driverId: "DRV-012",
     name: "Ahmad Suryanto",
     incidents: 3,
@@ -61,7 +58,7 @@ export const DriverAnalyticsData: DriverAnalytics[] = [
     riskLevel: "HIGH",
   },
   {
-    rank: 8,
+    id: 8,
     driverId: "DRV-018",
     name: "Dika Kusuma",
     incidents: 2,
@@ -69,7 +66,7 @@ export const DriverAnalyticsData: DriverAnalytics[] = [
     riskLevel: "HIGH",
   },
   {
-    rank: 9,
+    id: 9,
     driverId: "DRV-023",
     name: "Eko Prasetyo",
     incidents: 2,
@@ -77,7 +74,7 @@ export const DriverAnalyticsData: DriverAnalytics[] = [
     riskLevel: "MEDIUM",
   },
   {
-    rank: 10,
+    id: 10,
     driverId: "DRV-029",
     name: "Fajar Hidayat",
     incidents: 2,
@@ -85,7 +82,7 @@ export const DriverAnalyticsData: DriverAnalytics[] = [
     riskLevel: "MEDIUM",
   },
   {
-    rank: 11,
+    id: 11,
     driverId: "DRV-034",
     name: "Gilang Ramadhan",
     incidents: 1,
@@ -93,7 +90,7 @@ export const DriverAnalyticsData: DriverAnalytics[] = [
     riskLevel: "MEDIUM",
   },
   {
-    rank: 12,
+    id: 12,
     driverId: "DRV-041",
     name: "Hendra Wijaya",
     incidents: 1,
@@ -101,7 +98,7 @@ export const DriverAnalyticsData: DriverAnalytics[] = [
     riskLevel: "MEDIUM",
   },
   {
-    rank: 13,
+    id: 13,
     driverId: "DRV-015",
     name: "Irfan Hakim",
     incidents: 1,
@@ -109,7 +106,7 @@ export const DriverAnalyticsData: DriverAnalytics[] = [
     riskLevel: "MEDIUM",
   },
   {
-    rank: 14,
+    id: 14,
     driverId: "DRV-027",
     name: "Joko Widodo",
     incidents: 1,
@@ -117,7 +114,7 @@ export const DriverAnalyticsData: DriverAnalytics[] = [
     riskLevel: "LOW",
   },
   {
-    rank: 15,
+    id: 15,
     driverId: "DRV-033",
     name: "Kurniawan Adi",
     incidents: 1,
@@ -125,7 +122,7 @@ export const DriverAnalyticsData: DriverAnalytics[] = [
     riskLevel: "LOW",
   },
   {
-    rank: 16,
+    id: 16,
     driverId: "DRV-044",
     name: "Lutfi Ramadhan",
     incidents: 0,
@@ -133,7 +130,7 @@ export const DriverAnalyticsData: DriverAnalytics[] = [
     riskLevel: "LOW",
   },
   {
-    rank: 17,
+    id: 17,
     driverId: "DRV-009",
     name: "Made Wirawan",
     incidents: 0,
@@ -141,7 +138,7 @@ export const DriverAnalyticsData: DriverAnalytics[] = [
     riskLevel: "LOW",
   },
   {
-    rank: 18,
+    id: 18,
     driverId: "DRV-021",
     name: "Nanda Pratama",
     incidents: 0,
@@ -149,7 +146,7 @@ export const DriverAnalyticsData: DriverAnalytics[] = [
     riskLevel: "LOW",
   },
   {
-    rank: 19,
+    id: 19,
     driverId: "DRV-036",
     name: "Omar Syarif",
     incidents: 0,
@@ -157,7 +154,7 @@ export const DriverAnalyticsData: DriverAnalytics[] = [
     riskLevel: "LOW",
   },
   {
-    rank: 20,
+    id: 20,
     driverId: "DRV-042",
     name: "Putra Mahendra",
     incidents: 0,
@@ -166,8 +163,9 @@ export const DriverAnalyticsData: DriverAnalytics[] = [
   },
 ];
 
-export const driverDetailData: Record<string, DriverDetail> = {
-  "DRV-005": {
+export const driverDetailData: DriverDetail[] = [
+  {
+    id: 1,
     driverId: "DRV-005",
     name: "Bambang Ari",
     riskScore: 85,
@@ -182,42 +180,42 @@ export const driverDetailData: Record<string, DriverDetail> = {
       {
         id: "INC-1",
         date: "2024-10-12",
-        type: "Speeding",
+        type: "OVERCONSUMPTION",
         severity: "CRITICAL",
         description: "High speed alert",
-        resolution: "Under Review",
+        resolution: "driver_behavior",
       },
       {
         id: "INC-2",
         date: "2024-10-04",
-        type: "Fuel Theft",
+        type: "SUDDEN DROP",
         severity: "HIGH",
         description: "Fuel loss detected",
-        resolution: "Investigation",
+        resolution: "driver_behavior",
       },
       {
         id: "INC-3",
         date: "2024-09-20",
-        type: "Route Deviation",
+        type: "OUT OF ZONE",
         severity: "HIGH",
         description: "Unauthorized stop",
-        resolution: "Warning",
+        resolution: "no_violation",
       },
       {
         id: "INC-4",
         date: "2024-08-11",
-        type: "Harsh Brake",
+        type: "OVERCONSUMPTION",
         severity: "MEDIUM",
         description: "Harsh braking detected",
-        resolution: "Coaching",
+        resolution: "driver_behavior",
       },
       {
         id: "INC-5",
         date: "2024-07-28",
-        type: "Fuel Theft",
+        type: "SUDDEN DROP",
         severity: "HIGH",
         description: "Fuel dropped suddenly",
-        resolution: "Reviewing",
+        resolution: "no_violation",
       },
     ],
     recentTrips: [
@@ -242,7 +240,8 @@ export const driverDetailData: Record<string, DriverDetail> = {
     ],
   },
 
-  "DRV-010": {
+  {
+    id: 2,
     driverId: "DRV-010",
     name: "Budi Santoso",
     riskScore: 78,
@@ -257,34 +256,34 @@ export const driverDetailData: Record<string, DriverDetail> = {
       {
         id: "INC-1",
         date: "2024-09-22",
-        type: "Fuel Theft",
+        type: "SUDDEN DROP",
         severity: "HIGH",
         description: "Fuel drop detected",
-        resolution: "Investigation",
+        resolution: "driver_behavior",
       },
       {
         id: "INC-2",
         date: "2024-08-14",
-        type: "Route Deviation",
+        type: "OUT OF ZONE",
         severity: "MEDIUM",
         description: "Deviation from planned route",
-        resolution: "Warning",
+        resolution: "no_violation",
       },
       {
         id: "INC-3",
         date: "2024-07-08",
-        type: "Harsh Brake",
+        type: "OVERCONSUMPTION",
         severity: "MEDIUM",
         description: "Harsh braking behavior",
-        resolution: "Coaching",
+        resolution: "driver_behavior",
       },
       {
         id: "INC-4",
         date: "2024-06-10",
-        type: "Speeding",
+        type: "OVERCONSUMPTION",
         severity: "HIGH",
         description: "Exceeded speed limit",
-        resolution: "Warning",
+        resolution: "driver_behavior",
       },
     ],
     recentTrips: [
@@ -300,7 +299,8 @@ export const driverDetailData: Record<string, DriverDetail> = {
     ],
   },
 
-  "DRV-032": {
+  {
+    id: 3,
     driverId: "DRV-032",
     name: "Hamish Dawud",
     riskScore: 75,
@@ -315,34 +315,34 @@ export const driverDetailData: Record<string, DriverDetail> = {
       {
         id: "INC-1",
         date: "2024-10-18",
-        type: "Speeding",
+        type: "OVERCONSUMPTION",
         severity: "HIGH",
         description: "Speed limit exceeded",
-        resolution: "Review",
+        resolution: "no_violation",
       },
       {
         id: "INC-2",
         date: "2024-09-27",
-        type: "Fuel Theft",
+        type: "SUDDEN DROP",
         severity: "HIGH",
         description: "Fuel loss pattern detected",
-        resolution: "Investigation",
+        resolution: "driver_behavior",
       },
       {
         id: "INC-3",
         date: "2024-07-02",
-        type: "Route Deviation",
+        type: "OUT OF ZONE",
         severity: "MEDIUM",
         description: "Stop outside route",
-        resolution: "Warning",
+        resolution: "driver_behavior",
       },
       {
         id: "INC-4",
         date: "2024-06-11",
-        type: "Harsh Brake",
+        type: "OVERCONSUMPTION",
         severity: "MEDIUM",
         description: "Harsh braking behavior",
-        resolution: "Coaching",
+        resolution: "driver_behavior",
       },
     ],
     recentTrips: [
@@ -358,7 +358,8 @@ export const driverDetailData: Record<string, DriverDetail> = {
     ],
   },
 
-  "DRV-046": {
+  {
+    id: 4,
     driverId: "DRV-046",
     name: "Fransius",
     riskScore: 71,
@@ -373,26 +374,26 @@ export const driverDetailData: Record<string, DriverDetail> = {
       {
         id: "INC-1",
         date: "2024-09-30",
-        type: "Harsh Brake",
+        type: "OVERCONSUMPTION",
         severity: "MEDIUM",
         description: "Harsh brake detected",
-        resolution: "Coaching",
+        resolution: "no_violation",
       },
       {
         id: "INC-2",
         date: "2024-08-18",
-        type: "Speeding",
+        type: "OVERCONSUMPTION",
         severity: "HIGH",
         description: "Speed limit violation",
-        resolution: "Warning",
+        resolution: "driver_behavior",
       },
       {
         id: "INC-3",
         date: "2024-07-11",
-        type: "Route Deviation",
+        type: "OUT OF ZONE",
         severity: "HIGH",
         description: "Route not followed",
-        resolution: "Warning",
+        resolution: "driver_behavior",
       },
     ],
     recentTrips: [
@@ -408,7 +409,8 @@ export const driverDetailData: Record<string, DriverDetail> = {
     ],
   },
 
-  "DRV-001": {
+  {
+    id: 5,
     driverId: "DRV-001",
     name: "Januar Sulung",
     riskScore: 71,
@@ -423,26 +425,26 @@ export const driverDetailData: Record<string, DriverDetail> = {
       {
         id: "INC-1",
         date: "2024-10-01",
-        type: "Fuel Theft",
+        type: "SUDDEN DROP",
         severity: "HIGH",
         description: "Fuel loss alert",
-        resolution: "Review",
+        resolution: "driver_behavior",
       },
       {
         id: "INC-2",
         date: "2024-08-23",
-        type: "Speeding",
+        type: "OVERCONSUMPTION",
         severity: "HIGH",
         description: "High speed trigger",
-        resolution: "Warning",
+        resolution: "driver_behavior",
       },
       {
         id: "INC-3",
         date: "2024-07-12",
-        type: "Route Deviation",
+        type: "OUT OF ZONE",
         severity: "MEDIUM",
         description: "Out-of-route path",
-        resolution: "Warning",
+        resolution: "driver_behavior",
       },
     ],
     recentTrips: [
@@ -458,7 +460,8 @@ export const driverDetailData: Record<string, DriverDetail> = {
     ],
   },
 
-  "DRV-026": {
+  {
+    id: 6,
     driverId: "DRV-026",
     name: "Gregorius",
     riskScore: 54,
@@ -473,10 +476,10 @@ export const driverDetailData: Record<string, DriverDetail> = {
       {
         id: "INC-1",
         date: "2024-09-14",
-        type: "Route Deviation",
+        type: "OUT OF ZONE",
         severity: "LOW",
         description: "Minor deviation detected",
-        resolution: "Noted",
+        resolution: "driver_behavior",
       },
     ],
     recentTrips: [
@@ -492,7 +495,8 @@ export const driverDetailData: Record<string, DriverDetail> = {
     ],
   },
 
-  "DRV-012": {
+  {
+    id: 7,
     driverId: "DRV-012",
     name: "Ahmad Suryanto",
     riskScore: 68,
@@ -507,34 +511,34 @@ export const driverDetailData: Record<string, DriverDetail> = {
       {
         id: "INC-1",
         date: "2024-11-01",
-        type: "Fuel Theft",
+        type: "SUDDEN DROP",
         severity: "CRITICAL",
         description: "Fuel drop 45L",
-        resolution: "Under Review",
+        resolution: "driver_behavior",
       },
       {
         id: "INC-2",
         date: "2024-10-15",
-        type: "Fuel Theft",
+        type: "SUDDEN DROP",
         severity: "HIGH",
         description: "Fuel missing 32L",
-        resolution: "Investigation",
+        resolution: "driver_behavior",
       },
       {
         id: "INC-3",
         date: "2024-09-22",
-        type: "Route Deviation",
+        type: "OUT OF ZONE",
         severity: "MEDIUM",
         description: "Unauthorized deviation",
-        resolution: "Warning",
+        resolution: "driver_behavior",
       },
       {
         id: "INC-4",
         date: "2024-08-11",
-        type: "GPS Loss",
+        type: "OUT OF ZONE",
         severity: "HIGH",
         description: "GPS inactive 47m",
-        resolution: "Resolved",
+        resolution: "no_violation",
       },
     ],
     recentTrips: [
@@ -549,425 +553,5 @@ export const driverDetailData: Record<string, DriverDetail> = {
       },
     ],
   },
+];
 
-  "DRV-018": {
-    driverId: "DRV-018",
-    name: "Dika Kusuma",
-    riskScore: 62,
-    joinDate: "Apr 2021",
-    performanceMetrics: {
-      onTimeDelivery: 88,
-      fuelEfficiency: 70,
-      safetyScore: 73,
-      complianceRate: 84,
-    },
-    incidentHistory: [
-      {
-        id: "INC-1",
-        date: "2024-09-07",
-        type: "Fuel Theft",
-        severity: "MEDIUM",
-        description: "Abnormal fuel usage",
-        resolution: "Review",
-      },
-      {
-        id: "INC-2",
-        date: "2024-07-19",
-        type: "Speeding",
-        severity: "HIGH",
-        description: "Exceeded limit",
-        resolution: "Warning",
-      },
-    ],
-    recentTrips: [
-      {
-        date: "04 Nov 2024",
-        fleetId: "FL-003",
-        route: "Depot A → West Zone",
-        distance: "61 km",
-        fuelUsed: "19L",
-        duration: "2h 44m",
-        status: "Completed",
-      },
-    ],
-  },
-
-  "DRV-023": {
-    driverId: "DRV-023",
-    name: "Eko Prasetyo",
-    riskScore: 59,
-    joinDate: "Feb 2018",
-    performanceMetrics: {
-      onTimeDelivery: 82,
-      fuelEfficiency: 68,
-      safetyScore: 70,
-      complianceRate: 86,
-    },
-    incidentHistory: [
-      {
-        id: "INC-1",
-        date: "2024-08-02",
-        type: "Speeding",
-        severity: "MEDIUM",
-        description: "Speeding behavior",
-        resolution: "Coaching",
-      },
-      {
-        id: "INC-2",
-        date: "2024-07-10",
-        type: "Fuel Theft",
-        severity: "MEDIUM",
-        description: "Fuel loss pattern",
-        resolution: "Review",
-      },
-    ],
-    recentTrips: [
-      {
-        date: "05 Nov 2024",
-        fleetId: "FL-008",
-        route: "Depot B → Terminal D",
-        distance: "48 km",
-        fuelUsed: "16L",
-        duration: "2h 05m",
-        status: "Completed",
-      },
-    ],
-  },
-
-  "DRV-029": {
-    driverId: "DRV-029",
-    name: "Fajar Hidayat",
-    riskScore: 56,
-    joinDate: "Dec 2020",
-    performanceMetrics: {
-      onTimeDelivery: 85,
-      fuelEfficiency: 71,
-      safetyScore: 67,
-      complianceRate: 83,
-    },
-    incidentHistory: [
-      {
-        id: "INC-1",
-        date: "2024-09-12",
-        type: "Route Deviation",
-        severity: "LOW",
-        description: "Unexpected stop",
-        resolution: "Noted",
-      },
-      {
-        id: "INC-2",
-        date: "2024-08-01",
-        type: "Speeding",
-        severity: "MEDIUM",
-        description: "Speed above limit",
-        resolution: "Warning",
-      },
-    ],
-    recentTrips: [
-      {
-        date: "05 Nov 2024",
-        fleetId: "FL-007",
-        route: "Depot C → South Dock",
-        distance: "53 km",
-        fuelUsed: "17L",
-        duration: "2h 30m",
-        status: "Completed",
-      },
-    ],
-  },
-
-  "DRV-034": {
-    driverId: "DRV-034",
-    name: "Gilang Ramadhan",
-    riskScore: 48,
-    joinDate: "Jun 2022",
-    performanceMetrics: {
-      onTimeDelivery: 80,
-      fuelEfficiency: 66,
-      safetyScore: 72,
-      complianceRate: 85,
-    },
-    incidentHistory: [
-      {
-        id: "INC-1",
-        date: "2024-07-14",
-        type: "Fuel Theft",
-        severity: "LOW",
-        description: "Fuel imbalance",
-        resolution: "Review",
-      },
-    ],
-    recentTrips: [
-      {
-        date: "04 Nov 2024",
-        fleetId: "FL-005",
-        route: "Depot B → Iron Gate",
-        distance: "47 km",
-        fuelUsed: "15L",
-        duration: "2h 20m",
-        status: "Completed",
-      },
-    ],
-  },
-
-  "DRV-041": {
-    driverId: "DRV-041",
-    name: "Hendra Wijaya",
-    riskScore: 45,
-    joinDate: "Aug 2019",
-    performanceMetrics: {
-      onTimeDelivery: 84,
-      fuelEfficiency: 67,
-      safetyScore: 70,
-      complianceRate: 86,
-    },
-    incidentHistory: [
-      {
-        id: "INC-1",
-        date: "2024-06-22",
-        type: "Route Deviation",
-        severity: "LOW",
-        description: "Small detour",
-        resolution: "Noted",
-      },
-    ],
-    recentTrips: [
-      {
-        date: "04 Nov 2024",
-        fleetId: "FL-002",
-        route: "Depot C → Terminal A",
-        distance: "41 km",
-        fuelUsed: "13L",
-        duration: "1h 55m",
-        status: "Completed",
-      },
-    ],
-  },
-
-  "DRV-015": {
-    driverId: "DRV-015",
-    name: "Irfan Hakim",
-    riskScore: 42,
-    joinDate: "Sep 2018",
-    performanceMetrics: {
-      onTimeDelivery: 83,
-      fuelEfficiency: 68,
-      safetyScore: 71,
-      complianceRate: 84,
-    },
-    incidentHistory: [
-      {
-        id: "INC-1",
-        date: "2024-05-11",
-        type: "Harsh Brake",
-        severity: "LOW",
-        description: "Harsh braking detected",
-        resolution: "Coaching",
-      },
-    ],
-    recentTrips: [
-      {
-        date: "03 Nov 2024",
-        fleetId: "FL-004",
-        route: "Depot B → North Rail",
-        distance: "52 km",
-        fuelUsed: "16L",
-        duration: "2h 40m",
-        status: "Completed",
-      },
-    ],
-  },
-
-  "DRV-027": {
-    driverId: "DRV-027",
-    name: "Joko Widodo",
-    riskScore: 38,
-    joinDate: "Jul 2020",
-    performanceMetrics: {
-      onTimeDelivery: 82,
-      fuelEfficiency: 70,
-      safetyScore: 73,
-      complianceRate: 89,
-    },
-    incidentHistory: [
-      {
-        id: "INC-1",
-        date: "2024-04-22",
-        type: "Speeding",
-        severity: "LOW",
-        description: "Low-level speeding",
-        resolution: "Coaching",
-      },
-    ],
-    recentTrips: [
-      {
-        date: "03 Nov 2024",
-        fleetId: "FL-001",
-        route: "Depot A → Riverside",
-        distance: "44 km",
-        fuelUsed: "14L",
-        duration: "2h 10m",
-        status: "Completed",
-      },
-    ],
-  },
-
-  "DRV-033": {
-    driverId: "DRV-033",
-    name: "Kurniawan Adi",
-    riskScore: 35,
-    joinDate: "May 2021",
-    performanceMetrics: {
-      onTimeDelivery: 84,
-      fuelEfficiency: 72,
-      safetyScore: 75,
-      complianceRate: 87,
-    },
-    incidentHistory: [
-      {
-        id: "INC-1",
-        date: "2024-03-27",
-        type: "Fuel Theft",
-        severity: "LOW",
-        description: "Fuel fluctuation",
-        resolution: "Review",
-      },
-    ],
-    recentTrips: [
-      {
-        date: "02 Nov 2024",
-        fleetId: "FL-002",
-        route: "Depot C → Silver Rd",
-        distance: "37 km",
-        fuelUsed: "12L",
-        duration: "1h 45m",
-        status: "Completed",
-      },
-    ],
-  },
-
-  "DRV-044": {
-    driverId: "DRV-044",
-    name: "Lutfi Ramadhan",
-    riskScore: 28,
-    joinDate: "Oct 2022",
-    performanceMetrics: {
-      onTimeDelivery: 82,
-      fuelEfficiency: 74,
-      safetyScore: 78,
-      complianceRate: 90,
-    },
-    incidentHistory: [],
-    recentTrips: [
-      {
-        date: "02 Nov 2024",
-        fleetId: "FL-007",
-        route: "Depot C → East Point",
-        distance: "42 km",
-        fuelUsed: "13L",
-        duration: "1h 58m",
-        status: "Normal",
-      },
-    ],
-  },
-
-  "DRV-009": {
-    driverId: "DRV-009",
-    name: "Made Wirawan",
-    riskScore: 25,
-    joinDate: "Dec 2021",
-    performanceMetrics: {
-      onTimeDelivery: 85,
-      fuelEfficiency: 76,
-      safetyScore: 79,
-      complianceRate: 92,
-    },
-    incidentHistory: [],
-    recentTrips: [
-      {
-        date: "01 Nov 2024",
-        fleetId: "FL-001",
-        route: "Depot A → North Yard",
-        distance: "48 km",
-        fuelUsed: "14L",
-        duration: "2h 03m",
-        status: "Normal",
-      },
-    ],
-  },
-
-  "DRV-021": {
-    driverId: "DRV-021",
-    name: "Nanda Pratama",
-    riskScore: 22,
-    joinDate: "Jan 2023",
-    performanceMetrics: {
-      onTimeDelivery: 83,
-      fuelEfficiency: 75,
-      safetyScore: 79,
-      complianceRate: 90,
-    },
-    incidentHistory: [],
-    recentTrips: [
-      {
-        date: "01 Nov 2024",
-        fleetId: "FL-003",
-        route: "Depot A → West Block",
-        distance: "36 km",
-        fuelUsed: "11L",
-        duration: "1h 40m",
-        status: "Normal",
-      },
-    ],
-  },
-
-  "DRV-036": {
-    driverId: "DRV-036",
-    name: "Omar Syarif",
-    riskScore: 18,
-    joinDate: "May 2023",
-    performanceMetrics: {
-      onTimeDelivery: 84,
-      fuelEfficiency: 73,
-      safetyScore: 77,
-      complianceRate: 91,
-    },
-    incidentHistory: [],
-    recentTrips: [
-      {
-        date: "31 Oct 2024",
-        fleetId: "FL-006",
-        route: "Depot C → Hilltop",
-        distance: "58 km",
-        fuelUsed: "18L",
-        duration: "2h 50m",
-        status: "Normal",
-      },
-    ],
-  },
-
-  "DRV-042": {
-    driverId: "DRV-042",
-    name: "Putra Mahendra",
-    riskScore: 15,
-    joinDate: "Jul 2023",
-    performanceMetrics: {
-      onTimeDelivery: 86,
-      fuelEfficiency: 74,
-      safetyScore: 80,
-      complianceRate: 93,
-    },
-    incidentHistory: [],
-    recentTrips: [
-      {
-        date: "31 Oct 2024",
-        fleetId: "FL-008",
-        route: "Depot B → Central Lane",
-        distance: "40 km",
-        fuelUsed: "12L",
-        duration: "1h 55m",
-        status: "Normal",
-      },
-    ],
-  },
-};

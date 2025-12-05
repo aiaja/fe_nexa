@@ -19,7 +19,9 @@ const STORAGE_KEY = "driver-analytics-data";
 export default function DriverAnalyticsPage({
   DriverAnalyticsItems: initialDriverAnalyticsItems,
 }: DriverAnalyticsProps) {
-  const [DriverAnalyticsItems, setDriverAnalyticsItems] = useState<DriverAnalytics[]>([]);
+  const [DriverAnalyticsItems, setDriverAnalyticsItems] = useState<
+    DriverAnalytics[]
+  >([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [isActionOpen, setIsActionOpen] = useState(false);
@@ -148,10 +150,26 @@ export default function DriverAnalyticsPage({
     <div className="flex flex-1 flex-col">
       <div className="flex flex-1 flex-col gap-4 p-6">
         <div className="flex flex-col">
-          <h1 className="text-2xl font-bold text-gray-900">Incident Reports</h1>
+          <h1 className="text-2xl font-bold text-gray-900">Driver Analytics</h1>
           <p className="text-base text-gray-600 mt-1">
-            Manage and review all investigation cases
+            Comprehensive driver behavior and incident analysis{" "}
           </p>
+        </div>
+
+        <div className="bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200 rounded-lg p-4 flex gap-4">
+          <div className="flex-shrink-0">
+            <div className="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold text-sm">
+              i
+            </div>
+          </div>
+          <div className="flex-1">
+            <h3 className="text-sm font-semibold text-blue-900 mb-1">
+              Risk Scoring Criteria
+            </h3>
+            <p className="text-sm text-blue-800">
+              Critical (80-100), High (60-79), Medium (40-59), Low (0-39). Risk scores are calculated based on incident frequency, severity, compliance rate, and safety metrics.
+            </p>
+          </div>
         </div>
 
         <div className="flex items-center gap-3">

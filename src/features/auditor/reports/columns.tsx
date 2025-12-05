@@ -22,8 +22,6 @@ export const columns: ColumnDef<ReportCase>[] = [
     createTextColumn<ReportCase>("dateTime", "Date Time", {
   }),
 
-  createTextColumn<ReportCase>("fleet", "Title"),
-
   {
     accessorKey: "fleetDriver",
     header: "Fleet/Driver",
@@ -47,8 +45,6 @@ export const columns: ColumnDef<ReportCase>[] = [
     "HIGH": "bg-orange-100 text-orange-700",
     "MEDIUM": "bg-yellow-100 text-yellow-700",
   }),
-
-  createTextColumn<ReportCase>("severity", "Severity"),
 
   createTextColumn<ReportCase>("resolution", "Resolution"),
 

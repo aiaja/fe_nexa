@@ -13,7 +13,7 @@ export const ReportData: ReportCase[] = [
     severity: "CRITICAL",
     status: "RESOLVED",
     resolution: "confirmed_theft",
-    notes: "Pencurian BBM terverifikasi. GPS data menunjukkan driver berhenti di SPBU resmi.",
+    notes: "Pencurian BBM",
   },
   {
     id: "report-002",

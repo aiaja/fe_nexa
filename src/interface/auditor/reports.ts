@@ -1,8 +1,8 @@
 export type ResolutionType =
-  | "confirmed_theft"
-  | "driver_behavior"
-  | "fleet_issue"
-  | "no_violation";
+| "confirmed_theft"
+| "driver_behavior"
+| "fleet_issue"
+| "no_violation";
 
 export type IncidentCategory =
 | "SUDDEN DROP"
@@ -33,9 +33,4 @@ export interface ReportCase {
   resolution: ResolutionType;
   notes: string;
 }
-
-// export interface ReportsPageData {
-//   cases: ReportCase[];
-//   total: number;
-// }
 
