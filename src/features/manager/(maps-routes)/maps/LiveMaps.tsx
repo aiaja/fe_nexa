@@ -1,41 +1,28 @@
-"use client"
+"use client";
 
-import dynamic from 'next/dynamic';
-import { useMemo } from 'react';
-import { mockCheckpoints, getMockZones, getMockRoutes } from '@/data/map';
+import dynamic from "next/dynamic";
+import { useMemo } from "react";
+import { mockCheckpoints, getMockZones, getMockRoutes } from "@/data/map";
 
-const MapVisualizer = dynamic(
-  () => import('@/components/Map'),
-  { 
-    ssr: false,
-    loading: () => (
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        height: '100vh',
-        fontSize: '18px',
-        color: '#666'
-      }}>
-        Loading Map...
-      </div>
-    )
-  }
-);
+const MapVisualizer = dynamic(() => import("@/components/Map"), {
+  ssr: false,
+  loading: () => (
+    <div className="flex justify-center content-center items-center h-screen text-xl">
+      Loading Map...
+    </div>
+  ),
+});
 
 function LiveMaps() {
+  const checkpoints = useMemo(() => mockCheckpoints, []);
+  const zones = useMemo(() => getMockZones(checkpoints), [checkpoints]);
+  const routes = useMemo(() => getMockRoutes(checkpoints), [checkpoints]);
 
-   const checkpoints = useMemo(() => mockCheckpoints, []);
-    const zones = useMemo(() => getMockZones(checkpoints), [checkpoints]);
-    const routes = useMemo(() => getMockRoutes(checkpoints), [checkpoints]);
-  
   return (
-     <MapVisualizer 
-        zones={zones} 
-        checkpoints={checkpoints} 
-        routes={routes} 
-      />
-  )
+    <div className="flex h-screen w-full">
+      <MapVisualizer zones={zones} checkpoints={checkpoints} routes={routes} />
+    </div>
+  );
 }
 
-export default LiveMaps
+export default LiveMaps;
