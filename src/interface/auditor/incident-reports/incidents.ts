@@ -1,25 +1,31 @@
-export type IncidentCategory ='SUDDEN DROP' | 'OUT OF ZONE' | 'OVERCONSUMPTION';
-export type IncidentSaverity = 'CRICTICAL' | 'HIGH' | 'MEDIUM' | 'LOW';
+export type IncidentCategory =
+| "SUDDEN DROP"
+| "OUT OF ZONE"
+| "OVERCONSUMPTION"
+
+export type IncidentSaverity =
+| "CRITICAL"
+| "HIGH"
+| "MEDIUM"
 export interface Driver{
- id: string;
+ driverId: string;
  name: string;
 }
 
 export interface Fleet{
- id: string;
+ fleetId: string;
  model: string;
 }
 
 export interface IncidentReport {
-  id: string;
-  caseNumber: string;
-  fleetId: string;
-  driverId: string;
+  id: string
+  caseNumber: string
   zoneId: string
-  title: string;
-  location: string;
-  category: IncidentCategory;
-  severity: IncidentSaverity;
+  title: string
+  location: string
+  category: IncidentCategory
+  severity: IncidentSaverity
+  confidence: string
   detectionDate: string;
   driver: Driver;
   fleet: Fleet;

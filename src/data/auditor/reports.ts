@@ -1,28 +1,28 @@
 import type { ReportCase } from "@/interface/auditor/reports"
 
-export const mockCases: ReportCase[] = [
+export const ReportData: ReportCase[] = [
   {
     id: "report-001",
-    caseId: "A-2024-0847",
+    caseNumber: "A-2024-0847",
     dateTime: "06 Nov 2024, 14:32",
     fleetId: "F-001",
-    fleetName: "Volvo FH16",
+    model: "Volvo FH16",
     driverId: "D-001",
-    driverName: "Ahmad Suryanto",
+    name: "Ahmad Suryanto",
     category: "SUDDEN DROP",
     severity: "CRITICAL",
     status: "RESOLVED",
     resolution: "confirmed_theft",
-    notes: "Pencurian BBM terverifikasi. GPS data menunjukkan driver berhenti di SPBU resmi.",
+    notes: "Pencurian BBM",
   },
   {
     id: "report-002",
-    caseId: "A-2024-0848",
+    caseNumber: "A-2024-0848",
     dateTime: "06 Nov 2024, 11:15",
     fleetId: "F-002",
-    fleetName: "Mercedes Actros",
+    model: "Mercedes Actros",
     driverId: "D-002",
-    driverName: "Bambang Wibowo",
+    name: "Bambang Wibowo",
     category: "OUT OF ZONE",
     severity: "HIGH",
     status: "RESOLVED",
@@ -31,12 +31,12 @@ export const mockCases: ReportCase[] = [
   },
   {
     id: "report-003",
-    caseId: "A-2024-0845",
+    caseNumber: "A-2024-0845",
     dateTime: "08 Nov 2024, 09:20",
     fleetId: "F-003",
-    fleetName: "Canyo Prasetyo",
+    model: "Canyo Prasetyo",
     driverId: "D-003",
-    driverName: "Canyo Prasetyo",
+    name: "Canyo Prasetyo",
     category: "OVERCONSUMPTION",
     severity: "MEDIUM",
     status: "RESOLVED",
@@ -45,12 +45,12 @@ export const mockCases: ReportCase[] = [
   },
   {
     id: "report-004",
-    caseId: "A-2024-0842",
+    caseNumber: "A-2024-0842",
     dateTime: "08 Nov 2024, 08:45",
     fleetId: "F-004",
-    fleetName: "Dedi Kuriawan",
+    model: "Dedi Kuriawan",
     driverId: "D-004",
-    driverName: "Dedi Kuriawan",
+    name: "Dedi Kuriawan",
     category: "SUDDEN DROP",
     severity: "CRITICAL",
     status: "RESOLVED",
@@ -59,13 +59,13 @@ export const mockCases: ReportCase[] = [
   },
   {
     id: "report-005",
-    caseId: "A-2024-0841",
+    caseNumber: "A-2024-0841",
     dateTime: "08 Nov 2024, 08:45",
     fleetId: "F-004",
-    fleetName: "Dedi Kuriawan",
+    model: "Dedi Kuriawan",
     driverId: "D-004",
-    driverName: "Dedi Kuriawan",
-    category: "SENSOR MALFUNCTION",
+    name: "Dedi Kuriawan",
+    category: "OUT OF ZONE",
     severity: "MEDIUM",
     status: "RESOLVED",
     resolution: "no_violation",
@@ -74,5 +74,5 @@ export const mockCases: ReportCase[] = [
 ]
 
 export function getCaseById(id: string): ReportCase | undefined {
-  return mockCases.find((c) => c.id === id)
+  return ReportData.find((c) => c.id === id)
 }

@@ -1,8 +1,5 @@
-// app/auditor/reports/[id]/resolve/page.tsx
-import { notFound } from 'next/navigation';
-import ResolvePage from "@/features/auditor/reports/resolve/page";
+import ResolvePage from "@/features/auditor/reports/view-detail/page";
 import { resolutionOptions } from "@/data/auditor/resolve";
-import { getCaseById } from "@/data/auditor/reports";
 
 interface PageProps {
   params: Promise<{
@@ -13,19 +10,11 @@ interface PageProps {
 export default async function Page({ params }: PageProps) {
   const { id } = await params;
 
-  // Get case data
-  const caseData = getCaseById(id);
+  // Map options with case ID
+  const optionsWithCaseId = resolutionOptions.map((option) => ({
+    ...option,
+    caseNumber: id,
+  }));
 
-  // Handle case not found
-  if (!caseData) {
-    notFound();
-  }
-
-  return (
-    <ResolvePage 
-      caseId={id} 
-      caseData={caseData} 
-      options={resolutionOptions} 
-    />
-  );
+  return <ResolvePage caseId={id} options={optionsWithCaseId} />;
 }
