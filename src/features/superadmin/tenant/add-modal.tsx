@@ -1,7 +1,8 @@
+// features/superadmin/tenants/add-modal.tsx
 "use client"
 
 import { X } from 'lucide-react'
-import { Tenant, TenantStatus, SubscriptionPlan } from "@/interface/superadmin/tenant"
+import { Tenant, SubscriptionPlan, SubscriptionPeriod } from "@/interface/superadmin/tenant"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -9,20 +10,52 @@ import { Field, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { 
-  addTenantSchema, 
-  AddTenantFormData, 
-  generateTenantId,
-  formatDate,
-  getDefaultStatusForPlan,
-  getAddModalStatusDescription
-} from './schema'
+import { z } from "zod"
+import { calculateSubscriptionEnd } from "@/data/superadmin/tenant"
+
+// Schema
+const addTenantSchema = z.object({
+  company_name: z.string().min(3, "Company name must be at least 3 characters"),
+  email: z.string().email("Invalid email address"),
+  address: z.string().min(5, "Address must be at least 5 characters"),
+  plan: z.enum(["BASIC", "PREMIUM"] as const),
+  period: z.enum(["TRIAL", "MONTHLY", "QUARTERLY", "YEARLY"] as const)
+})
+
+type AddTenantFormData = z.infer<typeof addTenantSchema>
 
 interface AddTenantModalProps {
   open: boolean
   onClose: () => void
   onSuccess: (tenant: Tenant) => void
   existingEmails?: string[]
+}
+
+// Helper: Generate Tenant ID
+const generateTenantId = (): string => {
+  const prefix = 'TNT-'
+  const timestamp = Date.now().toString().slice(-6)
+  const random = Math.floor(Math.random() * 100).toString().padStart(2, '0')
+  return `${prefix}${timestamp}${random}`
+}
+
+// Helper: Get default period for plan
+const getDefaultPeriodForPlan = (plan: SubscriptionPlan): SubscriptionPeriod => {
+  return plan === "BASIC" ? "TRIAL" : "MONTHLY"
+}
+
+// Helper: Get period options for plan
+const getPeriodOptions = (plan: SubscriptionPlan): SubscriptionPeriod[] => {
+  if (plan === "BASIC") return ["TRIAL"]
+  return ["MONTHLY", "QUARTERLY", "YEARLY"]
+}
+
+// Helper: Get status description
+const getStatusDescription = (plan: SubscriptionPlan, period: SubscriptionPeriod): string => {
+  if (plan === "BASIC") {
+    return "🔵 Status will be set to ACTIVE (14-day free trial)"
+  }
+  return `🟢 Status will be set to ACTIVE (${period.toLowerCase()} subscription)`
 }
 
 export function AddTenantModal({ 
@@ -46,12 +79,13 @@ export function AddTenantModal({
       company_name: '',
       email: '',
       address: '',
-      plan: 'FREE',
-      tenantStatus: 'TRIAL'
+      plan: 'BASIC',
+      period: 'TRIAL'
     }
   })
 
   const watchedPlan = watch('plan')
+  const watchedPeriod = watch('period')
 
   if (!open) return null
 
@@ -65,15 +99,21 @@ export function AddTenantModal({
       return
     }
 
+    const now = new Date().toISOString()
+    const subscriptionEnd = calculateSubscriptionEnd(now, data.period)
+
     const newTenant: Tenant = {
       id: generateTenantId(),
       company_name: data.company_name,
       email: data.email,
       address: data.address,
       plan: data.plan,
-      tenantStatus: data.tenantStatus,
-      createdAt: formatDate(new Date()),
-      updatedAt: formatDate(new Date())
+      period: data.period,
+      tenantStatus: 'ACTIVE', // Always ACTIVE when created
+      subscriptionStart: now,
+      subscriptionEnd: subscriptionEnd,
+      createdAt: now,
+      updatedAt: now
     }
 
     onSuccess(newTenant)
@@ -161,37 +201,23 @@ export function AddTenantModal({
                 onValueChange={(value) => {
                   const newPlan = value as SubscriptionPlan
                   setValue('plan', newPlan, { shouldValidate: true })
-                  setValue('tenantStatus', getDefaultStatusForPlan(newPlan))
+                  setValue('period', getDefaultPeriodForPlan(newPlan))
                 }}
               >
                 <SelectTrigger className={errors.plan ? 'border-red-500' : ''}>
-                  <SelectValue placeholder="Select plan">
-                    {watchedPlan} 
-                  </SelectValue>
+                  <SelectValue placeholder="Select plan" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="FREE">
+                  <SelectItem value="BASIC">
                     <div className="flex flex-col">
-                      <span className="font-medium">Free</span>
-                      <span className="text-xs text-gray-500">5 fleets, 3 users</span>
+                      <span className="font-medium">Basic (Free Trial)</span>
+                      <span className="text-xs text-gray-500">5 fleets, 3 users • 14-day trial</span>
                     </div>
                   </SelectItem>
-                  <SelectItem value="STARTER">
+                  <SelectItem value="PREMIUM">
                     <div className="flex flex-col">
-                      <span className="font-medium">Starter</span>
-                      <span className="text-xs text-gray-500">20 fleets, 10 users</span>
-                    </div>
-                  </SelectItem>
-                  <SelectItem value="BUSINESS">
-                    <div className="flex flex-col">
-                      <span className="font-medium">Business</span>
-                      <span className="text-xs text-gray-500">100 fleets, 50 users</span>
-                    </div>
-                  </SelectItem>
-                  <SelectItem value="ENTERPRISE">
-                    <div className="flex flex-col">
-                      <span className="font-medium">Enterprise</span>
-                      <span className="text-xs text-gray-500">Unlimited</span>
+                      <span className="font-medium">Premium</span>
+                      <span className="text-xs text-gray-500">Unlimited fleets & users</span>
                     </div>
                   </SelectItem>
                 </SelectContent>
@@ -201,21 +227,56 @@ export function AddTenantModal({
               )}
             </Field>
 
-            {/* status */}
+            {/* Period Selection */}
             <Field>
               <FieldLabel>
-                Status <span className="text-red-500">*</span>
+                Subscription Period <span className="text-red-500">*</span>
               </FieldLabel>
-              
+              <Select 
+                value={watchedPeriod} 
+                onValueChange={(value) => setValue('period', value as SubscriptionPeriod)}
+                disabled={watchedPlan === "BASIC"}
+              >
+                <SelectTrigger className={errors.period ? 'border-red-500' : ''}>
+                  <SelectValue placeholder="Select period" />
+                </SelectTrigger>
+                <SelectContent>
+                  {getPeriodOptions(watchedPlan).map(period => (
+                    <SelectItem key={period} value={period}>
+                      <div className="flex flex-col">
+                        <span className="font-medium">
+                          {period === "TRIAL" ? "14-Day Trial" :
+                           period === "MONTHLY" ? "Monthly" :
+                           period === "QUARTERLY" ? "Quarterly (3 Months)" :
+                           "Yearly (12 Months)"}
+                        </span>
+                        <span className="text-xs text-gray-500">
+                          {period === "TRIAL" ? "FREE" :
+                           period === "MONTHLY" ? "$99/month" :
+                           period === "QUARTERLY" ? "$269 (save 10%)" :
+                           "$999 (save 15%)"}
+                        </span>
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {errors.period && (
+                <p className="text-xs text-red-500 mt-1">⚠️ {errors.period.message}</p>
+              )}
+            </Field>
+
+            {/* Status Info */}
+            <Field>
+              <FieldLabel>Status</FieldLabel>
               <Input
                 type="text"
-                value={getDefaultStatusForPlan(watchedPlan)}
+                value="ACTIVE"
                 disabled
                 className="bg-gray-50 cursor-not-allowed"
               />
-              
               <p className="text-xs text-gray-500 mt-1">
-                {getAddModalStatusDescription(watchedPlan)}
+                {getStatusDescription(watchedPlan, watchedPeriod)}
               </p>
             </Field>
 
