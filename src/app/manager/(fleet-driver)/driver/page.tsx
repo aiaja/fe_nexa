@@ -1,11 +1,11 @@
 "use client"
 
 import DriverManagementPage from '@/features/manager/(fleet-driver)/driver/driver-data'
-import { driverManagementData } from '@/data/manager/driver-management'
+import { driverData } from "@/data/admin/driver"
 
 function page() {
   return (
-    <div><DriverManagementPage driverItems={driverManagementData}/></div>
+    <div><DriverManagementPage driverItems={driverData}/></div>
   )
 }
 

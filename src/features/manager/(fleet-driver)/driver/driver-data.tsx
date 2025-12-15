@@ -6,31 +6,33 @@ import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { columns } from "./columns";
 import { DataTable } from "@/components/data-table";
-import type { DriverManagement } from "@/interface/manager/driver-management";
+import { DriverData } from "@/interface/admin/driver"
 import { FilterPopover, FilterValues } from "./filter-popover";
 import { ActionModal } from "@/components/action-modal";
 
-interface DriverManagementProps {
-  driverItems: DriverManagement[];
+interface DriverDataProps {
+  driverItems: DriverData[];
 }
 
 const STORAGE_KEY = "drivers-data";
 
-export default function DriverManagementPage({
+export default function DriverDataPage({
   driverItems: initialDriverItems,
-}: DriverManagementProps) {
-  const [driverItems, setDriverItems] = useState<DriverManagement[]>([]);
+}: DriverDataProps) {
+  const [driverItems, setDriverItems] = useState<DriverData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [isActionOpen, setIsActionOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
-  const [selectedDriver, setSelectedDriver] = useState<DriverManagement | null>(
+  const [selectedDriver, setSelectedDriver] = useState<DriverData | null>(
     null
   );
-  const [selectedRows, setSelectedRows] = useState<DriverManagement[]>([]);
+  const [selectedRows, setSelectedRows] = useState<DriverData[]>([]);
   const [actionPosition, setActionPosition] = useState({ top: 0, left: 0 });
   const [filters, setFilters] = useState<FilterValues>({
+    licenses: [],
     statuses: [],
+    assignmentStatus: 'all'
   });
 
   useEffect(() => {
@@ -46,7 +48,7 @@ export default function DriverManagementPage({
       const savedData = localStorage.getItem(STORAGE_KEY);
       if (savedData) {
         const parsedData = JSON.parse(savedData);
-        let data: DriverManagement[] = [];
+        let data: DriverData[] = [];
 
         if (parsedData.drivers && Array.isArray(parsedData.drivers)) {
           data = parsedData.drivers;
@@ -54,7 +56,7 @@ export default function DriverManagementPage({
           data = parsedData;
         }
 
-        // Validate data has correct structure (check for DriverManagement fields)
+        // Validate data has correct structure (check for DriverData fields)
         if (data.length > 0 && data[0].hasOwnProperty("fuel_consumption")) {
           setDriverItems(data);
         } else {
@@ -76,7 +78,7 @@ export default function DriverManagementPage({
   };
 
   const saveToStorage = (
-    updatedDrivers: DriverManagement[],
+    updatedDrivers: DriverData[],
     updatedDeletedIds?: string[]
   ) => {
     try {
@@ -97,30 +99,38 @@ export default function DriverManagementPage({
     return driverItems;
   }, [driverItems]);
 
-  const filteredData = useMemo(() => {
-    let result = activeDriverItems;
+   const filteredData = useMemo(() => {
+    let result = activeDriverItems
 
     if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase();
-      result = result.filter(
-        (driver) =>
-          driver.id.toLowerCase().includes(query) ||
-          driver.name.toLowerCase().includes(query) ||
-          driver.cur_location.toLowerCase().includes(query)
-      );
+      const query = searchQuery.toLowerCase()
+      result = result.filter(driver =>
+        driver.id.toLowerCase().includes(query) ||
+        driver.name.toLowerCase().includes(query) ||
+        driver.licenseNumber.toLowerCase().includes(query) ||
+        driver.phone.toLowerCase().includes(query)
+      )
+    }
+
+    if (filters.licenses.length > 0) {
+      result = result.filter(driver => filters.licenses.includes(driver.licenseType))
     }
 
     if (filters.statuses.length > 0) {
-      result = result.filter((driver) =>
-        filters.statuses.includes(driver.status)
-      );
+      result = result.filter(driver => filters.statuses.includes(driver.status))
     }
 
-    return result;
-  }, [activeDriverItems, searchQuery, filters]);
+    if (filters.assignmentStatus === 'assigned') {
+      result = result.filter(driver => driver.assignedTruck !== undefined)
+    } else if (filters.assignmentStatus === 'unassigned') {
+      result = result.filter(driver => driver.assignedTruck === undefined)
+    }
+
+    return result
+  }, [activeDriverItems, searchQuery, filters])
 
   const handleActionClick = (
-    driver: DriverManagement,
+    driver: DriverData,
     position: { top: number; left: number }
   ) => {
     setSelectedDriver(driver);
@@ -128,12 +138,12 @@ export default function DriverManagementPage({
     setIsActionOpen(true);
   };
 
-  const handleEditClick = (driver: DriverManagement) => {
+  const handleEditClick = (driver: DriverData) => {
     setSelectedDriver(driver);
     setIsEditOpen(true);
   };
 
-  const handleSelectionChange = (rows: DriverManagement[]) => {
+  const handleSelectionChange = (rows: DriverData[]) => {
     setSelectedRows(rows);
   };
 
@@ -176,7 +186,7 @@ export default function DriverManagementPage({
         />
       </div>
 
-      <ActionModal<DriverManagement>
+      <ActionModal<DriverData>
         open={isActionOpen}
         onClose={() => setIsActionOpen(false)}
         data={selectedDriver}

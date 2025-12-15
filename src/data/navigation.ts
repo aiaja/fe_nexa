@@ -111,21 +111,6 @@ const managerItems: NavItem[] = [
     icon: ChartColumn,
   },
   {
-    title: "Fleet & Driver",
-    url: "/manager/",
-    icon: Truck,
-    items: [
-        {
-            title: "Fleet Management",
-            url: "/manager/fleet",
-        },
-        {
-            title: "Driver Management",
-            url: "/manager/driver",
-        }
-    ]
-  },
-  {
     title: "Maps & Routes",
     url: "/manager",
     icon: Map,
@@ -146,6 +131,21 @@ const managerItems: NavItem[] = [
             title: "Route Editor",
             url: "/manager/route-editor",
         },
+    ]
+  },
+  {
+    title: "Master Data",
+    url: "/manager/",
+    icon: Truck,
+    items: [
+        {
+            title: "Fleet Data",
+            url: "/manager/fleet",
+        },
+        {
+            title: "Driver Data",
+            url: "/manager/driver",
+        }
     ]
   },
   {
