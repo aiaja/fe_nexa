@@ -1,6 +1,11 @@
-import React from 'react'
-import FleetAnalyticsPage from '@/features/auditor/(analytics)/fleet/fleet-analytics-page'
+import FleetAnalytics from '@/features/auditor/(analytics)/fleet/fleet-analytics-data';
+import { FleetAnalyticsData } from '@/data/auditor/fleet-analytics';
 
-export default function Page() {
-  return <FleetAnalyticsPage />
+
+function Page() {
+  return (
+    <FleetAnalytics FleetAnalyticsItems={FleetAnalyticsData} />
+  );
 }
+
+export default Page;

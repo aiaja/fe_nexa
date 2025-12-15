@@ -1,24 +1,29 @@
-export type IncidentSaverity = 'CRICTICAL' | 'HIGH' | 'MEDIUM' | 'LOW';
+export type IncidentSaverity =
+| "CRITICAL"
+| "HIGH"
+| "MEDIUM"
+
 
 export interface IncidentInvestigationLog {
-  id: string;
-  incidentId: string;
-  time: string;
-  location: string;
+  id: string
+  incidentId: string
+  time: string
+  location: string
   saverity:IncidentSaverity;
-  details: string[];
+  details: string[]
 }
 
 export interface CaseSummary {
-  caseId: string;
-  type: string;
-  fleet: string;
-  driver: string;
-  date: string;
-  severity: IncidentSaverity;
+  id: string
+  caseNumber: string
+  type: string
+  fleetId: string
+  driverId: string
+  date: string
+  severity: IncidentSaverity
 }
 
 export interface InvestigationData {
-  summary: CaseSummary;
-  timeline: IncidentInvestigationLog[];
+  summary: CaseSummary
+  timeline: IncidentInvestigationLog[]
 }

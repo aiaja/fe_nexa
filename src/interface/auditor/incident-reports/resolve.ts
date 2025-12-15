@@ -8,6 +8,7 @@ export interface ResolutionOption {
   caseNumber: string
   resolutionType: ResolutionType
   title: string
+  description: string
   notes: string
   icon: string
   bgColor: string
@@ -16,6 +17,6 @@ export interface ResolutionOption {
 }
 
 export interface ResolveData {
-  caseId: string
+  id: string
   options: ResolutionOption[]
 }

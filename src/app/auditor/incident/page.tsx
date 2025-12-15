@@ -1,10 +1,10 @@
-import IncidentReports from '@/features/auditor/incident/page';
-import { incidentReports } from '@/data/auditor/incident-reports';
+import IncidentReports from '@/features/auditor/incident/incident-data';
+import { IncidentsData } from '@/data/auditor/incident-reports';
 
 
 function Page() {
   return (
-    <IncidentReports incidents={incidentReports} />
+    <IncidentReports incidentItems={IncidentsData} />
   );
 }
 
