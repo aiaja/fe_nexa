@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react'
 import { Filter } from 'lucide-react'
-import { FleetManagementStatus } from '@/interface/manager/fleet-management'
+import { FleetType, FleetStatus } from '@/interface/admin/fleet'
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field"
@@ -15,7 +15,9 @@ interface FilterPopoverProps {
 }
 
 export interface FilterValues {
-  statuses: FleetManagementStatus[]
+  types: FleetType[]
+  statuses: FleetStatus[]
+  yearRange: { min: string; max: string }
 }
 
 function FilterIconFilled({ className }: { className?: string }) {
@@ -28,20 +30,33 @@ function FilterIconFilled({ className }: { className?: string }) {
 
 export function FilterPopover({ onApply, currentFilters }: FilterPopoverProps) {
   const [open, setOpen] = useState(false)
-  const [selectedStatuses, setSelectedStatuses] = useState<FleetManagementStatus[]>(currentFilters.statuses)
+  const [selectedTypes, setSelectedTypes] = useState<FleetType[]>(currentFilters.types)
+  const [selectedStatuses, setSelectedStatuses] = useState<FleetStatus[]>(currentFilters.statuses)
+  const [yearMin, setYearMin] = useState(currentFilters.yearRange.min)
+  const [yearMax, setYearMax] = useState(currentFilters.yearRange.max)
   const [isReady, setIsReady] = useState(false)
 
-  const FleetManagementStatuses: FleetManagementStatus[] = ["Active", "Inactive", "Idle", "Refueling"]
+  const fleetTypes: FleetType[] = ["Haul Truck", "Dump Truck", "Tanker", "Excavator", "Bulldozer", "Loader"]
+  const fleetStatuses: FleetStatus[] = ["Active", "Inactive", "Maintenance", "Under Review"]
   
   const years = Array.from({ length: 15 }, (_, i) => (2010 + i).toString())
 
   const activeFilterCount = 
-    selectedStatuses.length
+    selectedTypes.length + 
+    selectedStatuses.length + 
+    (yearMin || yearMax ? 1 : 0)
 
   const hasActiveFilters = activeFilterCount > 0
 
+  const handleTypeToggle = (type: FleetType) => {
+    setSelectedTypes(prev =>
+      prev.includes(type)
+        ? prev.filter(t => t !== type)
+        : [...prev, type]
+    )
+  }
 
-  const handleStatusToggle = (status: FleetManagementStatus) => {
+  const handleStatusToggle = (status: FleetStatus) => {
     setSelectedStatuses(prev =>
       prev.includes(status)
         ? prev.filter(s => s !== status)
@@ -51,8 +66,9 @@ export function FilterPopover({ onApply, currentFilters }: FilterPopoverProps) {
 
   const handleApply = () => {
     onApply({
-      
+      types: selectedTypes,
       statuses: selectedStatuses,
+      yearRange: { min: yearMin, max: yearMax }
     })
     setOpen(false)
   }
@@ -63,7 +79,10 @@ export function FilterPopover({ onApply, currentFilters }: FilterPopoverProps) {
       statuses: [],
       yearRange: { min: "", max: "" }
     }
+    setSelectedTypes([])
     setSelectedStatuses([])
+    setYearMin("")
+    setYearMax("")
     onApply(resetFilters)
     setOpen(false)
   }
@@ -71,7 +90,10 @@ export function FilterPopover({ onApply, currentFilters }: FilterPopoverProps) {
   useMemo(() => {
     if (open) {
       setIsReady(false)
+      setSelectedTypes(currentFilters.types)
       setSelectedStatuses(currentFilters.statuses)
+      setYearMin(currentFilters.yearRange.min)
+      setYearMax(currentFilters.yearRange.max)
       setTimeout(() => setIsReady(true), 0)
     }
   }, [open, currentFilters])
@@ -110,10 +132,32 @@ export function FilterPopover({ onApply, currentFilters }: FilterPopoverProps) {
             <h3 className="text-sm font-semibold text-gray-900">Filter by:</h3>
           </div>
 
+          <FieldGroup className="space-y-4">
+            <div className="space-y-2">
+              <h4 className="text-xs font-medium text-gray-700">Fleet Type</h4>
+              <div className="grid grid-cols-2 gap-2">
+                {fleetTypes.map((type) => (
+                  <Field key={type} orientation="horizontal" className="items-center space-x-2">
+                    <Checkbox
+                      id={`type-${type}`}
+                      checked={selectedTypes.includes(type)}
+                      onCheckedChange={() => handleTypeToggle(type)}
+                    />
+                    <FieldLabel 
+                      htmlFor={`type-${type}`}
+                      className="text-xs font-normal cursor-pointer"
+                    >
+                      {type}
+                    </FieldLabel>
+                  </Field>
+                ))}
+              </div>
+            </div>
+
             <div className="space-y-2">
               <h4 className="text-xs font-medium text-gray-700">Fleet Status</h4>
               <div className="grid grid-cols-2 gap-2">
-                {FleetManagementStatuses.map((status) => (
+                {fleetStatuses.map((status) => (
                   <Field key={status} orientation="horizontal" className="items-center space-x-2">
                     <Checkbox
                       id={`status-${status}`}
@@ -130,6 +174,47 @@ export function FilterPopover({ onApply, currentFilters }: FilterPopoverProps) {
                 ))}
               </div>
             </div>
+
+            <div className="space-y-2">
+              <h4 className="text-xs font-medium text-gray-700">Year Range</h4>
+              <div className="grid grid-cols-2 gap-2">
+                <Field className="space-y-1">
+                  <FieldLabel className="text-xs text-gray-600">From</FieldLabel>
+                  {isReady ? (
+                    <Select value={yearMin || undefined} onValueChange={setYearMin}>
+                      <SelectTrigger className="h-8 text-xs">
+                        <SelectValue placeholder="Year" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {years.map(year => (
+                          <SelectItem key={year} value={year}>{year}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  ) : (
+                    <div className="w-full h-8 bg-gray-100 animate-pulse rounded-md" />
+                  )}
+                </Field>
+                <Field className="space-y-1">
+                  <FieldLabel className="text-xs text-gray-600">To</FieldLabel>
+                  {isReady ? (
+                    <Select value={yearMax || undefined} onValueChange={setYearMax}>
+                      <SelectTrigger className="h-8 text-xs">
+                        <SelectValue placeholder="Year" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {years.map(year => (
+                          <SelectItem key={year} value={year}>{year}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  ) : (
+                    <div className="w-full h-8 bg-gray-100 animate-pulse rounded-md" />
+                  )}
+                </Field>
+              </div>
+            </div>
+          </FieldGroup>
 
           {/* Actions */}
           <div className="flex items-center gap-2 mt-4 pt-3 border-t">
