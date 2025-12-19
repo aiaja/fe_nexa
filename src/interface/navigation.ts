@@ -5,6 +5,15 @@ export interface NavSubItem {
   url: string;
 }
 
+export interface RoleCard {
+  id: string;
+  title: string;
+  icon: React.ReactNode;
+  description: string;
+  href: string;
+  restricted?: boolean;
+}
+
 export interface NavItem {
   title: string;
   url: string;

@@ -166,6 +166,31 @@ const guestItems: NavItem[] = [
     url: "/login",
     icon: LayoutDashboard,
   },
+  {
+    title: "MANAGER",
+    url: "/manager",
+    icon: ChartColumn,
+  },
+  {
+    title: "AUDITOR",
+    url: "/auditor",
+    icon: ChartColumn,
+  },
+  {
+    title: "EXECUTIVE",
+    url: "/executive",
+    icon: ChartColumn,
+  },
+  {
+    title: "ADMIN",
+    url: "/admin",
+    icon: ChartColumn,
+  },
+  {
+    title: "SUPER ADMIN",
+    url: "/superadmin",
+    icon: ChartColumn,
+  },
 ];
 
 export const NAVIGATION_MAP: Record<UserRole, NavItem[]> = {
