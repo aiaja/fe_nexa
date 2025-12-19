@@ -93,7 +93,7 @@ export default function FleetMaster({ fleetItems: initialFleetItems }: FleetMast
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase()
       result = result.filter(fleet =>
-        fleet.fleetID.toLowerCase().includes(query) ||
+        fleet.fleetId.toLowerCase().includes(query) ||
         fleet.licensePlate.toLowerCase().includes(query) ||
         fleet.brands.toLowerCase().includes(query) ||
         fleet.model.toLowerCase().includes(query)
@@ -162,7 +162,7 @@ export default function FleetMaster({ fleetItems: initialFleetItems }: FleetMast
     saveToStorage(updatedFleets)
     
     toast.success("Fleet added successfully!", {
-      description: `${newFleet.fleetID} - ${newFleet.licensePlate} has been added to the system`
+      description: `${newFleet.fleetId} - ${newFleet.licensePlate} has been added to the system`
     })
   }
 
@@ -175,7 +175,7 @@ export default function FleetMaster({ fleetItems: initialFleetItems }: FleetMast
     saveToStorage(updatedFleets)
     
     toast.success("Fleet updated successfully!", {
-      description: `${updatedFleet.fleetID} - ${updatedFleet.licensePlate} has been updated`
+      description: `${updatedFleet.fleetId} - ${updatedFleet.licensePlate} has been updated`
     })
   }
 

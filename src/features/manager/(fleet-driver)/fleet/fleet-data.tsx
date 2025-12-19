@@ -105,7 +105,7 @@ export default function FleetDataPage({
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase()
       result = result.filter(fleet =>
-        fleet.fleetID.toLowerCase().includes(query) ||
+        fleet.fleetId.toLowerCase().includes(query) ||
         fleet.licensePlate.toLowerCase().includes(query) ||
         fleet.brands.toLowerCase().includes(query) ||
         fleet.model.toLowerCase().includes(query)
