@@ -14,8 +14,8 @@ export interface CalendarState {
   selectedEvent?: CalendarEvent;
 }
 
-export interface EventFormData {
-  id: string;
+export interface ScheduleData {
+  scheduleId: string;
   startTime: Date;
   endTime: Date;
   startPoint: string;

@@ -6,32 +6,34 @@ import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { columns } from "./columns";
 import { DataTable } from "@/components/data-table";
-import type { FleetManagement } from "@/interface/manager/fleet-management";
+import { FleetData } from "@/interface/admin/fleet"
 import { FilterPopover, FilterValues } from "./filter-popover";
 import { ActionModal } from "@/components/action-modal";
 
-interface FleetManagementProps {
-  fleetItems: FleetManagement[];
+interface FleetDataProps {
+  fleetItems: FleetData[];
 }
 
 const STORAGE_KEY = "fleets-data";
 
-export default function FleetManagementPage({
+export default function FleetDataPage({
   fleetItems: initialFleetItems,
-}: FleetManagementProps) {
-  const [fleetItems, setFleetItems] = useState<FleetManagement[]>([]);
+}: FleetDataProps) {
+  const [fleetItems, setFleetItems] = useState<FleetData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [isActionOpen, setIsActionOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
-  const [selectedFleet, setSelectedFleet] = useState<FleetManagement | null>(
+  const [selectedFleet, setSelectedFleet] = useState<FleetData | null>(
     null
   );
-  const [selectedRows, setSelectedRows] = useState<FleetManagement[]>([]);
+  const [selectedRows, setSelectedRows] = useState<FleetData[]>([]);
   const [actionPosition, setActionPosition] = useState({ top: 0, left: 0 });
   const [filters, setFilters] = useState<FilterValues>({
-    statuses: [],
-  });
+      types: [],
+      statuses: [],
+      yearRange: { min: "", max: "" }
+    })
 
   useEffect(() => {
     loadFleetsData();
@@ -46,7 +48,7 @@ export default function FleetManagementPage({
       const savedData = localStorage.getItem(STORAGE_KEY);
       if (savedData) {
         const parsedData = JSON.parse(savedData);
-        let data: FleetManagement[] = [];
+        let data: FleetData[] = [];
 
         if (parsedData.fleets && Array.isArray(parsedData.fleets)) {
           data = parsedData.fleets;
@@ -54,7 +56,7 @@ export default function FleetManagementPage({
           data = parsedData;
         }
 
-        // Validate data has correct structure (check for FleetManagement fields)
+        // Validate data has correct structure (check for FleetData fields)
         if (data.length > 0 && data[0].hasOwnProperty("fuel_consumption")) {
           setFleetItems(data);
         } else {
@@ -76,7 +78,7 @@ export default function FleetManagementPage({
   };
 
   const saveToStorage = (
-    updatedFleets: FleetManagement[],
+    updatedFleets: FleetData[],
     updatedDeletedIds?: string[]
   ) => {
     try {
@@ -98,28 +100,40 @@ export default function FleetManagementPage({
   }, [fleetItems]);
 
   const filteredData = useMemo(() => {
-    let result = activeFleetItems;
+    let result = activeFleetItems
 
     if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase();
-      result = result.filter(
-        (fleet) =>
-          fleet.id.toLowerCase().includes(query) ||
-          fleet.location.toLowerCase().includes(query)
-      );
+      const query = searchQuery.toLowerCase()
+      result = result.filter(fleet =>
+        fleet.fleetID.toLowerCase().includes(query) ||
+        fleet.licensePlate.toLowerCase().includes(query) ||
+        fleet.brands.toLowerCase().includes(query) ||
+        fleet.model.toLowerCase().includes(query)
+      )
+    }
+
+    if (filters.types.length > 0) {
+      result = result.filter(fleet => filters.types.includes(fleet.type))
     }
 
     if (filters.statuses.length > 0) {
-      result = result.filter((fleet) =>
-        filters.statuses.includes(fleet.status)
-      );
+      result = result.filter(fleet => filters.statuses.includes(fleet.status))
     }
 
-    return result;
-  }, [activeFleetItems, searchQuery, filters]);
+    if (filters.yearRange.min || filters.yearRange.max) {
+      result = result.filter(fleet => {
+        const year = parseInt(fleet.year)
+        const min = filters.yearRange.min ? parseInt(filters.yearRange.min) : 0
+        const max = filters.yearRange.max ? parseInt(filters.yearRange.max) : 9999
+        return year >= min && year <= max
+      })
+    }
+
+    return result
+  }, [activeFleetItems, searchQuery, filters])
 
   const handleActionClick = (
-    fleet: FleetManagement,
+    fleet: FleetData,
     position: { top: number; left: number }
   ) => {
     setSelectedFleet(fleet);
@@ -127,12 +141,12 @@ export default function FleetManagementPage({
     setIsActionOpen(true);
   };
 
-  const handleEditClick = (fleet: FleetManagement) => {
+  const handleEditClick = (fleet: FleetData) => {
     setSelectedFleet(fleet);
     setIsEditOpen(true);
   };
 
-  const handleSelectionChange = (rows: FleetManagement[]) => {
+  const handleSelectionChange = (rows: FleetData[]) => {
     setSelectedRows(rows);
   };
 
@@ -175,7 +189,7 @@ export default function FleetManagementPage({
         />
       </div>
 
-      <ActionModal<FleetManagement>
+      <ActionModal<FleetData>
         open={isActionOpen}
         onClose={() => setIsActionOpen(false)}
         data={selectedFleet}

@@ -1,7 +1,7 @@
 "use client"
 
 import { ColumnDef } from "@tanstack/react-table"
-import type { FleetManagement } from "@/interface/manager/fleet-management"
+import { FleetData } from "@/interface/admin/fleet"
 import { 
   createSelectionColumn, 
   createTextColumn, 
@@ -9,27 +9,26 @@ import {
   createActionsColumn 
 } from "@/components/columns-helper"
 
-export const columns: ColumnDef<FleetManagement>[] = [
+export const columns: ColumnDef<FleetData>[] = [
 
-  createSelectionColumn<FleetManagement>(),
+  createSelectionColumn<FleetData>(),
 
-  createTextColumn<FleetManagement>("id", "Fleet ID", {
+  createTextColumn<FleetData>("fleetID", "Fleet ID", {
     fontWeight: "medium"
   }),
 
-  createTextColumn<FleetManagement>("fuel", "Fuel"),
+  createTextColumn<FleetData>("licensePlate", "Plate Number"),
 
-  createTextColumn<FleetManagement>("location", "Location"),
+  createTextColumn<FleetData>("brands", "Brands"),
 
-  createTextColumn<FleetManagement>("speed", "Speed"),
-  createTextColumn<FleetManagement>("fuel_consumption", "Fuel Consump."),
+  createTextColumn<FleetData>("model", "Model"),
 
-  createStatusColumn<FleetManagement>("status", "Status", {
+  createStatusColumn<FleetData>("status", "Status", {
     "Active": "bg-green-100 text-green-700",
-    "Idle": "bg-gray-100 text-gray-700",
-    "Refueling": "bg-yellow-100 text-yellow-700",
-    "Inactive": "bg-red-100 text-red-700",
+    "Inactive": "bg-gray-100 text-gray-700",
+    "Under Review": "bg-yellow-100 text-yellow-700",
+    "Maintenance": "bg-orange-100 text-orange-700",
   }),
 
-  createActionsColumn<FleetManagement>(),
+  createActionsColumn<FleetData>(),
 ]
