@@ -18,7 +18,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { format } from 'date-fns';
-import { CalendarEvent, EventFormData } from '@/interface/manager/schedule';
+import { CalendarEvent, ScheduleData } from '@/interface/manager/schedule';
 import { DriverData } from '@/interface/admin/driver';
 import { FleetData } from '@/interface/admin/fleet';
 
