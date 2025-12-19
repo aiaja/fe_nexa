@@ -32,8 +32,8 @@ export function FilterPopover({ onApply, currentFilters }: FilterPopoverProps) {
   const [selectedPlans, setSelectedPlans] = useState<SubscriptionPlan[]>(currentFilters.plans)
   const [isReady, setIsReady] = useState(false)
 
-  const tenantStatuses: TenantStatus[] = ["ACTIVE", "TRIAL", "SUSPENDED", "EXPIRED", "INACTIVE"]
-  const subscriptionPlans: SubscriptionPlan[] = ["FREE", "STARTER", "BUSINESS", "ENTERPRISE"]
+  const tenantStatuses: TenantStatus[] = ["ACTIVE", "SUSPENDED", "EXPIRED", "INACTIVE"]
+  const subscriptionPlans: SubscriptionPlan[] = ["BASIC", "PREMIUM"]
 
   const activeFilterCount = 
     selectedStatuses.length + 
