@@ -20,7 +20,7 @@ export function ReportHistoryItem({ report, isDownloading, onDownload }: ReportH
           <div className="flex items-center gap-4 text-sm text-gray-500">
             <div className="flex items-center gap-1">
               <Calendar className="w-4 h-4" />
-              <span>Generated: {report.generatedDate}</span>
+              <span>Generated: {report.generatedAt}</span>
             </div>
             <div className="flex items-center gap-1">
               <HardDrive className="w-4 h-4" />

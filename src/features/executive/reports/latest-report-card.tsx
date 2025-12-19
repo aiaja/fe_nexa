@@ -26,7 +26,7 @@ export function LatestReportCard({ report, isDownloading, onDownload }: LatestRe
             </div>
             <div className="flex items-center gap-2 text-white/90 text-sm">
               <Calendar className="w-4 h-4" />
-              <span>Generated on {report.generatedDate}</span>
+              <span>Generated on {report.generatedAt}</span>
             </div>
             {report.totalPages && (
               <div className="flex items-center gap-2 text-white/90 text-sm">
