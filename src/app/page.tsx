@@ -58,7 +58,7 @@ const roles: RoleCard[] = [
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-600 to-blue-800">
+    <div className="min-h-screen bg-blue-600">
       {/* Header */}
       <div className="flex flex-col items-center justify-center py-16 text-white">
         <h1 className="text-5xl font-bold mb-4">Welcome to Diesel Track</h1>
@@ -111,10 +111,10 @@ export default function Home() {
       </div>
 
       {/* Footer */}
-      <Footer className="bg-blue-900 text-blue-100 py-8 mt-auto">
+      <Footer className="bg-primary text-blue-100 py-4 mt-auto">
         <div className="container mx-auto px-4 flex justify-between items-center">
           <p className="text-sm">
-            © 2024 Diesel Track Systems. All rights reserved.
+            © 2025 Nexa Diesel Track Systems. All rights reserved.
           </p>
           <div className="flex gap-6 text-sm">
             <Link href="#" className="hover:text-white transition-colors">
