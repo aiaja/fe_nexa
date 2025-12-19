@@ -8,7 +8,7 @@ export default function Page() {
   const params = useParams();
   const driverId = params.id as string;
 
-  const driver = driverDetailData[driverId];
+  const driver = driverDetailData.find((d) => d.id === driverId);
   if (!driver) {
     return (
       <div className="p-10 text-center">

@@ -17,7 +17,7 @@ export type IncidentCategory =
 
 
 export interface DriverAnalytics {
-  id: number;
+  id: string;
   driverId: string;
   name: string;
   incidents: number;
@@ -25,7 +25,7 @@ export interface DriverAnalytics {
   riskLevel: RiskLevel;
 }
 export interface DriverDetail {
-  id: number;
+  id: string;
   driverId: string;
   name: string;
   riskScore: number;

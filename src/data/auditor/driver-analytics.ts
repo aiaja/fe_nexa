@@ -2,7 +2,7 @@ import { DriverAnalytics, DriverDetail } from "@/interface/auditor/driver";
 
 export const DriverAnalyticsData: DriverAnalytics[] = [
   {
-    id: 1,
+    id: "1",
     driverId: "DRV-005",
     name: "Bambang Ari",
     incidents: 5,
@@ -10,7 +10,7 @@ export const DriverAnalyticsData: DriverAnalytics[] = [
     riskLevel: "CRITICAL",
   },
   {
-    id: 2,
+    id: "2",
     driverId: "DRV-010",
     name: "Budi Santoso",
     incidents: 4,
@@ -18,7 +18,7 @@ export const DriverAnalyticsData: DriverAnalytics[] = [
     riskLevel: "HIGH",
   },
   {
-    id: 3,
+    id: "3",
     driverId: "DRV-032",
     name: "Hamish Dawud",
     incidents: 4,
@@ -26,7 +26,7 @@ export const DriverAnalyticsData: DriverAnalytics[] = [
     riskLevel: "HIGH",
   },
   {
-    id: 4,
+    id: "4",
     driverId: "DRV-046",
     name: "Fransius",
     incidents: 3,
@@ -34,7 +34,7 @@ export const DriverAnalyticsData: DriverAnalytics[] = [
     riskLevel: "HIGH",
   },
   {
-    id: 5,
+    id: "5",
     driverId: "DRV-001",
     name: "Januar Sulung",
     incidents: 3,
@@ -42,7 +42,7 @@ export const DriverAnalyticsData: DriverAnalytics[] = [
     riskLevel: "HIGH",
   },
   {
-    id: 6,
+    id: "6",
     driverId: "DRV-026",
     name: "Gregorius",
     incidents: 1,
@@ -50,7 +50,7 @@ export const DriverAnalyticsData: DriverAnalytics[] = [
     riskLevel: "MEDIUM",
   },
   {
-    id: 7,
+    id: "7",
     driverId: "DRV-012",
     name: "Ahmad Suryanto",
     incidents: 3,
@@ -58,7 +58,7 @@ export const DriverAnalyticsData: DriverAnalytics[] = [
     riskLevel: "HIGH",
   },
   {
-    id: 8,
+    id: "8",
     driverId: "DRV-018",
     name: "Dika Kusuma",
     incidents: 2,
@@ -66,7 +66,7 @@ export const DriverAnalyticsData: DriverAnalytics[] = [
     riskLevel: "HIGH",
   },
   {
-    id: 9,
+    id: "9",
     driverId: "DRV-023",
     name: "Eko Prasetyo",
     incidents: 2,
@@ -74,7 +74,7 @@ export const DriverAnalyticsData: DriverAnalytics[] = [
     riskLevel: "MEDIUM",
   },
   {
-    id: 10,
+    id: "10",
     driverId: "DRV-029",
     name: "Fajar Hidayat",
     incidents: 2,
@@ -82,7 +82,7 @@ export const DriverAnalyticsData: DriverAnalytics[] = [
     riskLevel: "MEDIUM",
   },
   {
-    id: 11,
+    id: "11",
     driverId: "DRV-034",
     name: "Gilang Ramadhan",
     incidents: 1,
@@ -90,7 +90,7 @@ export const DriverAnalyticsData: DriverAnalytics[] = [
     riskLevel: "MEDIUM",
   },
   {
-    id: 12,
+    id: "12",
     driverId: "DRV-041",
     name: "Hendra Wijaya",
     incidents: 1,
@@ -98,7 +98,7 @@ export const DriverAnalyticsData: DriverAnalytics[] = [
     riskLevel: "MEDIUM",
   },
   {
-    id: 13,
+    id: "13",
     driverId: "DRV-015",
     name: "Irfan Hakim",
     incidents: 1,
@@ -106,7 +106,7 @@ export const DriverAnalyticsData: DriverAnalytics[] = [
     riskLevel: "MEDIUM",
   },
   {
-    id: 14,
+    id: "14",
     driverId: "DRV-027",
     name: "Joko Widodo",
     incidents: 1,
@@ -114,7 +114,7 @@ export const DriverAnalyticsData: DriverAnalytics[] = [
     riskLevel: "LOW",
   },
   {
-    id: 15,
+    id: "15",
     driverId: "DRV-033",
     name: "Kurniawan Adi",
     incidents: 1,
@@ -122,7 +122,7 @@ export const DriverAnalyticsData: DriverAnalytics[] = [
     riskLevel: "LOW",
   },
   {
-    id: 16,
+    id: "16",
     driverId: "DRV-044",
     name: "Lutfi Ramadhan",
     incidents: 0,
@@ -130,7 +130,7 @@ export const DriverAnalyticsData: DriverAnalytics[] = [
     riskLevel: "LOW",
   },
   {
-    id: 17,
+    id: "17",
     driverId: "DRV-009",
     name: "Made Wirawan",
     incidents: 0,
@@ -138,7 +138,7 @@ export const DriverAnalyticsData: DriverAnalytics[] = [
     riskLevel: "LOW",
   },
   {
-    id: 18,
+    id: "18",
     driverId: "DRV-021",
     name: "Nanda Pratama",
     incidents: 0,
@@ -146,7 +146,7 @@ export const DriverAnalyticsData: DriverAnalytics[] = [
     riskLevel: "LOW",
   },
   {
-    id: 19,
+    id: "19",
     driverId: "DRV-036",
     name: "Omar Syarif",
     incidents: 0,
@@ -154,7 +154,7 @@ export const DriverAnalyticsData: DriverAnalytics[] = [
     riskLevel: "LOW",
   },
   {
-    id: 20,
+    id: "20",
     driverId: "DRV-042",
     name: "Putra Mahendra",
     incidents: 0,
@@ -165,7 +165,7 @@ export const DriverAnalyticsData: DriverAnalytics[] = [
 
 export const driverDetailData: DriverDetail[] = [
   {
-    id: 1,
+    id: "1",
     driverId: "DRV-005",
     name: "Bambang Ari",
     riskScore: 85,
@@ -241,7 +241,7 @@ export const driverDetailData: DriverDetail[] = [
   },
 
   {
-    id: 2,
+    id: "2",
     driverId: "DRV-010",
     name: "Budi Santoso",
     riskScore: 78,
@@ -300,7 +300,7 @@ export const driverDetailData: DriverDetail[] = [
   },
 
   {
-    id: 3,
+    id: "3",
     driverId: "DRV-032",
     name: "Hamish Dawud",
     riskScore: 75,
@@ -359,7 +359,7 @@ export const driverDetailData: DriverDetail[] = [
   },
 
   {
-    id: 4,
+    id: "4",
     driverId: "DRV-046",
     name: "Fransius",
     riskScore: 71,
@@ -410,7 +410,7 @@ export const driverDetailData: DriverDetail[] = [
   },
 
   {
-    id: 5,
+    id: "5",
     driverId: "DRV-001",
     name: "Januar Sulung",
     riskScore: 71,
@@ -461,7 +461,7 @@ export const driverDetailData: DriverDetail[] = [
   },
 
   {
-    id: 6,
+    id: "6",
     driverId: "DRV-026",
     name: "Gregorius",
     riskScore: 54,
@@ -496,7 +496,7 @@ export const driverDetailData: DriverDetail[] = [
   },
 
   {
-    id: 7,
+    id: "7",
     driverId: "DRV-012",
     name: "Ahmad Suryanto",
     riskScore: 68,
