@@ -44,7 +44,7 @@ export function CalendarWrapper() {
       // Update existing event
       setEvents(
         events.map((evt) =>
-          evt.id === editingEvent.id
+          evt.scheduleId === editingEvent.scheduleId
             ? { ...evt, ...eventData }
             : evt
         )
@@ -52,7 +52,7 @@ export function CalendarWrapper() {
     } else {
       // Create new event
       const newEvent: CalendarEvent = {
-        id: Math.random().toString(36).substr(2, 9),
+        scheduleId: Math.random().toString(36).substr(2, 9),
         ...eventData,
       };
       setEvents([...events, newEvent]);
@@ -61,7 +61,7 @@ export function CalendarWrapper() {
   };
 
   const handleDeleteEvent = (eventId: string) => {
-    setEvents(events.filter((evt) => evt.id !== eventId));
+    setEvents(events.filter((evt) => evt.scheduleId !== eventId));
   };
 
   const handleEditEvent = (event: CalendarEvent) => {

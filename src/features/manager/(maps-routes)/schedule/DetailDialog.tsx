@@ -29,8 +29,8 @@ export function EventDetailDialog({
   if (!event) return null;
 
   const handleDelete = () => {
-    if (onDelete && event.id) {
-      onDelete(event.id);
+    if (onDelete && event.scheduleId) {
+      onDelete(event.scheduleId);
       onClose();
     }
   };

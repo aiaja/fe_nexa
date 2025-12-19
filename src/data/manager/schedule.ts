@@ -6,7 +6,7 @@ const weekStart = startOfWeek(today, { weekStartsOn: 0 });
 
 export const MOCK_EVENTS: CalendarEvent[] = [
   {
-    id: '1',
+    scheduleId: '1',
     startTime: setMinutes(setHours(addDays(weekStart, 1), 9), 0),
     endTime: setMinutes(setHours(addDays(weekStart, 1), 11), 0),
     startPoint: 'ZONE A',
@@ -16,7 +16,7 @@ export const MOCK_EVENTS: CalendarEvent[] = [
     fleetId: 'fleet-1',
   },
   {
-    id: '2',
+    scheduleId: '2',
     startTime: setMinutes(setHours(addDays(weekStart, 2), 14), 0),
     endTime: setMinutes(setHours(addDays(weekStart, 2), 16), 0),
     startPoint: 'SPBU A',
@@ -26,7 +26,7 @@ export const MOCK_EVENTS: CalendarEvent[] = [
     fleetId: 'fleet-2',
   },
   {
-    id: '3',
+    scheduleId: '3',
     startTime: setMinutes(setHours(addDays(weekStart, 3), 10), 0),
     endTime: setMinutes(setHours(addDays(weekStart, 3), 12), 0),
     startPoint: 'ZONE B',
@@ -36,7 +36,7 @@ export const MOCK_EVENTS: CalendarEvent[] = [
     fleetId: 'fleet-1',
   },
   {
-    id: '4',
+    scheduleId: '4',
     startTime: setMinutes(setHours(addDays(weekStart, 4), 8), 0),
     endTime: setMinutes(setHours(addDays(weekStart, 4), 10), 30),
     startPoint: 'ZONE A',
@@ -46,7 +46,7 @@ export const MOCK_EVENTS: CalendarEvent[] = [
     fleetId: 'fleet-3',
   },
   {
-    id: '5',
+    scheduleId: '5',
     startTime: setMinutes(setHours(addDays(weekStart, 5), 13), 0),
     endTime: setMinutes(setHours(addDays(weekStart, 5), 15), 0),
     startPoint: 'SPBU B',

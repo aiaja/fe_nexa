@@ -12,7 +12,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Grid3X3, TableProperties } from "lucide-react";
-import ScheduleDataPage from "./ScheduleData";
 import { MOCK_EVENTS } from "@/data/manager/schedule";
 import { DataTable } from "@/components/data-table";
 import { columns } from "./columns";
@@ -38,7 +37,7 @@ export default function SchedulePage() {
   const scheduleItems = useMemo(
     () =>
       MOCK_EVENTS.map((event) => ({
-        scheduleId: event.id,
+        scheduleId: event.scheduleId,
         startTime: event.startTime,
         endTime: event.endTime,
         startPoint: event.startPoint,
