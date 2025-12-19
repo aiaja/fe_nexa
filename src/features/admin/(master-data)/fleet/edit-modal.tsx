@@ -111,7 +111,7 @@ export function EditFleetModal({ open, onClose, fleet, onSuccess }: EditFleetMod
         <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between z-10">
           <div>
             <h3 className="text-lg font-semibold text-gray-900">Edit Fleet</h3>
-            <p className="text-sm text-gray-500">{fleet.fleetID}</p>
+            <p className="text-sm text-gray-500">{fleet.fleetId}</p>
           </div>
           <Button 
             variant="ghost" 
@@ -167,7 +167,7 @@ export function EditFleetModal({ open, onClose, fleet, onSuccess }: EditFleetMod
               <FieldLabel>Fleet ID</FieldLabel>
               <Input
                 type="text"
-                value={fleet.fleetID}
+                value={fleet.fleetId}
                 disabled
                 className="bg-gray-100 text-gray-500 cursor-not-allowed"
               />

@@ -1,6 +1,6 @@
 export interface FleetData {
   id: string
-  fleetID: string // TRK-001
+  fleetId: string // TRK-001
   licensePlate: string
   photo?: string
   type: FleetType

@@ -64,7 +64,7 @@ export function AddFleetModal({ open, onClose, onSuccess, existingFleets }: AddF
     const lastFleet = existingFleets[existingFleets.length - 1]
     if (!lastFleet) return 'TRK-001'
     
-    const lastNumber = parseInt(lastFleet.fleetID.split('-')[1])
+    const lastNumber = parseInt(lastFleet.fleetId.split('-')[1])
     const nextNumber = lastNumber + 1
     return `TRK-${String(nextNumber).padStart(3, '0')}`
   }
@@ -72,7 +72,7 @@ export function AddFleetModal({ open, onClose, onSuccess, existingFleets }: AddF
   const onSubmit = (data: FleetFormData) => {
     const newFleet: FleetData = {
       id: crypto.randomUUID(),
-      fleetID: generateFleetID(),
+      fleetId: generateFleetID(),
       licensePlate: data.licensePlate,
       photo: data.photo || undefined,
       type: data.type,

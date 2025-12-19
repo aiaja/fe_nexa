@@ -35,7 +35,7 @@ export default function FleetDetail({ fleet: initialFleet, fleetId }: FleetDetai
           const deletedIds = parsedData.deletedIds || []
           
           const foundFleet = fleets.find((f: FleetData) => 
-            f.fleetID === initialFleet.fleetID && !deletedIds.includes(f.id)
+            f.fleetId === initialFleet.fleetId && !deletedIds.includes(f.id)
           )
           
           if (foundFleet) {
@@ -57,7 +57,7 @@ export default function FleetDetail({ fleet: initialFleet, fleetId }: FleetDetai
         const deletedIds = parsedData.deletedIds || []
         
         const foundFleet = fleets.find((f: FleetData) => 
-          f.fleetID === fleetId && !deletedIds.includes(f.id)
+          f.fleetId === fleetId && !deletedIds.includes(f.id)
         )
         
         if (foundFleet) {
@@ -107,7 +107,7 @@ export default function FleetDetail({ fleet: initialFleet, fleetId }: FleetDetai
         const fleets = parsedData.fleets || parsedData
         const deletedIds = parsedData.deletedIds || []
         
-        const fleetToDelete = fleets.find((f: FleetData) => f.fleetID === fleetIdToDelete)
+        const fleetToDelete = fleets.find((f: FleetData) => f.fleetId === fleetIdToDelete)
         
         if (fleetToDelete) {
           const updatedDeletedIds = [...deletedIds, fleetToDelete.id]
@@ -160,14 +160,14 @@ export default function FleetDetail({ fleet: initialFleet, fleetId }: FleetDetai
     setFleet(updatedFleet)
     saveFleetToStorage(updatedFleet)
     toast.success('Fleet updated successfully!', {
-      description: `${updatedFleet.fleetID} - ${updatedFleet.licensePlate} has been updated`
+      description: `${updatedFleet.fleetId} - ${updatedFleet.licensePlate} has been updated`
     })
   }
 
   const handleDeleteConfirm = () => {
-    deleteFleetFromStorage(fleet.fleetID)
+    deleteFleetFromStorage(fleet.fleetId)
     toast.success('Fleet deleted successfully!', {
-      description: `${fleet.fleetID} has been removed from the system`
+      description: `${fleet.fleetId} has been removed from the system`
     })
     setTimeout(() => {
       router.push('/admin/fleet')
@@ -224,7 +224,7 @@ export default function FleetDetail({ fleet: initialFleet, fleetId }: FleetDetai
                       <div className="rounded-lg aspect-square overflow-hidden border-2 border-gray-200">
                         <img 
                           src={fleet.photo} 
-                          alt={fleet.fleetID} 
+                          alt={fleet.fleetId} 
                           className="w-full h-full object-cover"
                           onError={(e) => {
                             console.error('Image failed to load:', fleet.photo)
@@ -255,7 +255,7 @@ export default function FleetDetail({ fleet: initialFleet, fleetId }: FleetDetai
                   {/* Details Section */}
                   <div className="lg:col-span-2 space-y-6">
                     <div>
-                      <h1 className="text-3xl font-bold text-gray-900 mb-2">{fleet.fleetID}</h1>
+                      <h1 className="text-3xl font-bold text-gray-900 mb-2">{fleet.fleetId}</h1>
                       <div className="flex items-center gap-2 text-gray-600">
                         <span className="font-medium">{fleet.type}</span>
                         <span>•</span>
