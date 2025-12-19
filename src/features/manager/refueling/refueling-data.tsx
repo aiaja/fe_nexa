@@ -107,7 +107,7 @@ export default function RefuelingLogbookPage({
           refueling.id.toLowerCase().includes(query) ||
           refueling.name.toLowerCase().includes(query) ||
           refueling.location.toLowerCase().includes(query) ||
-          refueling.fleet_id.toLowerCase().includes(query)
+          refueling.fleetId.toLowerCase().includes(query)
       );
     }
     return result;
