@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import { BarChart3 } from 'lucide-react'
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts'
-import { PerformancePeriodData } from '@/interface/executive/dashboard' // ⭐ TAMBAH IMPORT
 
 type PeriodType = 'today' | 'yesterday' | 'last7days'
 
@@ -14,18 +13,21 @@ interface ChartDataPoint {
   fullLabel: string
 }
 
-// ⭐ TAMBAH PROPS INTERFACE
+interface PerformancePeriodData {
+  today: Array<{ hour: string; value: number; fleetCount?: number }>
+  yesterday: Array<{ hour: string; value: number; fleetCount?: number }>
+  last7days: Array<{ hour: string; value: number; fleetCount?: number }>
+}
+
 interface PerformanceTrendsChartProps {
   trends: PerformancePeriodData
 }
 
-// ⭐ TERIMA PROPS
 export function PerformanceTrendsChart({ trends }: PerformanceTrendsChartProps) {
   const [selectedPeriod, setSelectedPeriod] = useState<PeriodType>('today')
 
-  // ⭐ UBAH FUNCTION INI - pakai data dari props
   const getPeriodData = (period: PeriodType): ChartDataPoint[] => {
-    const data = trends[period] // ambil dari props, bukan import
+    const data = trends[period]
     
     return data.map(t => ({
       label: t.hour,
@@ -60,8 +62,8 @@ export function PerformanceTrendsChart({ trends }: PerformanceTrendsChartProps) 
   }
 
   return (
-    <div className="rounded-lg border bg-white p-6 shadow-sm">
-      <div className="flex items-start justify-between mb-6">
+    <div className="rounded-lg border bg-white p-4 md:p-6 shadow-sm">
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6">
         <div>
           <div className="flex items-center gap-2">
             <BarChart3 className="h-5 w-5 text-gray-600" />
@@ -74,13 +76,13 @@ export function PerformanceTrendsChart({ trends }: PerformanceTrendsChartProps) 
           </p>
         </div>
 
-        <div className="flex gap-1 bg-gray-100 p-1 rounded-lg">
+        <div className="flex gap-1 bg-gray-100 p-1 rounded-lg overflow-x-auto">
           {periods.map((period) => (
             <button
               key={period.value}
               onClick={() => setSelectedPeriod(period.value)}
               className={`
-                px-3 py-1.5 text-sm font-medium rounded-md transition-all
+                px-3 py-1.5 text-sm font-medium rounded-md transition-all whitespace-nowrap
                 ${selectedPeriod === period.value
                   ? 'bg-white text-blue-600 shadow-sm'
                   : 'text-gray-600 hover:text-gray-900'

@@ -51,7 +51,7 @@ export default function ExecutiveDashboard({
   
   return (
     <div className="flex flex-1 flex-col">
-      <div className="flex flex-col gap-6 p-6 bg-gray-50 min-h-screen">
+      <div className="flex flex-col gap-6 p-6 min-h-screen">
         
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Executive Dashboard</h1>
