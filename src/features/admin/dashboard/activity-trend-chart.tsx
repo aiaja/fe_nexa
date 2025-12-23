@@ -78,11 +78,11 @@ export function ActivityTrendsChart({ trends }: ActivityTrendsChartProps) {
   }
 
   return (
-    <div className="rounded-lg border bg-white p-6 shadow-sm">
-      <div className="flex items-start justify-between mb-6">
-        <div>
+    <div className="rounded-lg border bg-white p-4 md:p-6 shadow-sm">
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6">
+        <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            <TrendingUp className="h-5 w-5 text-gray-600" />
+            <TrendingUp className="h-5 w-5 text-gray-600 shrink-0" />
             <h3 className="text-lg font-semibold">Activity Trends</h3>
           </div>
           <p className="text-sm text-gray-500 mt-1">
@@ -92,13 +92,13 @@ export function ActivityTrendsChart({ trends }: ActivityTrendsChartProps) {
           </p>
         </div>
 
-        <div className="flex gap-1 bg-gray-100 p-1 rounded-lg">
+        <div className="flex gap-0.5 sm:gap-1 bg-gray-100 p-0.5 sm:p-1 rounded-lg overflow-x-auto shrink-0">
           {periods.map((period) => (
             <button
               key={period.value}
               onClick={() => setSelectedPeriod(period.value)}
               className={`
-                px-3 py-1.5 text-sm font-medium rounded-md transition-all
+                px-2 py-1 sm:px-3 sm:py-1.5 text-xs sm:text-sm font-medium rounded-md transition-all whitespace-nowrap
                 ${selectedPeriod === period.value
                   ? 'bg-white text-blue-600 shadow-sm'
                   : 'text-gray-600 hover:text-gray-900'
@@ -119,7 +119,7 @@ export function ActivityTrendsChart({ trends }: ActivityTrendsChartProps) {
             tick={{ fill: '#6b7280', fontSize: 12 }}
             axisLine={{ stroke: '#e5e7eb' }}
             tickLine={false}
-            interval={selectedPeriod === 'last7days' ? 0 : 3} // Show all days, every 4th hour
+            interval={selectedPeriod === 'last7days' ? 0 : 3}
           />
           <YAxis 
             tick={{ fill: '#6b7280', fontSize: 12 }}
@@ -141,7 +141,7 @@ export function ActivityTrendsChart({ trends }: ActivityTrendsChartProps) {
           <span className="text-gray-500">
             {selectedPeriod === 'last7days' ? 'Peak Day' : 'Peak Hours'}
           </span>
-          <span className="font-medium text-gray-900">
+          <span className="font-medium text-gray-900 truncate ml-2">
             {(() => {
               const peak = displayData.reduce((max, curr) => 
                 curr.value > max.value ? curr : max
