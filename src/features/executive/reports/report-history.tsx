@@ -11,8 +11,8 @@ interface ReportHistoryProps {
 export function ReportHistory({ reports, downloadingId, footerText, onDownload }: ReportHistoryProps) {
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-200">
-      <div className="p-6 border-b border-gray-200">
-        <h2 className="text-xl font-bold text-gray-900">Report History</h2>
+      <div className="p-4 sm:p-6 border-b border-gray-200">
+        <h2 className="text-lg sm:text-xl font-bold text-gray-900">Report History</h2>
       </div>
       
       <div className="divide-y divide-gray-100">
@@ -26,7 +26,7 @@ export function ReportHistory({ reports, downloadingId, footerText, onDownload }
         ))}
       </div>
 
-      <div className="p-6 text-center text-sm text-gray-500 border-t border-gray-200">
+      <div className="p-4 sm:p-6 text-center text-xs sm:text-sm text-gray-500 border-t border-gray-200">
         {footerText}
       </div>
     </div>
