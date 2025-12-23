@@ -207,26 +207,35 @@ export default function DriverMaster({ driverItems: initialDriverItems }: Driver
           <h1 className="text-2xl font-bold text-gray-900">Driver Master</h1>
         </div>
 
-        <div className="flex items-center gap-3">
-          <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
-            <Input
-              type="text"
-              placeholder="Search by Driver ID, Name, SIM Number, or Phone"
-              value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
-              className="pl-10 focus-visible:ring-0 focus-visible:border-[#0047AB]"
-            />
+        {/* Desktop: horizontal | Mobile: 2 rows */}
+        <div className="flex flex-col md:flex-row md:items-center gap-3">
+          <div className="flex items-center gap-2 md:gap-3 flex-1 md:max-w-md">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
+              <Input
+                type="text"
+                placeholder="Search by Driver ID, Name, SIM Number, or Phone"
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                className="pl-10 focus-visible:ring-0 focus-visible:border-[#0047AB]"
+              />
+            </div>
+
+            <div className="md:hidden">
+              <FilterPopover onApply={setFilters} currentFilters={filters} />
+            </div>
           </div>
 
-          <FilterPopover onApply={setFilters} currentFilters={filters} />
+          <div className="hidden md:block">
+            <FilterPopover onApply={setFilters} currentFilters={filters} />
+          </div>
 
-          <div className="flex items-center gap-2 ml-auto">
+          <div className="flex items-center gap-2 md:ml-auto">
             <Button
               variant="destructive"
               onClick={handleBulkDelete}
               disabled={selectedRows.length === 0}
-              className="gap-2"
+              className="gap-2 flex-1 md:flex-initial"
             >
               <Trash2 className="h-4 w-4" />
               Delete {selectedRows.length > 0 && `(${selectedRows.length})`}
@@ -234,7 +243,7 @@ export default function DriverMaster({ driverItems: initialDriverItems }: Driver
 
             <Button
               onClick={() => setIsAddOpen(true)}
-              className="gap-2 bg-[#0047AB] hover:bg-[#003580]"
+              className="gap-2 bg-[#0047AB] hover:bg-[#003580] flex-1 md:flex-initial"
             >
               Add Data
               <Plus className="h-4 w-4" />
